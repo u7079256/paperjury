@@ -1,0 +1,12 @@
+# Internal development / continuity notes, not for publication
+docs/HANDOFF.md
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+*.tmp
+*~
+.vscode/
+.idea/
