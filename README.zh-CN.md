@@ -5,14 +5,14 @@
 > 一套可移植的范式,用来编辑并打磨任意 CS 会议论文,提供三种模式。
 
 <p align="center">
-  <a href="https://u7079256.github.io/papercourt/"><img alt="打开在线交互式总览" src="https://img.shields.io/badge/在线交互式总览-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
+  <a href="https://u7079256.github.io/papercourt/overview.html?lang=zh"><img alt="打开在线交互式总览" src="https://img.shields.io/badge/在线交互式总览-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
 </p>
 
 一个 Claude Code skill(v0.4.0),负责编辑并加固 CS 会议论文。它是同一个 skill 暴露出的三种模式(direct-edit、review、auto),底层由一套庭审式(courtroom)review 引擎和确定性 guards 支撑。
 
 **状态(2026-06-01):** 三种模式均已 BUILT 且通过组件级验证;**尚未**在真稿上端到端验证。唯一一次跑是一段合成的、植入缺陷的 passage。**整链未实跑**(完整流水线从未在真实论文上跑通端到端)。
 
-交互式总览:[在线站点](https://u7079256.github.io/papercourt/)(GitHub Pages),或仓库内 [`docs/overview.html`](docs/overview.html)。
+交互式总览:[在线站点](https://u7079256.github.io/papercourt/overview.html?lang=zh)(GitHub Pages),或仓库内 [`docs/overview.html`](docs/overview.html)。
 
 ---
 

@@ -5,14 +5,14 @@
 > A portable paradigm for editing and hardening any CS-conference paper, in three modes.
 
 <p align="center">
-  <a href="https://u7079256.github.io/papercourt/"><img alt="Open the live interactive overview" src="https://img.shields.io/badge/Open_the_interactive_overview-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
+  <a href="https://u7079256.github.io/papercourt/overview.html?lang=en"><img alt="Open the live interactive overview" src="https://img.shields.io/badge/Open_the_interactive_overview-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
 </p>
 
 A Claude Code skill (v0.4.0) that edits and hardens CS-conference papers. It is one skill exposing three modes (direct-edit, review, auto), backed by a courtroom-style review engine and deterministic guards.
 
 **Status (2026-06-01):** all three modes are BUILT and component-verified, but NOT yet validated end-to-end on a real paper. The only run was one synthetic planted-flaw passage. 整链未实跑 (the full pipeline has NOT been run end-to-end).
 
-Interactive overview: the [live site](https://u7079256.github.io/papercourt/) (GitHub Pages), or [`docs/overview.html`](docs/overview.html) in-repo.
+Interactive overview: the [live site](https://u7079256.github.io/papercourt/overview.html?lang=en) (GitHub Pages), or [`docs/overview.html`](docs/overview.html) in-repo.
 
 ---
 

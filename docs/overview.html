@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="Interactive workflow overview, global to local. EN / 中文.">
 <meta name="twitter:image" content="overview-card.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230e0f13'/><circle cx='7.5' cy='16' r='2.8' fill='%23d6a14b'/><circle cx='16' cy='16' r='2.8' fill='%235b9cff'/><circle cx='24.5' cy='16' r='2.8' fill='%2346c98b'/><path d='M10.3 16h2.9M18.8 16h2.9' stroke='%239a9488' stroke-width='1.6'/></svg>">
-<script>(function(){var d=document.documentElement;d.className+=' js';try{var s=localStorage.getItem('prl-lang');if(s==='en'||s==='zh'){d.setAttribute('data-lang',s);d.setAttribute('lang',s);}}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement;d.className+=' js';var lang=null;try{var m=(location.search||'').match(/[?&]lang=(en|zh)/i);if(m){lang=m[1].toLowerCase();}else{var s=localStorage.getItem('prl-lang');if(s==='en'||s==='zh')lang=s;}}catch(e){}if(lang){d.setAttribute('data-lang',lang);d.setAttribute('lang',lang);try{localStorage.setItem('prl-lang',lang);}catch(e){}}})();</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 

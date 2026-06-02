@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=./overview.html">
+<meta http-equiv="refresh" content="0; url=./overview.html"><!-- JS below forwards any ?lang= query to overview.html -->
 <link rel="canonical" href="./overview.html">
 <meta name="robots" content="noindex">
 <title>paper-review-loop</title>
 </head>
 <body>
 <p>Redirecting to <a href="./overview.html">overview.html</a> &hellip;</p>
-<script>location.replace('./overview.html');</script>
+<script>location.replace('./overview.html' + (location.search || ''));</script>
 </body>
 </html>
