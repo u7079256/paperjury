@@ -10,8 +10,6 @@
 
 A Claude Code skill that edits and hardens CS-conference papers. It is one skill exposing three modes (direct-edit, review, auto), backed by a courtroom-style review engine and deterministic guards.
 
-**Status:** All three modes are built and the engine is adversarially cross-checked, but not yet validated end-to-end on a real paper.
-
 Interactive overview: the [live site](https://u7079256.github.io/papercourt/overview.html?lang=en) (GitHub Pages), or [`docs/overview.html`](docs/overview.html) in-repo.
 
 ---
@@ -28,8 +26,6 @@ Interactive overview: the [live site](https://u7079256.github.io/papercourt/over
 - Human gates and author sign-off are first-class, not bolted on.
 - Durable cross-round, cross-session state via a machine-readable `ledger`, with a clerk-converged multi-round loop.
 
-No adoption, benchmarks, or real-paper results exist yet; do not infer any (see [Honest caveats](#honest-caveats)).
-
 ## Scope
 
 **CS conferences only.** Three venue families, each with its own style profile:
@@ -44,26 +40,23 @@ Scope is exactly these three families and these venue names: no journals, system
 
 ## Three modes
 
-All three modes are **BUILT**. Per-mode verification caveats are in [Honest caveats](#honest-caveats); they apply wherever a mode is presented as usable.
-
 ### Direct-Edit (common)
 
-- **Trigger:** you describe a change in Chinese or English and want the LaTeX edited directly.
+- **Trigger:** describe a change in Chinese or English and have the LaTeX edited directly.
 - **Example utterances:** "把这段改成…", "polish this paragraph", "把我对 intro 的想法写成 LaTeX", "tighten this".
 - **Behavior:** no review panel; go straight to drafting the patch through the writing toolkit, with author sign-off.
 
 ### Review (occasional)
 
-- **Trigger:** you want the paper critiqued or hardened: review / critique / 审稿 / 评审 / mock-review, or iterating a draft to clear reviewer-raised issues.
+- **Trigger:** ask for the paper to be critiqued or hardened: review / critique / 审稿 / 评审 / mock-review, or iterating a draft to clear reviewer-raised issues.
 - **Behavior:** runs the courtroom review engine (`references/review-engine-v3.md`).
 - **Scope sub-trigger:** `full` (whole paper) or `passage` (one section / paragraph / claim).
 
 ### Auto (unattended)
 
-- **Trigger (explicit only):** you opt in via `/goal` (or config `mode: auto`) to run the review-revise loop AFK toward a verifiable goal.
-- **Hard constraint:** **never self-detect auto; it is explicit only.** Auto never self-detects headless (no runtime signal). Opt in via `/goal` context or a project config `mode: auto`.
+- **Trigger (explicit only):** opt in via `/goal` (or config `mode: auto`) to run the review-revise loop unattended toward a verifiable goal.
+- **Hard constraint:** **auto is never self-detected; it is explicit only.** There is no runtime signal for it, so it is entered only via a `/goal` context or a project config `mode: auto`.
 - **Behavior:** establish the `spine` and the reviewer assignment up front (the human steps), then the engine applies safe fixes under the bounded-aggressive + edit-safety policy, queues the rest, and runs multiple rounds until a clerk-converged stop. See `references/auto-mode.md`.
-- **Note:** `/goal` is a real Claude Code feature, verified present.
 
 ---
 
@@ -75,13 +68,11 @@ Say what you want; the skill routes to a mode:
 - Want critique or hardening → say review / critique / 审稿 / 评审 / mock-review, optionally scoped `full` or `passage`. → **Review mode.**
 - Want an unattended loop toward a goal → opt in explicitly via `/goal` or config `mode: auto`. → **Auto mode.**
 
-
-
 ---
 
 ## Engine overview
 
-The courtroom engine is `assign-reviewers → reading-check → coverage-auditor → merge → {trial (+ escalate) ‖ polish} → recall-audit → drafter → {edit-audit | meaning-audit} → clerk`. Generation is bounded (N holistic domain reviewers, not a per-(unit × lens) flood); adjudication is routed by contestability; edits are guarded by risk; the multi-round loop converges via a deterministic clerk. The **deterministic guards in `scripts/`** run orchestrator-side via Bash between workflow calls.
+The courtroom engine is `assign-reviewers → reading-check → coverage-auditor → merge → {trial ‖ polish} → recall-audit → drafter → {edit-audit | meaning-audit} → clerk`. Generation is bounded (N holistic domain reviewers, not a per-(unit × lens) flood); adjudication is routed by contestability; edits are guarded by risk; the multi-round loop converges via a deterministic clerk. The **deterministic guards in `scripts/`** run orchestrator-side via Bash between workflow calls.
 
 ### Deterministic stages (orchestrator-side, Node via Bash)
 
@@ -101,16 +92,14 @@ The courtroom engine is `assign-reviewers → reading-check → coverage-auditor
 2. `reading-check`: N holistic reviewers each read the WHOLE paper once → weaknesses (significance + kind + verbatim quote) + one overall_confidence + a per-section coverage report; targeted re-invoke mode for anti-skim.
 3. `coverage-auditor`: anti-skim L2: flag skimmed (reviewer, section) pairs across the coverage reports.
 4. `merge`: semantic dedup across reviewers; the workflow derives significance (MAX) / kind (substantive-dominates) / corroboration deterministically.
-5. `trial`: the 5-tier: whole-paper defense → decorrelated local-context jury (with on-demand context expansion) → a deterministic quorum/majority verdict + a judge that routes a decided-valid charge (valid-fixable vs author-required); escalate to a 12-juror tier on no clear majority.
+5. `trial`: a 5-juror trial tier: whole-paper defense → independent local-context jury (with on-demand context expansion) → a deterministic quorum/majority verdict + a judge that routes a decided-valid charge (valid-fixable vs author-required); escalate to a 12-juror tier on no clear majority.
 6. `polish`: the off-gate track: batch copy-edit (mechanical) + batch light-check (minor-substantive); can escalate a misrouted major back to trial.
 7. `recall-audit`: Mode A revives wrongly-dropped charges (bias to revive); Mode B spot-checks strong-consensus majors before the edit (guards a correlated-wrong consensus).
 8. `drafter`: minimal-edit patch for valid-fixable charges.
 9. `edit-audit` / `meaning-audit`: the edit-safety semantic half: `edit-audit` checks a risky non-anchor edit (make-sense + cross-section alignment); `meaning-audit` is the four-state frozen-anchor + arc audit.
-10. `clerk`: the round boundary: reconcile carried open-questions vs this round's edits, dedup re-raises via a deterministic passage_id + similarity merge key, and emit the deterministic convergence counts.
+10. `clerk`: the round boundary: reconcile carried open-questions against this round's edits, dedup re-raises via a deterministic passage_id + similarity merge key, and emit the deterministic convergence counts.
 
-Also present: `review-panel.workflow.js`: the quick/legacy simple 3-lens panel (fast path).
-
-**How the engine was hardened (not a real-paper result):** the design was stress-tested by an adversarial validation workflow, then the built engine was cross-checked by a second workflow with fresh-skeptic verification of each finding. Confirmed defects were fixed and contracts written into `references/review-engine-v3.md`. The core has NOT yet been run end-to-end on a real paper.
+Also present: `review-panel.workflow.js`: a quick simple 3-lens panel (fast path).
 
 ---
 
@@ -118,7 +107,7 @@ Also present: `review-panel.workflow.js`: the quick/legacy simple 3-lens panel (
 
 1. **Skill (entry point + methodology):** the protocol, the reviewer assignment, the consensus gate, the writing toolkit, the human gates. Detail in `references/review-engine-v3.md`, `references/reviewer-personas.md`, `references/writing-toolkit.md`.
 
-2. **Workflow (fan-out engine):** the semantic, no-human-in-the-middle steps run as Workflows (parallelism plus schema-validated output by construction). Simple panel = `workflows/review-panel.workflow.js`; the v3 courtroom engine = `assign-reviewers → reading-check → coverage-auditor → merge → {trial ‖ polish} → recall-audit → drafter → {edit-audit | meaning-audit} → clerk`. The deterministic guards run orchestrator-side via Bash because the Workflow sandbox has no fs: `scripts/` holds `decompose`, `ledger`, `journal`, `apply-patch`, `anchor-diff`, `cross-ref`, `spine`, `compile-guard`, `compliance-check`.
+2. **Workflow (fan-out engine):** the semantic, no-human-in-the-middle steps run as Workflows (parallelism plus schema-validated output by construction). Simple panel = `workflows/review-panel.workflow.js`; the courtroom engine = `assign-reviewers → reading-check → coverage-auditor → merge → {trial ‖ polish} → recall-audit → drafter → {edit-audit | meaning-audit} → clerk`. The deterministic guards run orchestrator-side via Bash because the Workflow sandbox has no fs: `scripts/` holds `decompose`, `ledger`, `journal`, `apply-patch`, `anchor-diff`, `cross-ref`, `spine`, `compile-guard`, `compliance-check`.
 
 3. **Memory (durable state + learned conventions), two layers:**
    - **Ledger**: `LEDGER.json` resolved at runtime = the machine source of truth, plus a rendered `LEDGER.md` view; managed by `scripts/ledger.js`. The live, mutable issue state across rounds and sessions. Schema plus status state machine: `references/ledger-schema.md`.
@@ -149,46 +138,15 @@ The writing toolkit names (prompt bodies not shown here): `translate-to-english`
 
 ## Architecture notes
 
-- The Workflow sandbox has **no filesystem and no subprocess**; that is why all deterministic guards run orchestrator-side via Bash between workflow calls. This is a design fact, not a limitation to apologize for.
+- The Workflow sandbox has **no filesystem and no subprocess**; that is why all deterministic guards run orchestrator-side via Bash between workflow calls.
 - `compile-guard.js` is honest about unverifiability: when it cannot truly compile, it degrades to structural lint and reports `compiled:null`.
-- Submission-readiness is cross-mode, two parts: **A** = `compliance-check.js` plus a semantic agent; **B** = a compile-driven layout loop reusing `compile-guard.js` plus Read-on-PDF. A is tested; B reuses already-tested components.
-
----
-
-## Honest caveats
-
-Built and adversarially cross-checked, but not yet validated end-to-end on a real paper. "Built and cross-checked" is kept strictly separate from "validated end-to-end on a real paper."
-
-**What is built and verified:**
-
-- All three modes (direct-edit, review, auto) are **built**.
-- 9 deterministic scripts; `ledger.js` is unit-tested (22 cases).
-- The v3 workflows are syntax-clean and contract-cross-checked by an adversarial workflow with fresh-skeptic verification.
-- The deterministic `apply → compile → journal → revert` chain: end-to-end **in isolation**.
-
-**What is NOT yet done (stated plainly):**
-
-- The core has NOT been run end-to-end on a real paper.
-- Three-way routing accuracy, the 5-tier trial, the drafter/apply/edit-safety chain on real edits, the clerk convergence, and the `/goal` auto loop: **NOT YET validated on a real paper**.
-
-
-**Per-mode caveats:**
-
-- **Direct-Edit:** BUILT; component smoke-tested; **not run end-to-end on a real paper**.
-- **Review:** Built and cross-checked; **real-paper end-to-end validation not yet done**.
-- **Auto:** BUILT (engine + envelope + outer loop); **the full loop on a real paper not run end-to-end**.
-
-**Bottom line:**
-
-> All three modes are built and the engine is adversarially cross-checked, but NOT yet validated end-to-end on a real paper.
-
-This skill does not claim "production-ready", "validated", or "proven on real papers". No recall/precision numbers, real-paper cost figures, or adoption are claimed; none have been measured yet.
+- Submission-readiness is cross-mode, two parts: **A** = `compliance-check.js` plus a semantic agent; **B** = a compile-driven layout loop reusing `compile-guard.js` plus Read-on-PDF.
 
 ---
 
 ## File and path reference
 
-- Engine protocol (v3, + every orchestrator seam): `references/review-engine-v3.md`
+- Engine protocol (every orchestrator seam): `references/review-engine-v3.md`
 - Auto protocol: `references/auto-mode.md`
 - Personas / writing toolkit / methodology: `references/reviewer-personas.md`, `references/writing-toolkit.md`, `references/methodology.md`
 - Ledger schema + status machine: `references/ledger-schema.md`
@@ -202,7 +160,3 @@ This skill does not claim "production-ready", "validated", or "proven on real pa
 ## Credits
 
 The spine and anti-drift design (the anchor logic-transfer audit, the claim register, and the minimal-edit, intent-preserving revision policy) is inspired by [PaperSpine](https://github.com/WUBING2023/PaperSpine), a motivation-driven paper drafting and rewriting skill. PaperSpine is a forward generate/rewrite tool with no adversarial loop; paper-review-loop borrows its anchoring idea and its "deterministic scripts for checkable steps, model agents for judgment" mechanism, then adds the adversarial courtroom review engine on top.
-
----
-
-*Built and adversarially cross-checked, but not yet validated end-to-end on a real paper.*

@@ -2,15 +2,13 @@
 
 # paper-review-loop
 
-> 一套可移植的范式,用来编辑并打磨任意 CS 会议论文,提供三种模式。
+> 一套可移植的范式,用来编辑并加固任意 CS 会议论文,提供三种模式。
 
 <p align="center">
   <a href="https://u7079256.github.io/papercourt/overview.html?lang=zh"><img alt="打开在线交互式总览" src="https://img.shields.io/badge/在线交互式总览-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
 </p>
 
-一个 Claude Code skill,负责编辑并加固 CS 会议论文。它是同一个 skill 暴露出的三种模式(direct-edit、review、auto),底层由一套庭审式(courtroom)review 引擎(v3)和确定性 guards 支撑。
-
-三种模式已实现,核心引擎经对抗式验证、书记官日志有单元测试;但尚未在真实论文上端到端验证。
+一个 Claude Code skill,负责编辑并加固 CS 会议论文。它是同一个 skill 暴露出的三种模式(direct-edit、review、auto),底层由一套庭审式(courtroom)review 引擎和确定性 guards 支撑。
 
 交互式总览:[在线站点](https://u7079256.github.io/papercourt/overview.html?lang=zh)(GitHub Pages),或仓库内 [`docs/overview.html`](docs/overview.html)。
 
@@ -28,8 +26,6 @@
 - 人工 gate 与作者 sign-off 是一等公民,不是事后补的。
 - 跨轮、跨会话的持久状态靠一份机器可读的 `ledger`,并由书记官(clerk)收敛的多轮循环驱动。
 
-尚无任何采用情况、benchmark 或真实论文结果,不要据此推断。
-
 ## 适用范围
 
 **仅限 CS 会议。** 三大 venue 家族,各有自己的 style profile:
@@ -44,8 +40,6 @@
 
 ## 三种模式
 
-每种模式的限制见下文,使用时务必一并对照。
-
 ### Direct-Edit(常用)
 
 - **触发方式:** 用户用中文或英文描述一处改动,想直接改 LaTeX。
@@ -54,39 +48,37 @@
 
 ### Review(偶尔)
 
-- **触发方式:** 用户想让论文被批评或被加固:review / critique / 审稿 / 评审 / mock-review,或者迭代一份草稿来清掉评审者提出的问题。
-- **行为:** 启动庭审式评审引擎。
+- **触发方式:** 用户想给论文挑刺、做加固:review / critique / 审稿 / 评审 / mock-review,或者迭代一份草稿来清掉评审者提出的问题。
+- **行为:** 启动庭审式评审引擎(`references/review-engine-v3.md`)。
 - **范围子触发:** `full`(整篇)或 `passage`(某一节 / 段落 / claim)。
 
 ### Auto(无人值守)
 
 - **触发方式:** 用户通过 `/goal` 或配置 `mode: auto` 显式开启无人值守循环,让评审与修订循环朝一个可验证的目标推进。
-- **硬约束:** 绝不自动进入 auto 模式,仅能显式开启。
-- **行为:** 先获取作者对核心内容的确认及评审团队分配,之后引擎在安全的修补策略下逐轮迭代,由书记官判定收敛。
+- **硬约束:** 绝不自动进入 auto 模式,仅能显式开启;它没有任何运行时信号,只能通过 `/goal` 上下文或项目配置 `mode: auto` 进入。
+- **行为:** 先获取作者对核心方向和评审分配的确认,之后引擎按预授权的 bounded-aggressive + 编辑安全策略,自动落安全 fix、把有风险的改动入队,多轮迭代直到书记官判定收敛(详见 `references/auto-mode.md`)。
 
 ---
 
 ## 如何触发 / quick start
 
-说出你想要什么,skill 会把请求路由到对应模式:
+说出想要什么,skill 会把请求路由到对应模式:
 
 - 想直接改 LaTeX → 直接描述改动(如 "polish this paragraph"、"把这段改成…")。→ **Direct-Edit 模式。**
 - 想批评 / 加固 → 说 review / critique / 审稿 / 评审 / mock-review,可选范围 `full` 或 `passage`。→ **Review 模式。**
 - 想要朝目标无人值守循环 → 通过 `/goal` 或配置 `mode: auto` 显式开启。→ **Auto 模式。**
 
-
-
 ---
 
 ## 引擎总览
 
-庭审引擎的步骤为:评审员分配 → 完整阅读检查 → 覆盖审计 → 去重 → 审议(按可争议性路由) → 编辑 → 书记官收敛。生成端有界(N 个领域评审者),审议端按争议程度分流,多轮循环由确定性的书记官判定收敛。
+庭审引擎的步骤为:评审员分配 → 完整阅读检查 → 覆盖审计 → 去重 →(审议 ‖ 润色) → 召回审计 → 编辑起草 → 编辑 / 含义审计 → 书记官收敛。生成端有界(N 个领域评审者),审议端按争议程度分流,多轮循环由确定性的书记官判定收敛。
 
 ### 确定性步骤
 
 1. **读稿分解**:把手稿切成阅读单元、规范的段落列表、稳定的段落编号(防止漂移,为陪审团提供局部上下文)。
 2. **核心声明**(仅 auto 模式):提取核心声明,获得作者确认,冻结为配置。
-3. **账本**:活跃问题状态的机器可读源,跨轮跨会话持久化。包含 gate 逻辑(0 个未解决的重大问题作为决策阈值)。
+3. **账本**:活跃问题状态的机器可读源,跨轮跨会话持久化。包含 gate 逻辑(没有阻断 gate 的活跃 major 即为完成;author-required 不阻断 gate,累计进人工队列)。
 4. **日志**:编辑历史的仅追加记录,支持回滚。
 5. **补丁应用**:原子性应用编辑,记录日志,支持恢复。
 6. **锚点追踪**:定位已冻结的核心声明;当上下文变动时标出需要重新审计的部分。
@@ -100,7 +92,7 @@
 2. **完整阅读检查**:每位评审者读一遍全文,识别弱点(重要性、类别、具体引文)和总体信心度,以及按段落的覆盖报告。
 3. **覆盖审计**:跨评审者检查是否有段落被略读。
 4. **去重**:合并重复的评论,确定性地导出重要性、问题类别和交叉确认。
-5. **审议**:根据可争议性分流。对有争议的问题,进行论证和陪审团判定;无明显共识时升级。
+5. **审议**:根据可争议性分流。对有争议的问题,进行论证和陪审团判定;无明显多数时升到 12 人陪审团。
 6. **润色**:快路径处理机械性问题和轻微问题;如果判断错误,升级回审议。
 7. **审核补救**:检查是否遗漏或误判的问题。
 8. **编辑起草**:对确认的可修复问题起草最小改动。
@@ -109,14 +101,12 @@
 
 也支持简化的 3 人评审小组作为快速路径。
 
-核心设计已通过对抗式验证,代码已经过检验;已修复的缺陷被记录。但核心从未在真实论文上端到端运行过。
-
 ---
 
 ## 三原语:Skill + Workflow + Memory
 
 1. **Skill(入口 + 方法论):** 协议、reviewer 分配、consensus gate、writing toolkit、人工 gate。详见 `references/review-engine-v3.md`、`references/reviewer-personas.md`、`references/writing-toolkit.md`。
-2. **Workflow(fan-out 引擎):** 语义层、无人居中的步骤以 Workflow 运行(并行 + 构造上即 schema 校验的输出)。简单 panel = `workflows/review-panel.workflow.js`;v3 庭审引擎 = `assign-reviewers → reading-check → coverage-auditor → merge → {trial ‖ polish} → recall-audit → drafter → {edit-audit | meaning-audit} → clerk`。确定性 guards 由 orchestrator 侧经 Bash 在各 workflow 调用之间运行,因为 Workflow sandbox 没有 fs:`scripts/` 里有 `decompose`、`ledger`、`journal`、`apply-patch`、`anchor-diff`、`cross-ref`、`spine`、`compile-guard`、`compliance-check`。
+2. **Workflow(fan-out 引擎):** 语义层、无人居中的步骤以 Workflow 运行(并行 + 构造上即 schema 校验的输出)。简单 panel = `workflows/review-panel.workflow.js`;庭审引擎 = `assign-reviewers → reading-check → coverage-auditor → merge → {trial ‖ polish} → recall-audit → drafter → {edit-audit | meaning-audit} → clerk`。确定性 guards 由 orchestrator 侧经 Bash 在各 workflow 调用之间运行,因为 Workflow sandbox 没有 fs:`scripts/` 里有 `decompose`、`ledger`、`journal`、`apply-patch`、`anchor-diff`、`cross-ref`、`spine`、`compile-guard`、`compliance-check`。
 3. **Memory(持久状态 + 习得约定),两层:**
    - **Ledger**:运行时解析出的 `LEDGER.json` 是机器层的 source of truth,外加一份渲染出的 `LEDGER.md` 视图;由 `scripts/ledger.js` 管理。它是跨轮、跨会话的活的、可变的 issue 状态。schema 与状态机见 `references/ledger-schema.md`。
    - **Claude memory**:当前项目的 memory:值得下次会话回忆起的稳定约定(本论文的 house style、venue、persona 调校)。
@@ -136,47 +126,19 @@ writing toolkit 的工具名(具体 prompt 内容此处不列):`translate-to-eng
 ## 六条硬规则
 
 1. **未经作者显式确认,绝不改手稿。** auto 模式在前期获得作者对核心方向和修订范围的整体授权,之后基于预设策略应用修改,而不是逐次确认。
-2. **评审者相互隔离。** 每轮都是独立评审:无串话、无上一轮信息泄漏。
-3. **每条可修复问题都有明确的修复标准。** 由审议阶段设定,说明具体要修改什么。
+2. **评审者 / 陪审员相互隔离。** 每轮都是 fresh eyes:互不通气、无上一轮信息泄漏、也看不到 ledger;靠「放进每个 agent prompt 的内容」加「每个 reviewer 型 prompt 里显式的 ISOLATION 指令」双重保证。
+3. **每条可修复问题都有明确的修复标准。** 由法官设定,说明一处编辑具体要满足什么。
 4. **不向被审文本泄漏。** 评审日志、修订记录和内部检查结论都是作者侧的辅助,绝不进入论文或冻结快照。
-5. **分歧靠讨论解决,然后是决策(记录在案),绝不暗地驳回。**
+5. **分歧靠讨论解决,谈不拢再由人 override 覆盖(记录在案),绝不暗地驳回。**
 6. **所有路径和文件配置都在运行时解析,不硬编码。**
 
 ---
 
-## 架构事实
+## 架构说明
 
-- 编译检查诚实对待不可验证性:无法真正编译时,报告不可验证,而非虚假声称。
-- 提交合规检查分两部分:确定性检查和语义检查,复用已验证过的组件。
-
----
-
-## 坦诚说明
-
-务必区分「已实现」和「已在真实论文上端到端验证」。
-
-**已构建且通过验证:**
-
-- 三种模式(直接编辑、评审、自动)均已实现。
-- 核心步骤已验证,书记官日志有单元测试。
-- 编辑应用、编译、日志、回滚链已在隔离环境下端到端验证。
-
-**尚未验证:**
-
-- 核心引擎从未在真实论文上端到端运行过。
-- 分流准确性、审议判定、编辑应用链、自动循环:尚未在真稿上验证。
-
-**每种模式的限制:**
-
-- 直接编辑:已实现;未在真稿上验证。
-- 评审:已实现、已验证核心逻辑;未在真稿上端到端验证。
-- 自动:已实现;未在真稿上端到端验证。
-
-**一句话总结(如实):**
-
-> 三种模式已实现,核心逻辑已验证;但尚未在真实论文上端到端验证。
-
-本 skill 不声称 "production-ready" 或 "validated"。也不声称任何性能数据或采用情况。
+- Workflow sandbox 没有文件系统、也没有子进程;正因如此,所有确定性 guards 都由 orchestrator 侧经 Bash 在各 workflow 调用之间运行。
+- compile-guard.js 对不可验证性诚实:无法真正编译时,降级到结构 lint 并报告 compiled:null。
+- 提交就绪检查跨模式,分两部分:A = compliance-check.js + 一个语义 agent;B = 复用 compile-guard.js 的编译驱动版面循环,配合对 PDF 的 Read。
 
 ---
 
@@ -196,7 +158,3 @@ writing toolkit 的工具名(具体 prompt 内容此处不列):`translate-to-eng
 ## Credits / 致谢
 
 spine 与防漂移设计(anchor logic-transfer audit、claim register、minimal-edit 且保义的改写策略)受 [PaperSpine](https://github.com/WUBING2023/PaperSpine) 启发,它是一个 motivation-driven 的论文起草与改写 skill。PaperSpine 是 forward generate/rewrite 工具、没有对抗 loop;paper-review-loop 借用它的 anchoring 思路,以及「可检查步骤交给确定性脚本、判断交给 model agent」这一机制,再在其上加了对抗式庭审 review 引擎。
-
----
-
-*已实现、已验证核心逻辑,但尚未在真实论文上端到端验证。本 README 陈述已落实的内容。*
