@@ -1,7 +1,7 @@
 ---
 name: paper-review-loop
-description: Three modes for CS-conference papers (CVPR/ICCV/ECCV vision, ACL/EMNLP/NAACL NLP, ICLR/NeurIPS/ICML/AAAI ML). DIRECT-EDIT mode (common): the user describes a change in Chinese or English and the LaTeX is edited directly through a CS-venue writing toolkit with author sign-off (use for 改这段 / 把中文想法写成 latex / polish / de-AI / translate / compress a passage). REVIEW mode (occasional, pre-submission): harden the paper through an adversarial courtroom review engine (per-issue charge / screen / trial / three-way routing) with consensus-gated, author-signed revisions (use for review / critique / 审稿 / 评审 / mock-review). AUTO mode (unattended, opt-in via /goal): run the review-revise loop toward a verifiable goal, applying safe fixes under a drift-bounded policy and queueing risky ones. Resolves all inputs at runtime, no hardcoded paths. Not a from-scratch drafter (use ml-paper-writing) and not an official-venue rebuttal.
-version: 0.4.0
+description: Three modes for CS-conference papers (CVPR/ICCV/ECCV vision, ACL/EMNLP/NAACL NLP, ICLR/NeurIPS/ICML/AAAI ML). DIRECT-EDIT mode (common): the user describes a change in Chinese or English and the LaTeX is edited directly through a CS-venue writing toolkit with author sign-off (use for 改这段 / 把中文想法写成 latex / polish / de-AI / translate / compress a passage). REVIEW mode (occasional, pre-submission): harden the paper through an adversarial courtroom review engine (N holistic domain reviewers / contestability routing / two-sided trial / three-way verdict / clerk-converged multi-round loop) with consensus-gated, author-signed revisions (use for review / critique / 审稿 / 评审 / mock-review). AUTO mode (unattended, opt-in via /goal): run the review-revise loop toward a verifiable goal, applying safe fixes under a drift-bounded policy and queueing risky ones. Resolves all inputs at runtime, no hardcoded paths. Not a from-scratch drafter (use ml-paper-writing) and not an official-venue rebuttal.
+version: 0.5.0
 author: Yiran Wang
 license: MIT
 tags: [Academic Writing, Peer Review, Adversarial Review, CVPR, ICCV, ECCV, ACL, EMNLP, NAACL, ICLR, NeurIPS, ICML, AAAI, Workflow, LaTeX]
@@ -14,8 +14,9 @@ three modes. In **direct-edit mode** (the common case) the user describes a chan
 in Chinese or English and the LaTeX is edited directly through a CS-venue writing
 toolkit, with author sign-off. In **review mode** (occasional, pre-submission) it
 exposes the manuscript to a harsh, multi-perspective courtroom review engine that
-adjudicates each issue (charge -> cheap screen -> two-sided trial -> three-way
-routing), gates every change behind consensus, and tracks issues in a durable
+adjudicates each issue (N holistic domain reviewers -> contestability routing ->
+two-sided trial -> three-way verdict, with a polish track and a clerk-converged
+multi-round loop), gates every change behind consensus, and tracks issues in a durable
 ledger. In **auto mode** (unattended, opt-in via `/goal`) it runs that same engine
 toward a verifiable goal, applying safe fixes under a drift-bounded policy and
 queueing the risky ones for one human pass on return. All modes share the same
@@ -43,7 +44,7 @@ Three modes, one skill. Pick by what the user is asking for:
 - **Review mode (occasional, pre-submission).** The user wants the paper critiqued
   or hardened: review / critique / 审稿 / 评审 / mock-review, or iterating a draft
   to clear reviewer-raised issues. This runs the courtroom review engine
-  (`references/review-engine-v2.md`).
+  (`references/review-engine-v3.md`).
 - **Auto mode (unattended).** The user opts in via `/goal` (or config `mode: auto`)
   to run the review-revise loop AFK toward a verifiable goal. Establish the spine
   up front (the one human step), then the engine applies safe fixes under the
@@ -66,14 +67,15 @@ hand-rolled version accumulates.
    `references/writing-toolkit.md`.
 2. **Workflow = fan-out engine.** The semantic, no-human-in-the-middle steps run as
    Workflows (parallelism + schema-validated output by construction). The simple
-   panel is `workflows/review-panel.workflow.js`; the courtroom engine is
-   `reading-check` -> `grand-jury` -> `trial` -> `drafter` -> `recall-audit` (+
-   `meaning-audit`). The DETERMINISTIC guards run orchestrator-side via Bash between
-   workflow calls (the Workflow sandbox has no fs): `scripts/` holds `decompose`,
-   `ledger`, `journal`, `apply-patch`, `anchor-diff`, `spine`, `compile-guard`,
-   `compliance-check`. Build note: this harness delivers a workflow's `args` as a
-   JSON STRING, so every workflow parses it defensively. Protocol:
-   `references/review-engine-v2.md`.
+   panel is `workflows/review-panel.workflow.js`; the v3 courtroom engine is
+   `assign-reviewers` -> `reading-check` -> `coverage-auditor` -> `merge` ->
+   {`trial` (+ escalate) || `polish`} -> `recall-audit` -> `drafter` ->
+   {`edit-audit` | `meaning-audit`} -> `clerk`. The DETERMINISTIC guards run
+   orchestrator-side via Bash between workflow calls (the Workflow sandbox has no fs):
+   `scripts/` holds `decompose`, `ledger`, `journal`, `apply-patch`, `anchor-diff`,
+   `cross-ref`, `spine`, `compile-guard`, `compliance-check`. Build note: this harness
+   delivers a workflow's `args` as a JSON STRING, so every workflow parses it
+   defensively. Protocol + every orchestrator seam: `references/review-engine-v3.md`.
 3. **Memory = durable state + learned conventions.** Two layers:
    - **Ledger** (`LEDGER.json` resolved at runtime = the machine source of truth,
      plus a rendered `LEDGER.md` view; managed by `scripts/ledger.js`): the live,
@@ -96,8 +98,10 @@ each input by **discovery first, then asking**:
   absent, reuse if present. The user may point elsewhere.
 - **author**: ask who signs off on edits (default: the current user). Every edit
   needs explicit authorization.
-- **personas**: default to the three lenses in `references/reviewer-personas.md`.
-  If the project defines its own named reviewer subagents, use them as
+- **personas**: default to N domain-expert holistic reviewers assigned at runtime
+  (`assign-reviewers`, from the project gatekeeper core + a generated domain overlay);
+  the three generic lenses in `references/reviewer-personas.md` are the degrade
+  fallback. If the project defines its own named reviewer subagents, use them as
   `agentType`; otherwise inline the persona prompts.
 - **style_profile**: start from the venue-family default; refine from any
   conventions recalled from memory or pinned in a project config.
@@ -232,29 +236,34 @@ miss?") and scaling reviewer count or running independent panels per pass.
 
 ## Built engine + guards (operational)
 
-The three systems below are BUILT and COMPONENT-verified (2026-06-01): every v2
-workflow and engine script was smoke-tested on a synthetic planted-flaw passage, and
-the deterministic apply -> compile -> journal -> revert chain end-to-end. NOT yet
-validated: the full v2 pipeline and the auto loop on a real multi-section paper (a
-live v2 round + a `/goal` auto dry-run on throwaway copies are the remaining steps).
+The systems below are BUILT. The v3 engine was hardened by two adversarial workflows
+(a design validation, then a built-code cross-check with fresh-skeptic verification of
+each finding); the confirmed defects were fixed and the orchestrator seam contracts
+written into `references/review-engine-v3.md`. The ledger is unit-tested. NOT yet
+validated: the v3 core end-to-end on a REAL paper (three-way routing accuracy, the
+5-tier trial, the drafter/apply/edit-safety chain on real edits, the clerk convergence,
+the `/goal` auto loop). That real-paper run is the remaining milestone.
 
-- **Review-engine v2** (the courtroom engine; the default for review mode, replacing
-  the single-pass panel): protocol `references/review-engine-v2.md`; workflows
-  `reading-check` -> `grand-jury` -> `trial` -> `drafter` -> `recall-audit`;
-  deterministic guards in `scripts/`. Design rationale: `docs/REVIEW_ENGINE_V2_DESIGN.md`.
-- **Auto mode** (3rd mode, unattended via `/goal`): the v2 engine + the spine +
-  four-state meaning audit + the deterministic safety-envelope helpers (`journal.js`
-  passage-rounds / within-cap / applied-in-round, `ledger.js gate`) are BUILT; the
-  unattended round loop is the documented `references/auto-mode.md` procedure, NOT yet
-  run end-to-end. Design: `docs/AUTO_MODE_DESIGN.md`.
+- **Review-engine v3** (the courtroom engine; the default for review mode): protocol
+  `references/review-engine-v3.md`; workflows `assign-reviewers` -> `reading-check` ->
+  `coverage-auditor` -> `merge` -> {`trial` || `polish`} -> `recall-audit` -> `drafter`
+  -> {`edit-audit` | `meaning-audit`} -> `clerk`; deterministic guards in `scripts/`
+  (incl. `cross-ref`). Routing is by CONTESTABILITY (mechanical/minor -> polish track;
+  substantive-major -> the 5-tier). Design rationale: `docs/REVIEW_ENGINE_V3_DESIGN.md`
+  (v3 supersedes the v2 prosecution; `docs/REVIEW_ENGINE_V2_DESIGN.md` is retained as
+  history).
+- **Auto mode** (3rd mode, unattended via `/goal`): the v3 engine + the spine + the
+  edit-safety guard + the deterministic safety-envelope helpers + the clerk-converged
+  outer loop. The unattended loop is the documented `references/auto-mode.md` procedure,
+  NOT yet run end-to-end. Design: `docs/AUTO_MODE_DESIGN.md`.
 - **Submission-readiness** (cross-mode): `references/submission-compliance.md` +
   `scripts/compliance-check.js` (A, desk-reject shield) and the compile-driven layout
   loop reusing `scripts/compile-guard.js` (B). Design: `docs/SUBMISSION_READINESS_DESIGN.md`.
 
-The simple `review-panel.workflow.js` remains available for a quick single-pass
-panel. Build note for future work: this harness delivers a workflow's `args` as a
-JSON string (every workflow parses it), and workflow agents have file-read tools (the
-ISOLATION instruction keeps reviewers on their quoted text).
+The simple `review-panel.workflow.js` remains available for a quick single-pass panel.
+Build note: this harness delivers a workflow's `args` as a JSON string (every workflow
+parses it), and workflow agents have file-read tools (the ISOLATION instruction keeps
+reviewers on their quoted text). All engine agents run on Opus 4.8.
 
 ## Related skills
 

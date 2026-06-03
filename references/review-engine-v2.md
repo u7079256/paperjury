@@ -1,4 +1,11 @@
-# Review engine v2 -- the orchestration protocol (BUILT)
+# Review engine v2 -- the orchestration protocol (SUPERSEDED by v3)
+
+> SUPERSEDED. The default review engine is now v3 (`references/review-engine-v3.md`):
+> v3 replaces this per-(unit x lens) prosecution + grand-jury screen with N holistic
+> domain reviewers, contestability routing, a polish track, a risk-proportional
+> edit-safety guard, and a clerk-converged multi-round loop. This file is retained as
+> history for the v2 design; do not build against it.
+
 
 The courtroom per-issue adjudication engine (design: `docs/REVIEW_ENGINE_V2_DESIGN.md`).
 This file is the operational protocol: how the ORCHESTRATOR (the main session, driven

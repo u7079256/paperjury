@@ -1,195 +1,155 @@
-// reading-check.workflow.js -- v2 PROSECUTION: charge generation.
-// The first stage of review-engine v2 (REVIEW_ENGINE_V2_DESIGN §3-4). Each lens
-// close-reads each UNIT (decompose.js gives the units inline) and FILES CHARGES
-// (issue + severity + close_criterion + an exact evidence quote), then rests. One
-// cross-unit agent catches inconsistencies no single-unit reader can see (notation
-// clash across sections, abstract-vs-results, claim-vs-evidence). Loop-until-dry
-// raises recall. NO adversarial verify here -- that is the grand-jury screen + the
-// trial downstream; the prosecution only charges.
+// reading-check.workflow.js -- v3 GENERATION (review-engine-v3.md §3.2-3.3).
+// N domain-expert HOLISTIC reviewers each read the WHOLE paper ONCE and file
+// weaknesses, NOT a per-(unit x lens) fan-out and NOT loop-until-dry (v2's flood at
+// full-paper scale). Each reviewer is a project-provided persona (gatekeeper core +
+// a generated domain overlay + venue profile), instantiated by assign-reviewers and
+// passed in here as `persona_prompt`. The cross-section mandate is baked into the
+// persona, so holistic readers catch abstract-vs-results / notation-clash natively
+// (no separate cross-unit agent).
 //
-// Decompose -> one agent per (unit x lens) so deep reading is cheap and every
-// sentence is actually read (treats "not reading carefully", REVIEW_ENGINE_V2 §5).
-// A deterministic quote-verify tags any charge whose evidence quote is not actually
-// in the text (a hallucination tell the screen/trial then weigh).
+// ANTI-SKIM lives here as: (a) each reviewer must account for EVERY section with a
+// per_section_coverage entry carrying an in-section verbatim quote, and (b) a
+// deterministic quote-verify tags any weakness/coverage quote not actually present
+// (cannot quote = did not read). The orchestrator runs L1 (quote-verify) + an L2
+// coverage-auditor and, on a skim flag, re-invokes THIS workflow in `targets` mode
+// (cap-1, one reviewer x one section) -- merge happens AFTER anti-skim in merge.WF.
 //
-// args (delivered as a JSON STRING -- parse defensively):
-//   { mode, venueProfile,
-//     units:    [ { unit_id, section, text } ],     // from decompose.js (units)
-//     personas: [ { id, lensName, personaPrompt } ],// the reading lenses (3/3/4 by intensity)
-//     dryStop, maxReadRounds }                       // recall dials
-// Returns { charges:[...], rounds_run, dropped_no_criterion, per_round }.
+// NO close_criterion here (v3): the reviewer files the weakness; the judge sets the
+// close_criterion on a valid-fixable verdict. NO adversarial verify here (the trial
+// does that). The reviewer only reports.
+//
+// args (JSON STRING -- parse defensively):
+//   { paper:    "the WHOLE manuscript body (flattened) as one string",
+//     reviewers:[ { reviewer_id, domain, persona_prompt } ],   // from assign-reviewers
+//     sections: [ { section_path, section_title } ],           // from decompose units (coverage list)
+//     venueProfile, mode,
+//     targets:  [ { reviewer_id, section } ] | null }          // set => L3 re-invoke ONLY these
+// Returns [ { reviewer_id, overall_confidence, weaknesses:[...], per_section_coverage:[...] } ].
 
 export const meta = {
   name: 'reading-check',
-  description: 'v2 prosecution: per-(unit x lens) close-read files charges with an exact evidence quote, plus a cross-unit consistency pass, loop-until-dry. No verify (the trial does that). paper-review-loop review-engine v2.',
+  description: 'v3 generation: N domain holistic reviewers each read the whole paper once and file weaknesses (significance+kind+verbatim quote) + one overall_confidence + a per-section coverage report. Targeted re-invoke mode backs the anti-skim L3. No merge, no verify (those are separate steps). paper-review-loop review-engine v3.',
   phases: [
-    { title: 'Read', detail: 'one agent per (unit x lens) files charges with an evidence quote' },
-    { title: 'CrossUnit', detail: 'one agent reads all units for cross-section inconsistencies' },
-    { title: 'Merge', detail: 'dedupe within the pass and against everything seen; quote-verify' },
+    { title: 'Read', detail: 'one holistic reviewer per persona reads the whole paper and files weaknesses + coverage' },
   ],
 }
 
 const A = (typeof args === 'string' ? JSON.parse(args) : args) || {}
-const units = A.units || []
-const personas = A.personas || []
-const dryStop = A.dryStop ?? 2
-const maxReadRounds = A.maxReadRounds ?? 3
+const paper = A.paper || ''
+const reviewers = A.reviewers || []
+const sections = A.sections || []
 const venueProfile = A.venueProfile || '(unspecified venue)'
 const mode = A.mode || 'full'
-const ISOLATION = 'Judge ONLY the text quoted in this prompt. Do not read files, search the project, or use any tool to find other context (other sections, the ledger, prior rounds, or any real manuscript on disk); base your work solely on what is quoted here.'
+const targets = Array.isArray(A.targets) ? A.targets : null
 
-const CHARGES = {
+const ISOLATION = 'Judge ONLY the manuscript quoted in this prompt. Do not read files, search the project, or use any tool to find other context (the ledger, prior rounds, other reviewers, or any real manuscript on disk); base your review solely on the text quoted here.'
+
+const WEAKNESS = {
   type: 'object', additionalProperties: false,
   properties: {
-    charges: {
-      type: 'array',
-      items: {
-        type: 'object', additionalProperties: false,
-        properties: {
-          severity: { type: 'string', enum: ['blocker', 'major', 'minor', 'nit'] },
-          section: { type: 'string' },
-          summary: { type: 'string' },
-          close_criterion: { type: 'string' },
-          evidence_anchor: { type: 'string' },
-        },
-        required: ['severity', 'section', 'summary', 'close_criterion', 'evidence_anchor'],
-      },
-    },
+    summary: { type: 'string' },
+    evidence_anchor: { type: 'string' },
+    section: { type: 'string' },
+    significance: { type: 'string', enum: ['major', 'minor'] },
+    kind: { type: 'string', enum: ['mechanical', 'substantive'] },
+    references: { type: ['string', 'null'] },
   },
-  required: ['charges'],
+  required: ['summary', 'evidence_anchor', 'section', 'significance', 'kind'],
 }
-
-const MERGE = {
+const COVERAGE = {
   type: 'object', additionalProperties: false,
   properties: {
-    new_charges: {
-      type: 'array',
-      items: {
-        type: 'object', additionalProperties: false,
-        properties: {
-          severity: { type: 'string', enum: ['blocker', 'major', 'minor', 'nit'] },
-          section: { type: 'string' },
-          summary: { type: 'string' },
-          close_criterion: { type: 'string' },
-          evidence_anchor: { type: 'string' },
-          raised_by: { type: 'array', items: { type: 'string' } },
-        },
-        required: ['severity', 'section', 'summary', 'close_criterion', 'evidence_anchor', 'raised_by'],
-      },
-    },
-    dropped_no_criterion: {
-      type: 'array',
-      items: { type: 'object', additionalProperties: false,
-        properties: { summary: { type: 'string' }, reason: { type: 'string' } },
-        required: ['summary', 'reason'] },
-    },
+    section: { type: 'string' },
+    status: { type: 'string', enum: ['thorough', 'light', 'skipped'] },
+    in_section_quote: { type: 'string' },
   },
-  required: ['new_charges', 'dropped_no_criterion'],
+  required: ['section', 'status', 'in_section_quote'],
+}
+const REPORT = {
+  type: 'object', additionalProperties: false,
+  properties: {
+    overall_confidence: { type: 'integer', minimum: 1, maximum: 5 },
+    weaknesses: { type: 'array', items: WEAKNESS },
+    per_section_coverage: { type: 'array', items: COVERAGE },
+  },
+  required: ['overall_confidence', 'weaknesses', 'per_section_coverage'],
 }
 
 const norm = (s) => String(s || '').replace(/\s+/g, ' ').trim().toLowerCase()
+const paperNorm = norm(paper)
+function quoteVerified(q) { const nq = norm(q); return nq.length > 0 && paperNorm.includes(nq) }
 
-function readPrompt(unit, p) {
+const sectionList = sections.length
+  ? sections.map((s) => `- ${s.section_path}${s.section_title ? ' (' + s.section_title + ')' : ''}`).join('\n')
+  : '(no section list provided; account for every section you find in the text)'
+
+function reviewPrompt(rev, focusSection) {
   return [
-    p.personaPrompt,
+    rev.persona_prompt,
     '',
-    `Your lens: ${p.lensName}. Cover the full review surface; the lens is a tendency, not a fence.`,
+    `Your expert domain: ${rev.domain || '(general CS reviewer)'}. You cover the full review`,
+    'surface (originality, soundness, significance, clarity, impact); your domain is a',
+    'sensitivity, not a fence. You MUST reason across sections (abstract vs results,',
+    'notation reused across sections, a contribution the experiments do not validate).',
     `Venue style profile:\n${venueProfile}`,
     `Review mode: ${mode}.`,
     '',
-    'You are the PROSECUTION in a per-issue review. Close-read the unit below and',
-    'FILE CHARGES: each is a concrete alleged flaw. For each charge give severity, a',
-    'precise section anchor, a one-line summary, a concrete close_criterion (one',
-    'sentence an edit must satisfy), and evidence_anchor = an EXACT VERBATIM QUOTE',
-    'from the unit that the charge rests on (copy it character-for-character; do not',
-    'paraphrase). Read every sentence. Do not invent flaws to look thorough and do',
-    'not soften real ones. You only charge here; you will not defend or judge.',
+    'You are a HOLISTIC reviewer. Read the WHOLE manuscript below and file WEAKNESSES.',
+    'For EACH weakness give:',
+    '- summary: one line, what is wrong.',
+    '- evidence_anchor: an EXACT VERBATIM quote from the manuscript the weakness rests',
+    '  on (copy it character-for-character; do not paraphrase). Cannot quote = do not file.',
+    '- section: a precise anchor (section + eq/table/figure/paragraph).',
+    '- significance: major (a flaw that affects the paper\'s claims/soundness/contribution)',
+    '  or minor (a local problem that does not threaten the central claims).',
+    '- kind: substantive (a claim/method/evidence/clarity problem that needs judgment) or',
+    '  mechanical (a copy-edit class issue: typo, formatting, a notation slip, a phrasing nit).',
+    '  When unsure between the two, choose substantive (it will get a proper hearing).',
+    '- references: optional, what would settle it or which other section it implicates (may be "").',
+    'Do NOT propose the fix or a close_criterion (that is decided later). Do NOT invent',
+    'flaws to look thorough and do NOT soften a real one.',
+    '',
+    'ANTI-SKIM: you MUST also return per_section_coverage with ONE entry for EVERY section',
+    'listed below: {section, status (thorough|light|skipped), in_section_quote = an exact',
+    'verbatim quote FROM THAT SECTION proving you read it}. A section you genuinely cannot',
+    'quote is `skipped`.',
+    'Finally give ONE overall_confidence (1-5) for this review as a whole.',
     ISOLATION,
+    focusSection
+      ? `\nRE-READ FOCUS: a coverage check flagged that you under-read section "${focusSection}". Read it carefully now; file any weaknesses there and return an accurate coverage entry for it (you may return only that section\'s coverage + its weaknesses).`
+      : '',
     '',
-    `THE UNIT (section: ${unit.section}); all you may judge:`,
-    '"""', unit.text, '"""',
-  ].join('\n')
-}
-
-function crossUnitPrompt() {
-  return [
-    'You are the PROSECUTION doing a CROSS-UNIT consistency pass over a CS paper.',
-    `Venue style profile:\n${venueProfile}`,
+    'SECTIONS TO ACCOUNT FOR:',
+    sectionList,
     '',
-    'Read all units below and file charges ONLY for issues that span units and that a',
-    'single-unit reader cannot see: a symbol/notation used inconsistently across',
-    'sections, an abstract/intro claim not matched by the results, a contribution the',
-    'experiments do not validate, a method element never evaluated. For each charge',
-    'give severity, section anchor (name the units involved), summary, close_criterion,',
-    'and evidence_anchor = an exact verbatim quote from one of the units.',
-    ISOLATION,
-    '',
-    units.map((u) => `=== UNIT ${u.unit_id} (${u.section}) ===\n${u.text}`).join('\n\n'),
-  ].join('\n')
+    'THE MANUSCRIPT (all you may judge):',
+    '"""', paper, '"""',
+  ].filter(Boolean).join('\n')
 }
 
-function mergePrompt(reviews, seen) {
-  return [
-    'You merge one pass of the prosecution. Input: each reviewer\'s charges (JSON),',
-    'plus a SEEN list of charge summaries already captured in earlier passes.',
-    'Rules:',
-    '- Dedupe within this pass: charges raised by >=2 reviewers collapse into ONE',
-    '  whose raised_by lists every source. Same charge only when the section anchor',
-    '  matches AND the summaries/criteria genuinely overlap; when unsure keep separate.',
-    '- Exclude anything already in SEEN (judge by meaning). Only return genuinely NEW',
-    '  charges this pass.',
-    '- Drop any charge missing a usable close_criterion into dropped_no_criterion.',
-    '- Preserve each charge\'s evidence_anchor quote verbatim. Do NOT invent charges.',
-    ISOLATION,
-    '',
-    'SEEN (do not re-report):', JSON.stringify(seen, null, 2),
-    '', 'Charges this pass:', JSON.stringify(reviews, null, 2),
-  ].join('\n')
+// Tag every quote with the deterministic quote-verify (cheap string match on the
+// inline paper; the orchestrator re-checks for the re-invoke decision).
+function tag(report) {
+  for (const w of (report.weaknesses || [])) w.quote_verified = quoteVerified(w.evidence_anchor)
+  for (const c of (report.per_section_coverage || [])) c.quote_verified = quoteVerified(c.in_section_quote)
+  return report
 }
 
-// deterministic quote-verify: is the evidence quote actually in some unit?
-const allText = norm(units.map((u) => u.text).join('\n'))
-function quoteVerified(q) {
-  const nq = norm(q)
-  return nq.length > 0 && allText.includes(nq)
-}
+// L3 targeted re-invoke: run only the flagged (reviewer, section) pairs.
+const jobs = targets
+  ? targets.map((t) => {
+      const rev = reviewers.find((r) => r.reviewer_id === t.reviewer_id) || reviewers[0]
+      return () => agent(reviewPrompt(rev, t.section), { label: `reread:${t.reviewer_id}:${t.section}`, phase: 'Read', schema: REPORT })
+        .then((r) => (r ? { reviewer_id: t.reviewer_id, reread_section: t.section, ...tag(r) } : null))
+    })
+  : reviewers.map((rev) =>
+      () => agent(reviewPrompt(rev, null), { label: `read:${rev.reviewer_id}`, phase: 'Read', schema: REPORT })
+        .then((r) => (r ? { reviewer_id: rev.reviewer_id, ...tag(r) } : null)))
 
-const confirmed = []
-const seen = []
-const droppedNoCriterion = []
-const perRound = []
-let dry = 0, round = 0
+const reports = (await parallel(jobs)).filter(Boolean)
 
-while (dry < dryStop && round < maxReadRounds) {
-  round++
-  if (budget.total && budget.remaining() < 40000) { log(`budget low; stop at round ${round}`); break }
+const totalW = reports.reduce((n, r) => n + (r.weaknesses || []).length, 0)
+const unq = reports.reduce((n, r) => n + (r.weaknesses || []).filter((w) => !w.quote_verified).length, 0)
+log(`reading-check: ${reports.length} ${targets ? 're-read reports' : 'reviewers'}, ${totalW} weaknesses (${unq} with unverified quotes)`)
 
-  // unit x lens, plus one cross-unit agent, all in the Read/CrossUnit phases
-  const jobs = []
-  for (const u of units) for (const p of personas) {
-    jobs.push(() => agent(readPrompt(u, p), { label: `r${round}:read:${u.unit_id}:${p.id}`, phase: 'Read', schema: CHARGES })
-      .then((r) => (r ? { reviewer: `${p.id}@${u.unit_id}`, charges: r.charges } : null)))
-  }
-  if (units.length > 1) {
-    jobs.push(() => agent(crossUnitPrompt(), { label: `r${round}:crossunit`, phase: 'CrossUnit', schema: CHARGES })
-      .then((r) => (r ? { reviewer: 'cross-unit', charges: r.charges } : null)))
-  }
-  const reviews = (await parallel(jobs)).filter(Boolean)
-
-  const merge = await agent(mergePrompt(reviews, seen), { label: `r${round}:merge`, phase: 'Merge', schema: MERGE })
-  droppedNoCriterion.push(...(merge.dropped_no_criterion || []))
-  const fresh = (merge.new_charges || [])
-  if (fresh.length === 0) { dry++; perRound.push({ round, fresh: 0, dry, quote_unverified: 0 }); log(`pass ${round}: no new charges (dry ${dry}/${dryStop})`); continue }
-  fresh.forEach((c) => { seen.push(c.summary); c.quote_verified = quoteVerified(c.evidence_anchor) })
-  confirmed.push(...fresh)
-  dry = 0
-  perRound.push({ round, fresh: fresh.length, dry, quote_unverified: fresh.filter((c) => !c.quote_verified).length })
-  log(`pass ${round}: ${fresh.length} new charges (${fresh.filter((c) => !c.quote_verified).length} with unverified quotes), total ${confirmed.length}`)
-}
-
-const rank = { blocker: 0, major: 1, minor: 2, nit: 3 }
-const charges = confirmed
-  .slice().sort((a, b) => (rank[a.severity] ?? 9) - (rank[b.severity] ?? 9))
-  .map((c, i) => ({ ...c, charge_id: 'C-' + String(i + 1).padStart(2, '0') }))
-
-return { charges, rounds_run: round, dropped_no_criterion: droppedNoCriterion, per_round: perRound }
+return reports

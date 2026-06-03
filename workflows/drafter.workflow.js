@@ -49,7 +49,9 @@ const spineNorms = spine.filter((s) => s.text).map((s) => norm(s.text))
 
 function unitFor(c) {
   const a = norm(c.evidence_anchor)
-  return units.find((u) => norm(u.text).includes(a)) || units.find((u) => u.section === c.section) || units[0]
+  return units.find((u) => norm(u.text).includes(a))
+    || units.find((u) => u.section === c.section || u.section_title === c.section || u.section_path === c.section)
+    || units[0]
 }
 
 function draftPrompt(c) {
@@ -76,7 +78,7 @@ function draftPrompt(c) {
     '',
     `Venue style: ${A.venueProfile || '(default plain CS prose)'}`,
     '',
-    `THE TEXT (unit ${u ? u.section : '?'}):`,
+    `THE TEXT (unit ${u ? (u.section || u.section_title || u.section_path || '?') : '?'}):`,
     '"""', u ? u.text : '', '"""',
   ].join('\n')
 }

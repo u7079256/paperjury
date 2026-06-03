@@ -90,9 +90,10 @@ recorded.
 
 > This documents the legacy single-pass panel discussion (still available via
 > `workflows/review-panel.workflow.js` for a quick check). The courtroom per-issue
-> adjudication (charge -> screen -> two-sided trial -> three-way routing -> recall)
-> is now BUILT and is the DEFAULT for review mode: protocol
-> `references/review-engine-v2.md` (rationale `docs/REVIEW_ENGINE_V2_DESIGN.md`).
+> adjudication (N holistic domain reviewers -> contestability routing -> two-sided
+> 5-tier trial -> three-way verdict -> recall, with a polish track and a clerk-
+> converged multi-round loop) is the DEFAULT for review mode: protocol
+> `references/review-engine-v3.md` (rationale `docs/REVIEW_ENGINE_V3_DESIGN.md`).
 
 Runs after every merge, before any edit. Goal: every issue that drives an edit is
 agreed by both the author and the raising reviewer, or explicitly overridden by

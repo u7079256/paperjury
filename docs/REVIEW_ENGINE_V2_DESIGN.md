@@ -1,4 +1,10 @@
-# Review engine v2 — design rationale (BUILT 2026-06-01)
+# Review engine v2 — design rationale (SUPERSEDED by v3)
+
+> SUPERSEDED. The shipped engine is now v3 (`docs/REVIEW_ENGINE_V3_DESIGN.md`,
+> operational `references/review-engine-v3.md`). v3 replaces v2's per-(unit x lens)
+> prosecution + grand-jury screen with N holistic domain reviewers, contestability
+> routing, a polish track, a risk-proportional edit-safety guard, and a clerk-converged
+> multi-round loop. This file is retained as history for the v2 rationale.
 
 Status: design v0 + BUILT 2026-06-01. This doc is the RATIONALE; the operational
 protocol of the built engine is `references/review-engine-v2.md`, the workflows are
