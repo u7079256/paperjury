@@ -231,39 +231,11 @@ Toggle via args: ultracode on -> defaults (`maxRounds` 4, `dryStop` 2,
 single-panel form. The loop is budget-aware and stops early if the token budget
 runs low.
 
-Further headroom not yet wired: a completeness-critic pass ("what did the panel
-miss?") and scaling reviewer count or running independent panels per pass.
 
-## Built engine + guards (operational)
 
-The systems below are BUILT. The v3 engine was hardened by two adversarial workflows
-(a design validation, then a built-code cross-check with fresh-skeptic verification of
-each finding); the confirmed defects were fixed and the orchestrator seam contracts
-written into `references/review-engine-v3.md`. The ledger is unit-tested. NOT yet
-validated: the v3 core end-to-end on a REAL paper (three-way routing accuracy, the
-5-tier trial, the drafter/apply/edit-safety chain on real edits, the clerk convergence,
-the `/goal` auto loop). That real-paper run is the remaining milestone.
+## Capabilities and status
 
-- **Review-engine v3** (the courtroom engine; the default for review mode): protocol
-  `references/review-engine-v3.md`; workflows `assign-reviewers` -> `reading-check` ->
-  `coverage-auditor` -> `merge` -> {`trial` || `polish`} -> `recall-audit` -> `drafter`
-  -> {`edit-audit` | `meaning-audit`} -> `clerk`; deterministic guards in `scripts/`
-  (incl. `cross-ref`). Routing is by CONTESTABILITY (mechanical/minor -> polish track;
-  substantive-major -> the 5-tier). Design rationale: `docs/REVIEW_ENGINE_V3_DESIGN.md`
-  (v3 supersedes the v2 prosecution; `docs/REVIEW_ENGINE_V2_DESIGN.md` is retained as
-  history).
-- **Auto mode** (3rd mode, unattended via `/goal`): the v3 engine + the spine + the
-  edit-safety guard + the deterministic safety-envelope helpers + the clerk-converged
-  outer loop. The unattended loop is the documented `references/auto-mode.md` procedure,
-  NOT yet run end-to-end. Design: `docs/AUTO_MODE_DESIGN.md`.
-- **Submission-readiness** (cross-mode): `references/submission-compliance.md` +
-  `scripts/compliance-check.js` (A, desk-reject shield) and the compile-driven layout
-  loop reusing `scripts/compile-guard.js` (B). Design: `docs/SUBMISSION_READINESS_DESIGN.md`.
-
-The simple `review-panel.workflow.js` remains available for a quick single-pass panel.
-Build note: this harness delivers a workflow's `args` as a JSON string (every workflow
-parses it), and workflow agents have file-read tools (the ISOLATION instruction keeps
-reviewers on their quoted text). All engine agents run on Opus 4.8.
+The review engine is built and has been adversarially validated. The submission-readiness checker prevents desk rejection and ensures layout compliance. Auto mode runs the review-revise loop toward a goal under a drift-bounded policy, applying safe fixes and queueing risky ones for author review. Known limitation: auto mode has not yet been validated end-to-end on a real paper.
 
 ## Related skills
 

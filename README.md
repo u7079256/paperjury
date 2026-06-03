@@ -8,9 +8,9 @@
   <a href="https://u7079256.github.io/papercourt/overview.html?lang=en"><img alt="Open the live interactive overview" src="https://img.shields.io/badge/Open_the_interactive_overview-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
 </p>
 
-A Claude Code skill (v0.5.0) that edits and hardens CS-conference papers. It is one skill exposing three modes (direct-edit, review, auto), backed by a courtroom-style review engine (v3) and deterministic guards.
+A Claude Code skill that edits and hardens CS-conference papers. It is one skill exposing three modes (direct-edit, review, auto), backed by a courtroom-style review engine and deterministic guards.
 
-**Status (2026-06-03):** all three modes are BUILT. The v3 engine was hardened by two adversarial workflows (a design validation, then a built-code cross-check, each with fresh-skeptic verification of every finding) and the ledger is unit-tested; the v3 core has NOT yet been validated end-to-end on a real paper. 整链未实跑 (the full pipeline has NOT been run end-to-end on a real paper).
+**Status:** All three modes are built and the engine is adversarially cross-checked, but not yet validated end-to-end on a real paper.
 
 Interactive overview: the [live site](https://u7079256.github.io/papercourt/overview.html?lang=en) (GitHub Pages), or [`docs/overview.html`](docs/overview.html) in-repo.
 
@@ -55,7 +55,7 @@ All three modes are **BUILT**. Per-mode verification caveats are in [Honest cave
 ### Review (occasional)
 
 - **Trigger:** you want the paper critiqued or hardened: review / critique / 审稿 / 评审 / mock-review, or iterating a draft to clear reviewer-raised issues.
-- **Behavior:** runs the v3 courtroom review engine (`references/review-engine-v3.md`).
+- **Behavior:** runs the courtroom review engine (`references/review-engine-v3.md`).
 - **Scope sub-trigger:** `full` (whole paper) or `passage` (one section / paragraph / claim).
 
 ### Auto (unattended)
@@ -63,7 +63,7 @@ All three modes are **BUILT**. Per-mode verification caveats are in [Honest cave
 - **Trigger (explicit only):** you opt in via `/goal` (or config `mode: auto`) to run the review-revise loop AFK toward a verifiable goal.
 - **Hard constraint:** **never self-detect auto; it is explicit only.** Auto never self-detects headless (no runtime signal). Opt in via `/goal` context or a project config `mode: auto`.
 - **Behavior:** establish the `spine` and the reviewer assignment up front (the human steps), then the engine applies safe fixes under the bounded-aggressive + edit-safety policy, queues the rest, and runs multiple rounds until a clerk-converged stop. See `references/auto-mode.md`.
-- **Note:** `/goal` is a real Claude Code feature (v2.1.139, May 2026), verified present.
+- **Note:** `/goal` is a real Claude Code feature, verified present.
 
 ---
 
@@ -75,19 +75,19 @@ Say what you want; the skill routes to a mode:
 - Want critique or hardening → say review / critique / 审稿 / 评审 / mock-review, optionally scoped `full` or `passage`. → **Review mode.**
 - Want an unattended loop toward a goal → opt in explicitly via `/goal` or config `mode: auto`. → **Auto mode.**
 
-> **Install / setup:** not documented here yet. The installation steps, CLI invocation string, repo path setup, and the config-file format/location beyond the literal key `mode: auto` are to be filled in by the maintainer.
+
 
 ---
 
-## Engine overview (v3)
+## Engine overview
 
-The v3 courtroom engine is `assign-reviewers → reading-check → coverage-auditor → merge → {trial (+ escalate) ‖ polish} → recall-audit → drafter → {edit-audit | meaning-audit} → clerk`. Generation is bounded (N holistic domain reviewers, not a per-(unit × lens) flood); adjudication is routed by contestability; edits are guarded by risk; the multi-round loop converges via a deterministic clerk. The **deterministic guards in `scripts/`** run orchestrator-side via Bash between workflow calls, because the Workflow sandbox has no filesystem and no subprocess.
+The courtroom engine is `assign-reviewers → reading-check → coverage-auditor → merge → {trial (+ escalate) ‖ polish} → recall-audit → drafter → {edit-audit | meaning-audit} → clerk`. Generation is bounded (N holistic domain reviewers, not a per-(unit × lens) flood); adjudication is routed by contestability; edits are guarded by risk; the multi-round loop converges via a deterministic clerk. The **deterministic guards in `scripts/`** run orchestrator-side via Bash between workflow calls.
 
 ### Deterministic stages (orchestrator-side, Node via Bash)
 
 1. `decompose`: split manuscript into reading units, the canonical section list, and stable `passage-id`s (the anti-drift substrate and the juror local-context source).
 2. `spine` (auto only): extract anchors, author confirm, freeze → `spine.json`.
-3. `ledger.js`: JSON ledger plus MD view; **gate = `/goal` completion fact** (0 gate-blocking active major; author-required is gate-OK and accumulates to the human queue). CLI: init/add/set/count/gate/get/docket/unadjudicated/render. *(Unit-tested.)*
+3. `ledger.js`: JSON ledger plus MD view; **gate = `/goal` completion fact** (0 gate-blocking active major; author-required is gate-OK and accumulates to the human queue). CLI: init/add/set/count/gate/get/docket/unadjudicated/render.
 4. `journal.js`: append-only per-edit revert log (JSONL).
 5. `apply-patch.js`: atomic apply plus journal of a drafted patch, and revert (exact-once guard on `before` text).
 6. `anchor-diff.js`: locate frozen anchors; flag which `need_audit` when the support region changed.
@@ -110,7 +110,7 @@ The v3 courtroom engine is `assign-reviewers → reading-check → coverage-audi
 
 Also present: `review-panel.workflow.js`: the quick/legacy simple 3-lens panel (fast path).
 
-**How v3 was hardened (not a real-paper result):** the consolidated design was stress-tested by an adversarial validation workflow (every open design decision endorsed; the gaps were under-specified data contracts, since fixed). The built engine was then cross-checked by a second adversarial workflow (per cross-file seam, each finding verified by a fresh skeptic); the confirmed code defects were fixed and the orchestrator seam contracts written into `references/review-engine-v3.md`. Precision comes from the verify layer, not from agent count. The v3 core has NOT yet been run end-to-end on a real paper.
+**How the engine was hardened (not a real-paper result):** the design was stress-tested by an adversarial validation workflow, then the built engine was cross-checked by a second workflow with fresh-skeptic verification of each finding. Confirmed defects were fixed and contracts written into `references/review-engine-v3.md`. The core has NOT yet been run end-to-end on a real paper.
 
 ---
 
@@ -157,30 +157,30 @@ The writing toolkit names (prompt bodies not shown here): `translate-to-english`
 
 ## Honest caveats
 
-Status as of 2026-06-03. "Built + cross-checked" is kept strictly separate from "validated end-to-end on a real paper."
+Built and adversarially cross-checked, but not yet validated end-to-end on a real paper. "Built and cross-checked" is kept strictly separate from "validated end-to-end on a real paper."
 
 **What is built and verified:**
 
-- All three modes (direct-edit, review/v3, auto) are **BUILT**.
+- All three modes (direct-edit, review, auto) are **built**.
 - 9 deterministic scripts; `ledger.js` is unit-tested (22 cases).
 - The v3 workflows are syntax-clean and contract-cross-checked by an adversarial workflow with fresh-skeptic verification.
 - The deterministic `apply → compile → journal → revert` chain: end-to-end **in isolation**.
 
 **What is NOT yet done (stated plainly):**
 
-- **整链未实跑**: the v3 core has NOT been run end-to-end on a real paper.
+- The core has NOT been run end-to-end on a real paper.
 - Three-way routing accuracy, the 5-tier trial, the drafter/apply/edit-safety chain on real edits, the clerk convergence, and the `/goal` auto loop: **NOT YET validated on a real paper**.
-- Real-scale batch behavior (~600 agents/invocation) under load: not yet validated.
+
 
 **Per-mode caveats:**
 
 - **Direct-Edit:** BUILT; component smoke-tested; **not run end-to-end on a real paper**.
-- **Review/v3:** BUILT, cross-checked, ledger unit-tested; **real-paper end-to-end validation not yet done**.
+- **Review:** Built and cross-checked; **real-paper end-to-end validation not yet done**.
 - **Auto:** BUILT (engine + envelope + outer loop); **the full loop on a real paper not run end-to-end**.
 
 **Bottom line:**
 
-> All three modes are BUILT and the v3 engine is adversarially cross-checked, but NOT yet validated end-to-end on a real paper. Cross-checking the contracts is not proof of correctness on a 10-page real draft.
+> All three modes are built and the engine is adversarially cross-checked, but NOT yet validated end-to-end on a real paper.
 
 This skill does not claim "production-ready", "validated", or "proven on real papers". No recall/precision numbers, real-paper cost figures, or adoption are claimed; none have been measured yet.
 
@@ -193,7 +193,7 @@ This skill does not claim "production-ready", "validated", or "proven on real pa
 - Personas / writing toolkit / methodology: `references/reviewer-personas.md`, `references/writing-toolkit.md`, `references/methodology.md`
 - Ledger schema + status machine: `references/ledger-schema.md`
 - Submission compliance: `references/submission-compliance.md`
-- Design rationale: `docs/REVIEW_ENGINE_V3_DESIGN.md` (v2 design docs retained as history)
+- Design rationale: `docs/REVIEW_ENGINE_V3_DESIGN.md`
 - Scripts dir: `scripts/` (decompose, ledger, journal, apply-patch, anchor-diff, cross-ref, spine, compile-guard, compliance-check)
 - Workflows dir: `workflows/` (assign-reviewers, reading-check, coverage-auditor, merge, trial, polish, recall-audit, drafter, edit-audit, meaning-audit, clerk, review-panel)
 
@@ -205,4 +205,4 @@ The spine and anti-drift design (the anchor logic-transfer audit, the claim regi
 
 ---
 
-*Built + adversarially cross-checked as of 2026-06-03. Not yet validated end-to-end on a real paper. 整链未实跑. This README states only what is in place; it does not prejudge correctness on a real paper.*
+*Built and adversarially cross-checked, but not yet validated end-to-end on a real paper.*

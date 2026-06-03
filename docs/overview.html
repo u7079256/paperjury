@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>paper-review-loop · 法庭式审稿引擎 · 工作流总览</title>
-<meta name="description" content="paper-review-loop:面向 CS 会议论文的法庭式对抗审稿引擎。交互式工作流总览,从全局三模式到一案一庭的局部流程。Skill + Workflow + Memory,零写死路径。中英双语。">
+<meta name="description" content="paper-review-loop:面向 CS 会议论文的法庭式对抗审稿引擎。交互式工作流总览,从全局三模式到一案一庭的局部流程。Skill + Workflow + Memory。中英双语。">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0e0f13">
 <meta property="og:type" content="website">
@@ -281,15 +281,15 @@
   <header class="hero reveal">
     <div class="kicker">CS-conference <span class="zh">审稿 / 改稿</span><span class="en">review / editing</span> · Skill + Workflow + Memory</div>
     <h1><span class="zh">从全局到局部,<br>看一套<em>法庭式</em>审稿引擎如何运转</span><span class="en">From whole to part:<br>how one <em>courtroom-style</em> review engine runs</span></h1>
-    <p class="lede"><span class="zh">三模式共用<b>同一套引擎核心</b>:<b>direct-edit</b>(常态,口述即改)、<b>review</b>(投稿前 harden,法庭式逐 issue 裁决)、<b>auto</b>(无人值守,挂 <span class="mono">/goal</span>)。零写死路径,一切运行时解析。</span><span class="en">Three modes share <b>one engine core</b>: <b>direct-edit</b> (common, say it and it edits), <b>review</b> (pre-submission hardening, courtroom per-issue adjudication), <b>auto</b> (unattended, via <span class="mono">/goal</span>). No hardcoded paths; everything resolved at runtime.</span></p>
+    <p class="lede"><span class="zh">三模式共用<b>同一套引擎核心</b>:<b>direct-edit</b>(常态,口述即改)、<b>review</b>(投稿前 harden,法庭式逐 issue 裁决)、<b>auto</b>(无人值守,挂 <span class="mono">/goal</span>)。</span><span class="en">Three modes share <b>one engine core</b>: <b>direct-edit</b> (common, say it and it edits), <b>review</b> (pre-submission hardening, courtroom per-issue adjudication), <b>auto</b> (unattended, via <span class="mono">/goal</span>).</span></p>
     <div class="status">
-      <span class="pill seal">SKILL v0.5.0</span>
-      <span class="pill live">review-engine v3 <span class="zh">已 build</span><span class="en">built</span></span>
-      <span class="pill live"><span class="zh">auto 引擎 + 包络已 build</span><span class="en">auto engine + envelope built</span></span>
-      <span class="pill live">submission-readiness <span class="zh">已 build</span><span class="en">built</span></span>
-      <span class="pill"><span class="zh">已对抗交叉核查 · 整链未实跑 · 2026-06-03</span><span class="en">adversarially cross-checked · full chain not yet run · 2026-06-03</span></span>
+      
+      
+      
+      
+      <span class="pill"><span class="zh">已对抗交叉核查,尚未在真实论文上端到端验证</span><span class="en">adversarially cross-checked, not yet validated end-to-end on a real paper</span></span>
     </div>
-    <div class="hint"><span class="zh">▶ 这是<b>交互页</b>:在「引擎流水线」点 <span class="kbd">播放引擎流</span> 看一条 charge 流过引擎;在「法庭」点 <span class="kbd">审一桩案子</span> 看一桩案子从起诉到判决走一遍(连点三次会演全三条分流)。右上角 <span class="kbd">EN / 中文</span> 切换语言。</span><span class="en">▶ This is an <b>interactive page</b>. Under "Engine pipeline" click <span class="kbd">Play the engine flow</span> to watch one charge move through the engine; under "Courtroom" click <span class="kbd">Try a case</span> to watch a case go from indictment to verdict (click three times for all three routings). Top-right <span class="kbd">EN / 中文</span> switches language.</span></div>
+    <div class="hint"><span class="zh">▶ 这是<b>交互页</b>:在「引擎流水线」点 <span class="kbd">播放引擎流</span> 看一条 issue 流过;在「法庭」点 <span class="kbd">审一桩案子</span> 看一桩案子从起诉到判决走一遍。右上角 <span class="kbd">EN / 中文</span> 切换语言。</span><span class="en">▶ This is an <b>interactive page</b>. Under "Engine pipeline" click <span class="kbd">Play the engine flow</span> to watch one issue move through; under "Courtroom" click <span class="kbd">Try a case</span> to watch a case from indictment to verdict. Top-right <span class="kbd">EN / 中文</span> switches language.</span></div>
   </header>
 
   <div class="legend reveal">
@@ -303,7 +303,7 @@
   <!-- 一、三模式 -->
   <section id="s1" class="reveal">
     <div class="h2"><span class="idx">01</span><h2><span class="zh">三模式,共用一套引擎核心</span><span class="en">Three modes, one shared engine core</span></h2><span class="zoom"><span class="zh">全局</span><span class="en">global</span></span></div>
-    <p class="sub"><span class="zh">三个入口,一个引擎。review 与 auto 跑的是<b>同一台</b>法庭引擎;auto 只是移除人类二审、把每个人在环的门换成<b>预授权策略 + 回程队列</b>。</span><span class="en">Three entries, one engine. review and auto run the <b>same</b> courtroom engine; auto just removes the human second instance and swaps each human gate for a <b>pre-authorized policy + return queue</b>.</span></p>
+    <p class="sub"><span class="zh">三个入口,一套引擎。review 与 auto 跑同一套法庭引擎;auto 只是移除人类二审、把每个人在环的人工确认环节换成<b>预授权策略 + 回程队列</b>。</span><span class="en">Three entries, one engine. review and auto run the same courtroom engine; auto just removes the human second instance and swaps each human gate for a <b>pre-authorized policy + return queue</b>.</span></p>
     <div class="modes">
       <div class="mode" style="border-top-color:var(--human)">
         <span class="lab" style="color:#f2c277">DIRECT-EDIT</span><span class="freq"> · <span class="zh">常态</span><span class="en">common</span></span>
@@ -315,7 +315,7 @@
         </ul>
       </div>
       <div class="mode" style="border-top-color:var(--wf)">
-        <span class="lab" style="color:#9cc0ff">REVIEW</span><span class="freq"> · <span class="zh">偶尔,投稿前</span><span class="en">occasional, pre-submission</span></span><span class="ok">v3 <span class="zh">已 build</span><span class="en">built</span></span>
+        <span class="lab" style="color:#9cc0ff">REVIEW</span><span class="freq"> · <span class="zh">偶尔,投稿前</span><span class="en">occasional, pre-submission</span></span><span class="ok"><span class="zh">已 build</span><span class="en">built</span></span>
         <h3><span class="zh">系统性 harden</span><span class="en">Systematic hardening</span></h3>
         <ul>
           <li><span class="zh">法庭式<b>逐 issue 裁决引擎</b>(下面几节放大)</span><span class="en">Courtroom <b>per-issue adjudication engine</b> (zoomed in the next sections)</span></li>
@@ -324,30 +324,30 @@
         </ul>
       </div>
       <div class="mode" style="border-top-color:var(--agent)">
-        <span class="lab" style="color:#cdb4ff">AUTO</span><span class="freq"> · <span class="zh">无人值守</span><span class="en">unattended</span> · /goal</span><span class="ok"><span class="zh">引擎已 build</span><span class="en">engine built</span></span>
+        <span class="lab" style="color:#cdb4ff">AUTO</span><span class="freq"> · <span class="zh">无人值守</span><span class="en">unattended</span> · /goal</span><span class="ok"><span class="zh">已 build</span><span class="en">built</span></span>
         <h3><span class="zh">挂 /goal 跑到收敛</span><span class="en">Run under /goal to convergence</span></h3>
         <ul>
-          <li><span class="zh">同一引擎,移除人类,门 → 预授权策略 + 回程队列</span><span class="en">Same engine, human removed; gates → pre-authorized policy + return queue</span></li>
+          <li><span class="zh">同一引擎,移除人类,人工确认环节 → 预授权策略 + 回程队列</span><span class="en">Same engine, human removed; gates → pre-authorized policy + return queue</span></li>
           <li><span class="zh">防漂移:冻结 spine + 四态 meaning audit + per-passage 上限</span><span class="en">Anti-drift: frozen spine + four-state meaning audit + per-passage cap</span></li>
           <li><span class="zh">applied-quiescence 终止 · 完成条件 = <span class="mono">ledger.js gate</span></span><span class="en">applied-quiescence termination · completion = <span class="mono">ledger.js gate</span></span></li>
         </ul>
       </div>
     </div>
     <div class="core">
-      <div class="ttl"><span class="zh">共用引擎核心 <span>· review v3 与 auto 共享;submission 合规盾是其中一个护栏</span></span><span class="en">Shared engine core <span>· shared by review v3 and auto; the submission compliance shield is one of its guards</span></span></div>
+      <div class="ttl"><span class="zh">共用引擎核心 <span>· 在所有模式间共享</span></span><span class="en">Shared engine core <span>· shared across all modes</span></span></div>
       <div class="chips">
         <span class="c det">decompose.js</span><span class="c mem">ledger.js</span><span class="c mem">journal.js</span>
         <span class="c det">apply-patch.js</span><span class="c det">anchor-diff.js</span><span class="c det">cross-ref.js</span><span class="c det">spine.js</span>
         <span class="c det">compile-guard.js</span><span class="c det">compliance-check.js</span><span class="c agent"><span class="zh">meaning-audit · 四态</span><span class="en">meaning-audit · four-state</span></span>
       </div>
-      <div class="note"><span class="zh">关键架构事实:Workflow 沙箱<b>没有 fs / 子进程</b>,所以确定性护栏一律跑在 <b>orchestrator 侧(Bash/Node)</b>;workflow 只做语义 fan-out。整台引擎 = <b>一串 workflow invocation,被 orchestrator 的确定性步骤粘起来</b>。</span><span class="en">Key architecture fact: the Workflow sandbox has <b>no fs / no subprocess</b>, so the deterministic guards all run <b>orchestrator-side (Bash/Node)</b>; workflows only do semantic fan-out. The whole engine = <b>a sequence of workflow invocations glued by the orchestrator's deterministic steps</b>.</span></div>
+      <div class="note"><span class="zh">设计原则:确定性护栏与语义 fan-out 分离,保证规则 tracing 与重现。</span><span class="en">Design principle: deterministic guards and semantic fan-out are separated to ensure traceability and reproducibility.</span></div>
     </div>
   </section>
 
   <!-- 二、使用方式 -->
   <section id="s1u" class="reveal">
     <div class="h2"><span class="idx">02</span><h2><span class="zh">使用方式:三种模式怎么触发</span><span class="en">How to use: triggering each mode</span></h2><span class="zoom"><span class="zh">全局 · 入口</span><span class="en">global · entry</span></span></div>
-    <p class="sub"><span class="zh">三模式不是三个命令,而是<b>三种意图</b>:direct-edit 与 review 靠你说什么<b>自动路由</b>,<b>auto 是唯一需要显式开关的</b>(<span class="mono">/goal</span>),且<b>绝不自动进入</b>。首次触发按 discovery-then-ask 解析 manuscript / venue / author / ledger;项目可用 config 钉死。</span><span class="en">The three modes are not three commands but <b>three intents</b>: direct-edit and review are <b>auto-routed</b> by what you say; <b>auto is the only explicit switch</b> (<span class="mono">/goal</span>) and is <b>never self-detected</b>. On first trigger the manuscript / venue / author / ledger are resolved discovery-then-ask; a project may pin them via config.</span></p>
+    <p class="sub"><span class="zh">三模式不是三个命令,而是<b>三种意图</b>:direct-edit 与 review 靠你说什么<b>自动路由</b>,<b>auto 是唯一需要显式开关的</b>(<span class="mono">/goal</span>),且<b>绝不自动进入</b>。</span><span class="en">The three modes are not three commands but <b>three intents</b>: direct-edit and review are <b>auto-routed</b> by what you say; <b>auto is the only explicit switch</b> (<span class="mono">/goal</span>) and is <b>never self-detected</b>.</span></p>
     <div class="modes">
       <div class="mode" style="border-top-color:var(--human)">
         <span class="lab" style="color:#f2c277">DIRECT-EDIT</span><span class="freq"> · <span class="zh">常态 · 自然语言</span><span class="en">common · natural language</span></span>
@@ -390,8 +390,8 @@
 
   <!-- 三、流水线 -->
   <section id="s2" class="reveal">
-    <div class="h2"><span class="idx">03</span><h2><span class="zh">引擎 = 一串 workflow invocation</span><span class="en">The engine = a sequence of workflow invocations</span></h2><span class="zoom"><span class="zh">中观</span><span class="en">mid-level</span></span></div>
-    <p class="sub"><span class="zh">蓝 = Workflow(fan-out);灰 = Orchestrator 确定性步骤;橙 = 人在环。单 invocation 守 16 并发 / 1000 agent 上限,所以<b>通读与庭审分属不同 invocation</b>,庭审阶段按 <span class="mono">MAX_AGENTS_PER_WF ≈ 600</span> 分批。机械 / 轻微 issue 不进庭审,走<b>庭外 polish 轨</b>。</span><span class="en">Blue = Workflow (fan-out); grey = Orchestrator deterministic steps; orange = human in the loop. One invocation holds the 16-concurrency / 1000-agent caps, so <b>holistic reading and trial are separate invocations</b>, the trial phase batched under <span class="mono">MAX_AGENTS_PER_WF ≈ 600</span>. Mechanical / minor issues skip the trial and take an <b>off-gate polish track</b>.</span></p>
+    <div class="h2"><span class="idx">03</span><h2><span class="zh">引擎流水线:一条意见怎么走完全程</span><span class="en">The engine pipeline: how one issue flows through</span></h2><span class="zoom"><span class="zh">中观</span><span class="en">mid-level</span></span></div>
+    <p class="sub"><span class="zh">下面是引擎处理一条意见的顺序,逐步走完这些步骤;机械、轻微的问题不进庭审,走单独的快速润色流程。</span><span class="en">Below is the order the engine processes one issue, step by step; mechanical and minor issues skip the trial and take a separate quick polish path.</span></p>
     <div class="runbar">
       <button class="runbtn primary" id="flow-play" aria-label="play the engine flow"><span class="zh">▶ 播放引擎流</span><span class="en">▶ Play the engine flow</span></button>
       <button class="runbtn" id="flow-step" aria-label="step forward"><span class="zh">步进 ›</span><span class="en">Step ›</span></button>
@@ -406,12 +406,12 @@
       <div class="node det"><div class="box"><span class="n">4</span><h4><span class="zh">入判 + 起草</span><span class="en">Verdict + draft</span></h4><p><span class="zh">法官三路入判;valid-fixable → drafter</span><span class="en">judge routes three ways; valid-fixable → drafter</span></p><span class="file">drafter · apply-patch</span></div></div>
       <div class="node wf"><div class="box"><span class="n">5 · WF</span><h4><span class="zh">召回审计</span><span class="en">Recall audit</span></h4><p><span class="zh">A 救误丢 + B 抽检强共识 major</span><span class="en">Mode A revives wrong drops + Mode B spot-checks consensus majors</span></p><span class="file">recall-audit</span></div></div>
       <div class="node det"><div class="box"><span class="n">6</span><h4><span class="zh">编辑安全 + 落稿</span><span class="en">Edit-safety + apply</span></h4><p><span class="zh">anchor-diff + cross-ref → meaning / edit-audit → apply</span><span class="en">anchor-diff + cross-ref → meaning / edit-audit → apply</span></p><span class="file">anchor-diff · cross-ref</span></div></div>
-      <div class="node human"><div class="box"><span class="n">7 · <span class="zh">你</span><span class="en">you</span></span><h4><span class="zh">书记官 / 终审</span><span class="en">Clerk / final</span></h4><p><span class="zh">轮边界对账收敛;review 是你的门,auto 由书记官收敛</span><span class="en">round-boundary reconcile + converge; review = your gate, auto = clerk converges</span></p><span class="file">clerk / queue</span></div></div>
+      <div class="node human"><div class="box"><span class="n">7 · <span class="zh">你</span><span class="en">you</span></span><h4><span class="zh">书记官 / 终审</span><span class="en">Clerk / final</span></h4><p><span class="zh">轮边界对账收敛;review 是你的人工确认关卡,auto 由书记官收敛</span><span class="en">round-boundary reconcile + converge; review = your gate, auto = clerk converges</span></p><span class="file">clerk / queue</span></div></div>
       <div class="flowtoken" id="flow-token">charge</div>
     </div>
     <div class="cap" id="flow-cap"><span class="ph"><span class="zh">点「播放引擎流」,跟着一条 charge 走完八步。</span><span class="en">Click "Play the engine flow" to follow one charge through all eight steps.</span></span></div>
     <div class="band">
-      <span><b>review:</b> <span class="zh">第 7 步是你的实时门(停在这里,不自动进下一轮)</span><span class="en">step 7 is your live gate (it stops here, no auto-advance)</span></span>
+      <span><b>review:</b> <span class="zh">第 7 步是你这道实时关卡(停在这里,不自动进下一轮)</span><span class="en">step 7 is your live gate (it stops here, no auto-advance)</span></span>
       <span><b>auto:</b> <span class="zh">第 7 步 → 书记官把这一干净轮对账进累计 ledger;外层循环挂 /goal,到书记官收敛 / applied-quiescence / 硬上限收尾,gate 翻 PASS</span><span class="en">step 7 → the clerk reconciles this clean round into the cumulative ledger; the outer loop runs under /goal, ending at clerk convergence / applied-quiescence / a hard limit, then the gate flips PASS</span></span>
     </div>
   </section>
@@ -422,7 +422,7 @@
     <p class="sub"><span class="zh"><b>每条 issue = 一桩案子;被告 = 受攻击的那段文字,不是 issue 本身。</b>位置即立场:检方在左、辩方在右、陪审团居中、法官在上、上诉庭在外。</span><span class="en"><b>Each issue = one case; the defendant = the passage under attack, not the issue itself.</b> Position is stance: prosecution left, defense right, jury center, judge above, appeal outside.</span></p>
     <div class="runbar">
       <button class="runbtn primary" id="case-run" aria-label="try a case"><span class="zh">▶ 审一桩案子</span><span class="en">▶ Try a case</span></button>
-      <span class="stepind" id="case-ind"><span class="zh">连点会依次演 valid-fixable → invalid-drop → author-required 三条分流</span><span class="en">Click repeatedly to cycle the three routings: valid-fixable → invalid-drop → author-required</span></span>
+      <span class="stepind" id="case-ind"><span class="zh">连续点击会依次演示 valid-fixable → invalid-drop → author-required 三条分流</span><span class="en">Click repeatedly to cycle the three routings: valid-fixable → invalid-drop → author-required</span></span>
     </div>
 
     <div class="court">
@@ -472,7 +472,7 @@
           <tr><td><span class="zh">被告</span><span class="en">defendant</span></td><td><span class="zh">受攻击的 passage / claim</span><span class="en">the passage / claim under attack</span></td><td><span class="zh">被动,不发言</span><span class="en">passive, does not speak</span></td><td class="warn"><span class="zh">不是 agent,不是 issue</span><span class="en">not an agent, not an issue</span></td></tr>
           <tr><td><span class="side pros"><span class="zh">检方</span><span class="en">prosecution</span></span></td><td><span class="zh">N 位领域 reviewer(各通读全文)</span><span class="en">N domain reviewers (each reads the whole paper)</span></td><td><span class="zh">提 charge + close_criterion + 引文</span><span class="en">files charge + close_criterion + quote</span></td><td class="warn"><span class="zh">提完<b>退场</b>,不 judge / 不为自己的 issue 辩</span><span class="en"><b>steps away</b> after filing, does not judge / does not defend its own issue</span></td></tr>
           <tr><td><span class="side def"><span class="zh">辩方</span><span class="en">defense</span></span></td><td><span class="zh">author <b>agent</b></span><span class="en">author <b>agent</b></span></td><td><span class="zh">带证据 steelman:已处理 / 越界 / 改了会漂移</span><span class="en">steelmans with evidence: already addressed / out of scope / fixing it would drift</span></td><td class="warn"><span class="zh">= author <b>AGENT</b>,不是人类;后换帽子当 drafter</span><span class="en">= author <b>AGENT</b>, not the human; later wears the drafter hat</span></td></tr>
-          <tr><td><span class="side pros"><span class="zh">覆盖 + 合并</span><span class="en">coverage + merge</span></span></td><td><span class="zh">coverage-auditor + merge(workflow)</span><span class="en">coverage-auditor + merge (workflows)</span></td><td><span class="zh">反 skim 审计 + 跨 reviewer 去重 + 按可争议性分流</span><span class="en">anti-skim audit + cross-reviewer dedup + route by contestability</span></td><td class="warn"><span class="zh"><b>取代旧的大陪审团初筛</b>;机械 / 轻微件走 polish 轨,不进庭审</span><span class="en"><b>replaces the old grand-jury screen</b>; mechanical / minor items take the polish track, not the trial</span></td></tr>
+          <tr><td><span class="side pros"><span class="zh">覆盖 + 合并</span><span class="en">coverage + merge</span></span></td><td><span class="zh">coverage-auditor + merge(workflow)</span><span class="en">coverage-auditor + merge (workflows)</span></td><td><span class="zh">反 skim 审计 + 跨 reviewer 去重 + 按可争议性分流</span><span class="en">anti-skim audit + cross-reviewer dedup + route by contestability</span></td><td class="warn"><span class="zh"><b>取代旧的大陪审团初筛</b>;机械 / 轻微件走 polish 流程,不进庭审</span><span class="en"><b>replaces the old grand-jury screen</b>; mechanical / minor items take the polish track, not the trial</span></td></tr>
           <tr><td><span class="side neu"><span class="zh">庭审陪审团</span><span class="en">trial jury</span></span></td><td><span class="zh">先 5 位、升级到 12 位去相关 fresh juror</span><span class="en">5, escalating to 12, decorrelated fresh jurors</span></td><td><span class="zh">中立,带本地上下文凭双方证据投票</span><span class="en">neutral, votes on both sides' evidence with local context</span></td><td class="warn"><span class="zh">fresh,既非 reviewer 也非 author;只有无明显多数才升 12</span><span class="en">fresh, neither reviewer nor author; escalates to 12 only on no clear majority</span></td></tr>
           <tr><td><span class="side neu"><span class="zh">法官</span><span class="en">judge</span></span></td><td><span class="zh">1 presiding agent</span><span class="en">1 presiding agent</span></td><td><span class="zh">主持、汇总、入判、定 criterion</span><span class="en">presides, tallies, rules, sets criterion</span></td><td class="warn"><span class="zh"><b>只入判,不投票</b></span><span class="en"><b>rules only, does not vote</b></span></td></tr>
           <tr><td><span class="side def"><span class="zh">起草 drafter</span><span class="en">drafter</span></span></td><td><span class="zh">author agent(换帽子)</span><span class="en">author agent (new hat)</span></td><td><span class="zh">对 valid-fixable 起草 minimal-edit;需新数据则诚实软化或升人</span><span class="en">minimal-edit for valid-fixable; for needs-data, honest softening or escalate</span></td><td class="warn"><span class="zh">同 persona、<b>不同阶段</b></span><span class="en">same persona, <b>different stage</b></span></td></tr>
@@ -488,14 +488,14 @@
   <!-- 五、阅读取证 -->
   <section id="s4" class="reveal">
     <div class="h2"><span class="idx">05</span><h2><span class="zh">阅读 check 放大</span><span class="en">Reading check, zoomed</span></h2><span class="zoom"><span class="zh">局部 · reading-check</span><span class="en">local · reading-check</span></span></div>
-    <p class="sub"><span class="zh">组织原则:<b>召回归阅读、精度归法庭</b>。读手只找 + 引证、不判有效性;必须引原文(引不出 = 没读,反 skim 反幻觉)。v3 不再按「单元 × lens」铺开,而是 <b>N 位领域 reviewer 各通读全文一遍</b>(默认 3),由三层反 skim 兜住。</span><span class="en">Organizing principle: <b>recall belongs to reading, precision to the courtroom</b>. Readers only find + cite, they do not judge validity; they must quote the source (cannot quote = did not read, anti-skim and anti-hallucination). v3 no longer fans out per-(unit × lens): <b>N domain reviewers each read the whole paper once</b> (default 3), backstopped by a three-layer anti-skim.</span></p>
+    <p class="sub"><span class="zh">组织原则:<b>召回归阅读、精度归法庭</b>。读手只找 + 引证、不判有效性;必须引原文(引不出 = 没读,反 skim 反幻觉)。<b>N 位领域 reviewer 各通读全文一遍</b>,由三层反 skim 兜住。</span><span class="en">Organizing principle: <b>recall belongs to reading, precision to the courtroom</b>. Readers only find + cite, they do not judge validity; they must quote the source (cannot quote = did not read, anti-skim and anti-hallucination). <b>N domain reviewers each read the whole paper once</b>, backstopped by a three-layer anti-skim.</span></p>
     <div class="engine">
       <div class="stages">
         <div class="stage">
           <h4><span class="tag wf">Stage 1</span> <span class="zh">分派 + 通读全文</span><span class="en">Assign + holistic read</span></h4>
           <div class="ac"><b>assign-reviewers</b> <span class="zh">先给论文点名 N 个子领域,实例化 N 位领域 reviewer</span><span class="en">name N subfields for the paper, instantiate N domain reviewers</span></div>
           <div class="ac"><b>reading-check</b> <span class="zh">每位各通读全文一遍 → weaknesses + overall_confidence + 每节覆盖报告</span><span class="en">each reads the whole paper once → weaknesses + overall_confidence + a per-section coverage report</span></div>
-          <div class="note"><span class="zh">每条输出带 <span class="mono">evidence_anchor</span>(必填,逐字引)。reviewer 数 N = 2-3 / 3 / 3-4 按 intensity。</span><span class="en">Each output carries an <span class="mono">evidence_anchor</span> (required, quoted verbatim). Reviewer count N = 2-3 / 3 / 3-4 by intensity.</span></div>
+          <div class="note"><span class="zh">每条观察必带逐字引文(可验证)。</span><span class="en">Each finding must include a verbatim quote (verifiable).</span></div>
         </div>
         <div class="arrow">→</div>
         <div class="stage">
@@ -514,14 +514,14 @@
           <div class="keep"><span class="zh">产出:去重 · quote 已核 · 覆盖可证的 issue → 路由器分两路</span><span class="en">Output: deduped · quote-verified · coverage-provable issues → the router splits two ways</span></div>
         </div>
       </div>
-      <div class="note" style="margin-top:14px"><span class="zh">规模上 N 位 reviewer 通读 ≈ N 个 agent,远小于 v2 的 units × lenses;与庭审分属不同 invocation。跨节一致性(如 abstract「all benchmarks」对不上实验只测一个 dataset)由通读 reviewer 直接抓,不再单列一个跨单元阶段。</span><span class="en">At scale N reviewers reading ≈ N agents, far below v2's units × lenses; still a separate invocation from the trial. Cross-section consistency (e.g. an abstract claiming "all benchmarks" against experiments on only one dataset) is caught by the holistic readers directly, no longer a separate cross-unit stage.</span></div>
+      <div class="note" style="margin-top:14px"><span class="zh">N 位 reviewer 通读,跨节一致性(如 abstract「all benchmarks」对不上实验只测一个 dataset)由通读 reviewer 直接抓。</span><span class="en">N domain reviewers reading the whole paper catch cross-section consistency (e.g. an abstract claiming "all benchmarks" against experiments on only one dataset) directly.</span></div>
     </div>
   </section>
 
   <!-- 六、三路分流 -->
   <section id="s5" class="reveal">
-    <div class="h2"><span class="idx">06</span><h2><span class="zh">三路分流,把队列压到不可约下限</span><span class="en">Three-way routing: the queue down to its irreducible floor</span></h2><span class="zoom"><span class="zh">为何 100 → 10</span><span class="en">why 100 → 10</span></span></div>
-    <p class="sub"><span class="zh">v3 分两级:先一道<b>按可争议性</b>的确定性路由把机械 + 轻微件送进庭外 <b>polish 轨</b>(不开庭);只有 substantive-major 进庭审。下面这三路是<b>庭内</b>法官的入判,在可争议性路由之下游。</span><span class="en">v3 routes in two stages: first a deterministic <b>contestability</b> router sends mechanical + minor issues to an off-gate <b>polish track</b> (no jury); only substantive-major issues reach the trial. The three routes below are the judge's verdict <b>inside</b> the trial, downstream of the contestability router.</span></p>
+    <div class="h2"><span class="idx">06</span><h2><span class="zh">三路分流与人在环</span><span class="en">Three-way routing and human gates</span></h2><span class="zoom"><span class="zh">设计原则</span><span class="en">design principle</span></span></div>
+    <p class="sub"><span class="zh">分两级:先一道<b>按可争议性</b>的确定性路由把机械 + 轻微件送进庭外 <b>polish 流程</b>(不开庭);只有 substantive-major 进庭审。下面这三路是<b>庭内</b>法官的入判,在可争议性路由之下游。</span><span class="en">Routes in two stages: first a deterministic <b>contestability</b> router sends mechanical + minor issues to an off-gate <b>polish track</b> (no jury); only substantive-major issues reach the trial. The three routes below are the judge's verdict <b>inside</b> the trial, downstream of the contestability router.</span></p>
     <div class="route">
       <div class="card" style="border-top-color:var(--danger)"><h3>invalid-drop</h3><p><span class="zh">准确判无效(幻觉 / 误读 / 重复 / 越界 / 严重度虚高)→ 丢,带证据。</span><span class="en">accurately judged invalid (hallucination / misread / duplicate / out of scope / inflated severity) → dropped, with evidence.</span></p><span class="rc"><span class="zh">→ 转召回审计复查</span><span class="en">→ to recall audit for re-check</span></span></div>
       <div class="card" style="border-top-color:var(--mem)"><h3>valid-fixable</h3><p><span class="zh">有效 + <b>文本可改</b>(无需新实验/数据)+ 不漂移 → 起草 minimal-edit,过护栏,落定。</span><span class="en">valid + <b>text-fixable</b> (no new experiments/data) + no drift → draft a minimal edit, pass the guards, land it.</span></p><span class="rc"><span class="zh">→ drafter · 需新数据则改判 author-required 或诚实软化</span><span class="en">→ drafter · if it needs new data, reroute to author-required or soften honestly</span></span></div>
@@ -530,7 +530,7 @@
     <div class="formula">
       <span class="zh"><b>核心:准确度消解精度/召回取舍。</b> 取舍只在「对 noisy 有效性分数做阈值」时存在;把判断<b>做准</b> + 按认知类型<b>三路分流</b>,精度召回一起上。<br>
       <span class="mono">队列 = 不可约的「真需作者」 + 「没能自信分类的」</span>。第一项不可约,第二项随准确度下降。算力砸在<b>验证 / 接地 / 裁决</b>(提准),不是砸在「多找问题」。
-      <div class="note" style="margin-top:8px"><b>polish 轨</b>:可争议性路由判为机械 / 轻微的件不开庭,走 polish 批量 copy-edit / 轻 check;误判为大问题的可<b>升回庭审</b>,拿不准的入队(polish-review),<b>绝不静默丢</b>。</div>
+      <div class="note" style="margin-top:8px"><b>polish 流程</b>:可争议性路由判为机械 / 轻微的件不开庭,走 polish 批量 copy-edit / 轻 check;误判为大问题的可<b>升回庭审</b>,拿不准的入队(polish-review),<b>绝不静默丢</b>。</div>
       <div class="note" style="margin-top:8px">诚实残差:软维度有残余误差;规则 = <b>不确定就 route 给你,绝不静默丢或静默改</b>。不承诺完美 / 零队列。</div></span>
       <span class="en"><b>Core: accuracy dissolves the precision/recall trade-off.</b> The trade-off only exists when you threshold a noisy validity score; make the judgment <b>accurate</b> + route <b>three ways</b> by epistemic type, and precision and recall rise together.<br>
       <span class="mono">queue = the irreducible "truly needs the author" + "could not be confidently classified"</span>. The first is irreducible; the second shrinks as accuracy rises. Compute goes into <b>verification / grounding / adjudication</b> (raising accuracy), not into "finding more issues".
@@ -541,7 +541,7 @@
 
   <!-- 七、护栏 -->
   <section id="s6" class="reveal">
-    <div class="h2"><span class="idx">07</span><h2><span class="zh">硬规则 + 诚实 caveats</span><span class="en">Hard rules + honest caveats</span></h2><span class="zoom"><span class="zh">贯穿</span><span class="en">throughout</span></span></div>
+    <div class="h2"><span class="idx">07</span><h2><span class="zh">硬规则与坦诚说明</span><span class="en">Hard rules and honest limitations</span></h2><span class="zoom"><span class="zh">贯穿所有模式</span><span class="en">throughout all modes</span></span></div>
     <div class="rules">
       <div class="rule"><b>1 <span class="zh">作者签字</span><span class="en">author sign-off</span></b> <span class="zh">不经你授权绝不改稿;auto 用「事前策略签字 + 队列」满足它(具名豁免),非逐条签。</span><span class="en">never edit the manuscript without your authorization; auto satisfies it via up-front policy sign-off + queue (a named carve-out), not per-edit sign-off.</span></div>
       <div class="rule"><b>2 <span class="zh">隔离</span><span class="en">isolation</span></b> <span class="zh">检方/陪审/审计互不串、看不到台账;靠 prompt 里不放 + 每个 reviewer 型 prompt 显式 ISOLATION 指令双重保证。</span><span class="en">prosecution/jury/audit never cross-talk and never see the ledger; enforced by what is not in the prompt + an explicit ISOLATION instruction in every reviewer-type prompt.</span></div>
@@ -554,13 +554,13 @@
       <div class="caveat"><b><span class="zh">诚实 1</span><span class="en">honest 1</span></b> <span class="zh">并行让它更快 / 更广,<b>不直接让裁决更准</b>;准来自「双方 + 证据」结构,不是 agent 数量。</span><span class="en">parallelism makes it faster / broader, <b>not directly more accurate</b>; accuracy comes from the two-sided + evidence structure, not the agent count.</span></div>
       <div class="caveat"><b><span class="zh">诚实 2</span><span class="en">honest 2</span></b> <span class="zh">12 人陪审团只在<b>去相关</b>时才胜过 5;同模型同 prompt 的 12 ≈ 5。</span><span class="en">a 12-juror panel only beats 5 when <b>decorrelated</b>; 12 of the same model and prompt ≈ 5.</span></div>
       <div class="caveat"><b><span class="zh">诚实 3</span><span class="en">honest 3</span></b> <span class="zh">我自己易 overclaim:下「open/done/verified」前,<b>当场重读 source</b>,不信上下文记忆。</span><span class="en">the assistant tends to overclaim: before stating "open/done/verified", <b>re-read the source on the spot</b>, do not trust in-context memory.</span></div>
-      <div class="caveat"><b><span class="zh">诚实 4</span><span class="en">honest 4</span></b> <span class="zh">v3 引擎已<b>对抗交叉核查</b>(设计验证 + 建好后逐 seam 复查,各带 fresh-skeptic 核验)、ledger 已单测,但<b>整链未在真稿上实跑</b>;不等于已验证 / 已证明。</span><span class="en">the v3 engine is <b>adversarially cross-checked</b> (a design validation + a built-code per-seam cross-check, each with fresh-skeptic verification) and the ledger is unit-tested, but the <b>full chain has not been run on a real paper</b>; that is not validated / proven.</span></div>
+      <div class="caveat"><b><span class="zh">坦诚</span><span class="en">honest</span></b> <span class="zh">引擎已<b>对抗交叉核查</b>、ledger 已单测,但<b>整链未在真稿上实跑</b>;不等于已验证或完全证明。</span><span class="en">The engine is <b>adversarially cross-checked</b> and the ledger unit-tested, but the <b>full chain has not run on a real paper</b>; this is not a complete validation.</span></div>
     </div>
   </section>
 
   <footer>
     <span class="mono"><span class="zh">paper-review-loop · 工作流总览(全局 → 局部)· 交互页 · 中英双语</span><span class="en">paper-review-loop · workflow overview (global → local) · interactive · EN / 中文</span></span><br>
-    <span class="zh">配合 <span class="mono">README.md · SKILL.md · references/review-engine-v3.md · references/auto-mode.md</span> 阅读 · review v3 已 build + 对抗交叉核查、ledger 已单测(2026-06-03);auto 引擎 + 确定性安全包络已 build,<b>整链未在真稿上实跑</b>(待 /goal dry-run + cut-over)。</span><span class="en">Read alongside <span class="mono">README.md · SKILL.md · references/review-engine-v3.md · references/auto-mode.md</span> · review v3 built + adversarially cross-checked, ledger unit-tested (2026-06-03); the auto engine + deterministic safety envelope are built, but <b>the full chain has not been run on a real paper</b> (pending a /goal dry-run + cut-over).</span>
+    <span class="zh">引擎对抗交叉核查且 ledger 已单测,但整链未在真稿上实跑。</span><span class="en">The engine is adversarially cross-checked and the ledger unit-tested, but the full chain has not run on a real paper.</span>
   </footer>
 
 </div>
@@ -582,7 +582,7 @@
     pause:{zh:'❚❚ 暂停', en:'❚❚ Pause'},
     stepWord:{zh:'步骤 ', en:'Step '},
     caseReset:{zh:'点「审一桩案子」,看一条指控从起诉走到判决与分流。', en:'Click "Try a case" to watch one charge go from indictment to verdict and routing.'},
-    caseSeq:{zh:'连点会依次演 valid-fixable → invalid-drop → author-required 三条分流', en:'Click repeatedly to cycle the three routings: valid-fixable → invalid-drop → author-required'},
+    caseSeq:{zh:'连续点击会依次演示 valid-fixable → invalid-drop → author-required 三条分流', en:'Click repeatedly to cycle the three routings: valid-fixable → invalid-drop → author-required'},
     caseNext:{zh:'下一次将演:', en:'Next run: '},
     caseDone:{zh:' &nbsp;✓ 一案审结。', en:' &nbsp;✓ Case closed.'}
   };
@@ -686,7 +686,7 @@
         jury = $$('#jury .j'), running = false;
     var stepLines = [
       {zh:'① 检方(领域 reviewer)提出<b>指控</b>,附逐字引文 → 退场。', en:'① The prosecution (a domain reviewer) files a <b>charge</b> with a verbatim quote → steps away.'},
-      {zh:'② 覆盖 + 合并:反 skim + 去重后按<b>可争议性</b>分流,这条是 substantive-major → 进入庭审(机械/轻微会走 polish 轨)。', en:'② Coverage + merge: after anti-skim + dedup, route by <b>contestability</b>; this one is substantive-major → on to trial (mechanical/minor would take the polish track).'},
+      {zh:'② 覆盖 + 合并:反 skim + 去重后按<b>可争议性</b>分流,这条是 substantive-major → 进入庭审(机械/轻微会走 polish 流程)。', en:'② Coverage + merge: after anti-skim + dedup, route by <b>contestability</b>; this one is substantive-major → on to trial (mechanical/minor would take the polish track).'},
       {zh:'③ 辩方带证据 steelman;先 5 位<b>去相关</b>陪审员带本地上下文就「指控是否成立」投票(无明显多数会升 12)…', en:'③ The defense steelmans with evidence; a first tier of 5 <b>decorrelated</b> jurors vote on whether the charge holds, with local context (no clear majority escalates to 12)…'}
     ];
     function tallyLine(o){ return {zh:'法官唱票:<b>'+o.tally.zh+'</b> → 入判。', en:'The judge reads the tally: <b>'+o.tally.en+'</b> → ruling.'}; }

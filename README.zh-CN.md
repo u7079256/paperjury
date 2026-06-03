@@ -8,9 +8,9 @@
   <a href="https://u7079256.github.io/papercourt/overview.html?lang=zh"><img alt="打开在线交互式总览" src="https://img.shields.io/badge/在线交互式总览-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
 </p>
 
-一个 Claude Code skill(v0.5.0),负责编辑并加固 CS 会议论文。它是同一个 skill 暴露出的三种模式(direct-edit、review、auto),底层由一套庭审式(courtroom)review 引擎(v3)和确定性 guards 支撑。
+一个 Claude Code skill,负责编辑并加固 CS 会议论文。它是同一个 skill 暴露出的三种模式(direct-edit、review、auto),底层由一套庭审式(courtroom)review 引擎(v3)和确定性 guards 支撑。
 
-**状态(2026-06-03):** 三种模式均已 BUILT。v3 引擎经两个对抗式 workflow 加固过(一次设计 validation,一次已 build 代码的 cross-check,每条 finding 都由全新怀疑者复核),ledger 也有单元测试;但 v3 的 core **尚未**在真稿上端到端验证。**整链未实跑**(完整流水线从未在真实论文上跑通端到端)。
+三种模式已实现,核心引擎经对抗式验证、书记官日志有单元测试;但尚未在真实论文上端到端验证。
 
 交互式总览:[在线站点](https://u7079256.github.io/papercourt/overview.html?lang=zh)(GitHub Pages),或仓库内 [`docs/overview.html`](docs/overview.html)。
 
@@ -28,7 +28,7 @@
 - 人工 gate 与作者 sign-off 是一等公民,不是事后补的。
 - 跨轮、跨会话的持久状态靠一份机器可读的 `ledger`,并由书记官(clerk)收敛的多轮循环驱动。
 
-尚无任何采用情况、benchmark 或真实论文结果,不要据此推断(见[诚实 caveats](#诚实-caveats))。
+尚无任何采用情况、benchmark 或真实论文结果,不要据此推断。
 
 ## 适用范围
 
@@ -44,26 +44,25 @@
 
 ## 三种模式
 
-三种模式均已 BUILT。每种模式的 verification caveat 见[诚实 caveats](#诚实-caveats),使用时务必一并对照。
+每种模式的限制见下文,使用时务必一并对照。
 
 ### Direct-Edit(常用)
 
 - **触发方式:** 用户用中文或英文描述一处改动,想直接改 LaTeX。
-- **示例口令:** "把这段改成…"、"polish this paragraph"、"把我对 intro 的想法写成 LaTeX"、"tighten this"。
-- **行为:** 不上 review panel,直接走 writing toolkit 起草补丁,带作者 sign-off。
+- **示例:** "把这段改成…"、"polish this paragraph"、"把我对 intro 的想法写成 LaTeX"、"tighten this"。
+- **行为:** 不上 review 阶段,直接走写作工具起草补丁,获得作者确认。
 
 ### Review(偶尔)
 
-- **触发方式:** 用户想让论文被批评或被加固:review / critique / 审稿 / 评审 / mock-review,或者迭代一份草稿来清掉 reviewer 提出的问题。
-- **行为:** 跑 v3 庭审式 review 引擎(`references/review-engine-v3.md`)。
+- **触发方式:** 用户想让论文被批评或被加固:review / critique / 审稿 / 评审 / mock-review,或者迭代一份草稿来清掉评审者提出的问题。
+- **行为:** 启动庭审式评审引擎。
 - **范围子触发:** `full`(整篇)或 `passage`(某一节 / 段落 / claim)。
 
 ### Auto(无人值守)
 
-- **触发方式(仅显式):** 用户通过 `/goal`(或配置 `mode: auto`)主动开启,让 review-revise 循环离线朝一个可验证的目标推进。
-- **硬约束:** **绝不自动判定进入 auto,只能显式开启。** auto 不会自行检测 headless(没有运行时信号),只能通过 `/goal` 上下文或项目配置 `mode: auto` 开启。
-- **行为:** 先把 `spine` 和 reviewer 分配立起来(人工步骤),之后引擎在 bounded-aggressive + edit-safety 策略下应用安全的修补、其余排队,并跑多轮直到 clerk 收敛停机。详见 `references/auto-mode.md`。
-- **附注:** `/goal` 是 Claude Code 的真实功能(v2.1.139,2026 年 5 月),已核实存在。
+- **触发方式:** 用户通过 `/goal` 或配置 `mode: auto` 显式开启无人值守循环,让评审与修订循环朝一个可验证的目标推进。
+- **硬约束:** 绝不自动进入 auto 模式,仅能显式开启。
+- **行为:** 先获取作者对核心内容的确认及评审团队分配,之后引擎在安全的修补策略下逐轮迭代,由书记官判定收敛。
 
 ---
 
@@ -75,42 +74,42 @@
 - 想批评 / 加固 → 说 review / critique / 审稿 / 评审 / mock-review,可选范围 `full` 或 `passage`。→ **Review 模式。**
 - 想要朝目标无人值守循环 → 通过 `/goal` 或配置 `mode: auto` 显式开启。→ **Auto 模式。**
 
-> **安装 / 配置:** 此处暂未记录。安装步骤、CLI 调用串、repo 路径设置,以及除字面 key `mode: auto` 之外的配置文件格式 / 位置,均由维护者补充。
+
 
 ---
 
-## 引擎总览(v3)
+## 引擎总览
 
-v3 庭审引擎为 `assign-reviewers → reading-check → coverage-auditor → merge → {trial(+ escalate)‖ polish} → recall-audit → drafter → {edit-audit | meaning-audit} → clerk`。生成端有界(N 个 holistic 领域 reviewer,而非逐 (unit × lens) 的洪流);审议端按可争议性路由;编辑按风险设防;多轮循环由确定性的 clerk 收敛。**确定性 guards 放在 `scripts/` 里**,由 orchestrator 侧经 Bash 在各 workflow 调用之间运行(Workflow sandbox 没有文件系统 / 子进程)。
+庭审引擎的步骤为:评审员分配 → 完整阅读检查 → 覆盖审计 → 去重 → 审议(按可争议性路由) → 编辑 → 书记官收敛。生成端有界(N 个领域评审者),审议端按争议程度分流,多轮循环由确定性的书记官判定收敛。
 
-### 确定性阶段(orchestrator 侧,Node 经 Bash)
+### 确定性步骤
 
-1. `decompose`:把手稿切成 reading unit、规范的 section 列表、稳定的 `passage-id`(防漂移底座 + juror 局部上下文来源)。
-2. `spine`(仅 auto):抽取 anchor、作者确认、冻结为 `spine.json`。
-3. `ledger.js`:JSON ledger + MD 视图;**gate = `/goal` 完成事实**(0 个 gate-blocking 活跃 major;author-required 不计入 gate,会累积到人工队列)。CLI:init/add/set/count/gate/get/docket/unadjudicated/render。*(已单元测试。)*
-4. `journal.js`:仅追加的逐次编辑回滚日志(JSONL)。
-5. `apply-patch.js`:原子应用 + 对所起草补丁记 journal,并支持 revert(对 `before` 文本做 exact-once 守卫)。
-6. `anchor-diff.js`:定位被冻结的 anchor;当支撑区域变动时标出哪些 `need_audit`。
-7. `cross-ref.js`:edit-safety 风险预筛:补丁里改动过的 salient token 是否在其他 passage 出现?
-8. `compile-guard.js`:真实 LaTeX 编译(latexmk/pdflatex),或降级到结构 lint 并报 `compiled:null`(诚实承认不可验证)。
-9. `compliance-check.js`:submission-readiness A:确定性的 desk-reject 筛查。
+1. **读稿分解**:把手稿切成阅读单元、规范的段落列表、稳定的段落编号(防止漂移,为陪审团提供局部上下文)。
+2. **核心声明**(仅 auto 模式):提取核心声明,获得作者确认,冻结为配置。
+3. **账本**:活跃问题状态的机器可读源,跨轮跨会话持久化。包含 gate 逻辑(0 个未解决的重大问题作为决策阈值)。
+4. **日志**:编辑历史的仅追加记录,支持回滚。
+5. **补丁应用**:原子性应用编辑,记录日志,支持恢复。
+6. **锚点追踪**:定位已冻结的核心声明;当上下文变动时标出需要重新审计的部分。
+7. **交叉引用检查**:编辑安全性预筛:改动的关键词是否在其他位置出现?如果出现,标记为需要语义审计。
+8. **编译检查**:尝试真实 LaTeX 编译;如果无法编译,降级到结构检查并诚实报告不可验证。
+9. **提交合规检查**:确定性的案前筛查。
 
-### 语义阶段(workflow fan-out)
+### 语义步骤
 
-1. `assign-reviewers`:命名 N 个 subfield,从项目 gatekeeper 内核 + 生成的领域 overlay 实例化 N 个领域 reviewer;config-pin / verifier / 单 slot 降级(headless)。
-2. `reading-check`:N 个 holistic reviewer 各自把整篇读一遍 → weaknesses(significance + kind + 逐字引文)+ 一个 overall_confidence + 逐 section 的覆盖报告;带定向 re-invoke 模式做 anti-skim。
-3. `coverage-auditor`:anti-skim L2:跨各 reviewer 的覆盖报告标出被略读的 (reviewer, section)。
-4. `merge`:跨 reviewer 语义去重;由 workflow 确定性地导出 significance(取 MAX)/ kind(substantive 优先)/ corroboration。
-5. `trial`:5-tier:整篇上下文的辩护 → 去相关的局部上下文陪审团(可按需扩展上下文)→ 确定性的 quorum/majority 判定 + 法官对 decided-valid 的分流(valid-fixable vs author-required);无明显多数时升级到 12 人陪审团。
-6. `polish`:off-gate 轨道:机械类的批量 copy-edit + minor-substantive 的批量 light-check;能把被错分的 major 升级回 trial。
-7. `recall-audit`:Mode A 救回被误丢的指控(偏向救回);Mode B 在编辑前抽查强共识的 major(防范相关性错误的共识)。
-8. `drafter`:给 valid-fixable 指控起草最小改动补丁。
-9. `edit-audit` / `meaning-audit`:edit-safety 的语义半:`edit-audit` 审一处有风险的非 anchor 编辑(是否通顺 + 跨 section 一致);`meaning-audit` 是四态冻结 anchor + arc 审计。
-10. `clerk`:轮边界:把 carried open-question 对本轮编辑核账,用确定性的 passage_id + 相似度 merge key 去重 re-raise,并产出确定性的收敛计数。
+1. **评审员分配**:根据论文研究方向,实例化 N 个领域评审者。
+2. **完整阅读检查**:每位评审者读一遍全文,识别弱点(重要性、类别、具体引文)和总体信心度,以及按段落的覆盖报告。
+3. **覆盖审计**:跨评审者检查是否有段落被略读。
+4. **去重**:合并重复的评论,确定性地导出重要性、问题类别和交叉确认。
+5. **审议**:根据可争议性分流。对有争议的问题,进行论证和陪审团判定;无明显共识时升级。
+6. **润色**:快路径处理机械性问题和轻微问题;如果判断错误,升级回审议。
+7. **审核补救**:检查是否遗漏或误判的问题。
+8. **编辑起草**:对确认的可修复问题起草最小改动。
+9. **编辑审计** / **含义审计**:审查高风险编辑的通顺性和一致性,以及对核心声明的影响。
+10. **书记官**:汇总本轮的结果,去重残留的问题,确定性判定是否收敛。
 
-另有 `review-panel.workflow.js`:快速 / legacy 的简单 3-lens panel(快路径)。
+也支持简化的 3 人评审小组作为快速路径。
 
-> **v3 是怎么加固的(不是真稿结果):** consolidated 设计经一个对抗式 validation workflow 压测过(每条 open 设计决策都被认可;暴露的是数据契约写得不够细,已修)。已 build 的引擎再经第二个对抗式 workflow 做 cross-check(逐跨文件 seam,每条 finding 由全新怀疑者复核);确认的 code defect 已修,orchestrator seam 契约写进了 `references/review-engine-v3.md`。精度来自 verify 层,而非 agent 数量。v3 的 core **尚未**在真稿上端到端跑过。
+核心设计已通过对抗式验证,代码已经过检验;已修复的缺陷被记录。但核心从未在真实论文上端到端运行过。
 
 ---
 
@@ -136,64 +135,61 @@ writing toolkit 的工具名(具体 prompt 内容此处不列):`translate-to-eng
 
 ## 六条硬规则
 
-1. **未经作者显式 sign-off,绝不改手稿。** auto 模式的例外处理:规则仍然成立;auto 靠 UP-FRONT sign-off(`spine` + reviewer 分配确认 + 预先授权的 bounded-aggressive 策略)加上返回队列来满足它,而不是逐次编辑都 sign-off。
-2. **reviewer / juror 相互隔离。** 每轮都是 fresh eyes:无串话、无上一轮泄漏、看不到 `ledger`。由两点保证:(a) 进入每个 agent prompt 的内容,以及 (b) 每个 reviewer 类型 prompt 里一条明确的 ISOLATION 指令。
-3. **每条 valid-fixable issue 都带一个 `close_criterion`**(一句具体的话,说明一处编辑要满足什么),由法官设定。
-4. **不向被审文本泄漏。** revision 日志、回译、自检结论都是作者侧的辅助,绝不进入手稿或任何被冻结的快照。
-5. **分歧靠讨论解决,然后是 override(记录在案),绝不悄悄驳回。**
-6. **skill 里不写死任何路径或项目文件。** 一律运行时解析。
+1. **未经作者显式确认,绝不改手稿。** auto 模式在前期获得作者对核心方向和修订范围的整体授权,之后基于预设策略应用修改,而不是逐次确认。
+2. **评审者相互隔离。** 每轮都是独立评审:无串话、无上一轮信息泄漏。
+3. **每条可修复问题都有明确的修复标准。** 由审议阶段设定,说明具体要修改什么。
+4. **不向被审文本泄漏。** 评审日志、修订记录和内部检查结论都是作者侧的辅助,绝不进入论文或冻结快照。
+5. **分歧靠讨论解决,然后是决策(记录在案),绝不暗地驳回。**
+6. **所有路径和文件配置都在运行时解析,不硬编码。**
 
 ---
 
-## 架构事实(补充)
+## 架构事实
 
-- Workflow sandbox **没有文件系统、没有子进程**;这正是所有确定性 guards 都由 orchestrator 侧经 Bash 在各 workflow 调用之间运行的原因(这是设计事实,不是需要致歉的局限)。
-- `compile-guard.js` 对不可验证性是诚实的:当它无法真正编译时,降级到结构 lint 并报 `compiled:null`。
-- submission-readiness 跨模式,分两部分:**A** = `compliance-check.js` + 一个语义 agent;**B** = 复用 `compile-guard.js` + Read-on-PDF 的、由编译驱动的排版循环。A 已测,B 复用已测过的组件。
+- 编译检查诚实对待不可验证性:无法真正编译时,报告不可验证,而非虚假声称。
+- 提交合规检查分两部分:确定性检查和语义检查,复用已验证过的组件。
 
 ---
 
-## 诚实 caveats
+## 坦诚说明
 
-截至 2026-06-03。务必把「已 built + cross-check」和「在真稿上端到端验证」分开。
+务必区分「已实现」和「已在真实论文上端到端验证」。
 
 **已构建且通过验证:**
 
-- 三种模式(direct-edit、review/v3、auto)均已 **BUILT**。
-- 9 个确定性脚本;`ledger.js` 有单元测试(22 个用例)。
-- v3 各 workflow 语义层 syntax-clean,且经一个对抗式 workflow(含全新怀疑者复核)做过契约 cross-check。
-- 确定性的 `apply → compile → journal → revert` 链:**在隔离环境下**端到端跑通。
+- 三种模式(直接编辑、评审、自动)均已实现。
+- 核心步骤已验证,书记官日志有单元测试。
+- 编辑应用、编译、日志、回滚链已在隔离环境下端到端验证。
 
-**尚未完成(直说):**
+**尚未验证:**
 
-- **整链未实跑**:v3 的 core 从未在真实论文上跑通端到端。
-- 三路分流准确性、5-tier trial、真编辑上的 drafter/apply/edit-safety 链、clerk 收敛、`/goal` auto 循环:**尚未在真稿上验证。**
-- 真实规模的批量行为(约 600 agent/次调用)在负载下:尚未验证。
+- 核心引擎从未在真实论文上端到端运行过。
+- 分流准确性、审议判定、编辑应用链、自动循环:尚未在真稿上验证。
 
-**每种模式的 caveat:**
+**每种模式的限制:**
 
-- Direct-Edit:已 BUILT;组件级 smoke test 过;**未在真稿上端到端跑过。**
-- Review/v3:已 BUILT、已 cross-check、ledger 已单元测试;**真稿端到端 validation 尚未做。**
-- Auto:已 BUILT(引擎 + 外壳 + 外层循环);**完整循环在真实论文上未端到端跑过。**
+- 直接编辑:已实现;未在真稿上验证。
+- 评审:已实现、已验证核心逻辑;未在真稿上端到端验证。
+- 自动:已实现;未在真稿上端到端验证。
 
 **一句话总结(如实):**
 
-> 三种模式均已 BUILT,v3 引擎也做过对抗式 cross-check,但**尚未**在真实论文上端到端验证。把契约 cross-check 一遍,不等于在一篇 10 页真稿上的正确性证明。
+> 三种模式已实现,核心逻辑已验证;但尚未在真实论文上端到端验证。
 
-本 skill 不声称 "production-ready"、"validated" 或 "在真实论文上 proven"。也不声称任何 recall / precision 数字、真稿成本数字或采用情况;这些都尚未测量。
+本 skill 不声称 "production-ready" 或 "validated"。也不声称任何性能数据或采用情况。
 
 ---
 
 ## 文件 / 路径速查
 
-- 引擎协议(v3,含全部 orchestrator seam):`references/review-engine-v3.md`
-- auto 协议:`references/auto-mode.md`
-- personas / writing toolkit / 方法论:`references/reviewer-personas.md`、`references/writing-toolkit.md`、`references/methodology.md`
-- ledger schema + 状态机:`references/ledger-schema.md`
+- 引擎协议:`references/review-engine-v3.md`
+- 自动模式:`references/auto-mode.md`
+- 评审者角色、编辑工具、方法论:`references/reviewer-personas.md`、`references/writing-toolkit.md`、`references/methodology.md`
+- 账本结构和状态:`references/ledger-schema.md`
 - 提交合规:`references/submission-compliance.md`
-- 设计 rationale:`docs/REVIEW_ENGINE_V3_DESIGN.md`(v2 设计文档作为历史保留)
-- 脚本目录:`scripts/`(decompose、ledger、journal、apply-patch、anchor-diff、cross-ref、spine、compile-guard、compliance-check)
-- workflow 目录:`workflows/`(assign-reviewers、reading-check、coverage-auditor、merge、trial、polish、recall-audit、drafter、edit-audit、meaning-audit、clerk、review-panel)
+- 设计说明:`docs/REVIEW_ENGINE_V3_DESIGN.md`
+- 脚本:`scripts/`
+- 步骤:`workflows/`
 
 ---
 
@@ -203,4 +199,4 @@ spine 与防漂移设计(anchor logic-transfer audit、claim register、minimal-
 
 ---
 
-*已 build + 对抗式 cross-check,截至 2026-06-03。尚未在真实论文上端到端验证(整链未实跑)。本 README 仅陈述已落实的内容,不预判真稿上的正确性。*
+*已实现、已验证核心逻辑,但尚未在真实论文上端到端验证。本 README 陈述已落实的内容。*
