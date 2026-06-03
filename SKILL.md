@@ -62,8 +62,8 @@ concern; together they replace the heavy per-round file-and-flag machinery a
 hand-rolled version accumulates.
 
 1. **Skill (this folder) = entry point + methodology.** The protocol, the
-   reviewer panel, the consensus gate, the writing toolkit, the human gates.
-   Detail in `references/methodology.md`, `references/reviewer-personas.md`,
+   reviewer panel, the contestability routing, the writing toolkit, the human gates.
+   Detail in `references/review-engine-v3.md`, `references/reviewer-personas.md`,
    `references/writing-toolkit.md`.
 2. **Workflow = fan-out engine.** The semantic, no-human-in-the-middle steps run as
    Workflows (parallelism + schema-validated output by construction). The simple
@@ -133,7 +133,7 @@ user wants the paper critiqued or hardened, not for a single asked-for edit.
 
 ## Why fan-out is a Workflow and the rest is conversation
 
-The panel and the contested-reviewer re-spawn are pure fan-out: spawn, collect,
+The reviewer panel and the trial jury are pure fan-out: spawn, collect,
 merge. A Workflow does this deterministically (parallelism enforced by
 construction, structured outputs via schema, isolation by default since each
 agent sees only the prompt you give it). That isolation is what replaces the
@@ -144,45 +144,63 @@ But the loop has genuine human gates (the author reviews the issue list, gives
 per-issue direction, authorizes edits, breaks ties). Workflows run to completion
 and return a result; they do not pause mid-run for hours of human input. So:
 
-- fan-out steps (panel review + merge; contested re-spawn) -> **Workflow**
+- fan-out steps (reviewers, trial, polish, recall, merge) -> **Workflow**
 - human gates (direction, authorization, tiebreak) -> **main conversation turns**
 - cross-round truth (the ledger) + stable conventions -> **Memory**
 
 ## Review mode: one round, end to end
 
-The full adversarial loop. Use it to harden the paper, not for a single asked-for
-edit (that is direct-edit mode). `[WF]` = Workflow step, `[HUMAN]` = author gate,
-`[LEDGER]` = state write.
+The full adversarial loop (the v3 courtroom engine). Use it to harden the paper, not
+for a single asked-for edit (that is direct-edit mode). Full protocol + the 14
+orchestrator seams: `references/review-engine-v3.md`. `[WF]` = Workflow step,
+`[det]` = deterministic Node guard run orchestrator-side between workflow calls,
+`[HUMAN]` = author gate, `[LEDGER]` = state write.
 
-1. **Resolve + recall.** Resolve the inputs above; recall this paper's
-   conventions from memory. Pick mode: `full` (whole paper) or `passage` (one
-   section / paragraph / claim).
-2. **Freeze the unit.** Copy the target text, strip any revision/changelog
-   markers so reviewers meet it fresh. Keep one frozen copy per round for audit.
-3. **`[WF]` Review panel.** Spawn N reviewers in parallel (default 3), each with
-   the gatekeeper persona, its lens, the venue style profile, and ONLY the frozen
-   text. Each returns a schema-validated issue table (every issue carries a
-   `close_criterion`).
-4. **`[WF]` Merge.** Mechanically dedupe issues raised by >=2 reviewers, drop any
-   issue missing a `close_criterion`, assign IDs. `[LEDGER]` append as `raised`.
-5. **`[HUMAN]` Direction.** Author gives a per-issue verdict: will-fix /
-   clarification / disagree / out-of-scope.
-6. **`[WF]` Discussion** (only if any issue is contested). Re-spawn the original
-   raising reviewer in discussion mode with its own report plus the author
-   response for its issues only. Returns concede / refine / maintain.
-   `[LEDGER]` update.
-7. **`[HUMAN]` Tiebreak.** For each `maintain`, the author yields or overrides
-   (override is logged with both rationales for a pre-submission self-audit).
-8. **Edit gate.** No manuscript edit until every current-round issue is in
-   agreed-to-fix / agreed-to-fix-modified / withdrawn / override.
-9. **`[HUMAN]` Authorize + draft.** On authorization, draft each patch through the
-   writing toolkit so it satisfies that issue's `close_criterion`. Verify the
-   criterion, then `[LEDGER]` mark `closed`. Revision logs / back-translations
-   stay author-side, never in the manuscript.
-10. **Report + stop.** Summarize new/closed counts and the next decision point.
-    Do not auto-start the next round.
+1. **Resolve + recall.** Resolve the inputs above; recall this paper's conventions
+   from memory. Pick scope: `full` (whole paper) or `passage` (one section / para / claim).
+2. **`[det]` decompose.** Split the manuscript into reading units + stable
+   `passage_id`s + the canonical section list.
+3. **`[WF]` assign-reviewers** + **`[HUMAN]` confirm.** Name N subfields (2-4,
+   default 3); instantiate N holistic domain reviewers from the gatekeeper core + a
+   generated overlay. An unconfirmable slot degrades per slot to a generic gatekeeper
+   (the three generic lenses in `reviewer-personas.md` are the fallback). The author
+   confirms the assignment (or pins it via config).
+4. **`[WF]` reading-check.** Each reviewer reads the WHOLE paper → weaknesses
+   {`significance`(major|minor), `kind`(mechanical|substantive), verbatim quote —
+   cannot quote = did not read} + one `overall_confidence` + a per-section coverage
+   report. Anti-skim is three layers: `[det]` per-section quote-verify, `[WF]`
+   coverage-auditor, `[WF]` targeted re-invoke.
+5. **`[WF]` merge.** Semantic dedup across reviewers; derive `significance` (MAX) /
+   `kind` (substantive-dominates) / corroboration. `[LEDGER]` intake as `raised`.
+6. **`[det]` route.** mechanical → polish; substantive&minor → polish;
+   substantive&major → trial (two parallel tracks).
+7. **`[WF]` trial.** Per substantive-major charge: a whole-paper DEFENSE → 5
+   decorrelated local-context jurors (+ on-demand expansion) → a deterministic verdict
+   (decide iff quorum `surviving >= ceil(0.8*jurySize)` AND one side `> 60%` of
+   surviving votes; else escalate to 12). Verdict ∈ {invalid-drop, valid-fixable,
+   author-required, escalate}; the judge sets a `close_criterion` ONLY for a
+   valid-fixable charge, satisfiable by editing existing text (no new data). `[WF]`
+   polish runs the off-gate mechanical/minor track in parallel (never silently dropped).
+8. **`[WF]` recall-audit.** Mode A revives wrongly-dropped charges; Mode B spot-checks
+   strong-consensus majors BEFORE the edit. Runs before the drafter.
+9. **`[HUMAN]` Authorize + `[WF]` drafter + edit-safety.** On authorization, the
+   drafter writes the minimal patch per surviving valid-fixable. The edit-safety chain
+   gates it: `[det]` anchor-diff + cross-ref → `[WF]` meaning-audit (frozen anchor,
+   four-state) / edit-audit (risky non-anchor); `[det]` apply-patch + compile-guard land
+   a passing patch and `[LEDGER]` mark `closed`; a drift / anchor / failed edit is
+   reverted and queued. Revision logs / back-translations stay author-side.
+10. **`[WF]` clerk + report.** The clerk reconciles the round boundary (carried
+    open-questions vs this round's edits, via a passage_id + similarity merge key) and
+    emits convergence counts. Summarize new/closed counts; in review mode do not
+    auto-start the next round (auto mode drives the outer loop via `/goal`).
 
-Full protocol, ledger schema, status state machine: `references/methodology.md`.
+GATE: `node scripts/ledger.js gate` = 0 gate-blocking active major (gate-blocking =
+{raised, in-trial, re-trial, valid-fixable}; author-required / queued / dropped /
+closed are gate-OK and author-required accumulates to the queue). Full protocol +
+ledger schema + status machine: `references/review-engine-v3.md`,
+`references/ledger-schema.md`. The legacy single-pass 3-reviewer panel
+(`workflows/review-panel.workflow.js`, the discussion-mode flow in
+`references/methodology.md`) is kept only as a quick check.
 
 ## Hard rules (load-bearing, venue-agnostic)
 
@@ -195,8 +213,8 @@ Full protocol, ledger schema, status state machine: `references/methodology.md`.
    agent's prompt AND (b) an explicit ISOLATION instruction in every reviewer-type
    prompt telling the agent to judge only the quoted text and not read files
    (workflow agents have read tools and will otherwise sometimes roam).
-3. **Every issue carries a `close_criterion`** (one concrete sentence describing
-   what an edit must satisfy). Issues without one are dropped at merge.
+3. **A valid-fixable issue carries a `close_criterion`** (one concrete sentence an
+   edit must satisfy), set by the judge at trial; it is null at intake.
 4. **No leakage into the reviewed text.** Revision logs, back-translations, and
    self-check verdicts are author-side aids; they never enter the manuscript or
    any frozen snapshot.
