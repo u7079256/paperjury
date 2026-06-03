@@ -290,7 +290,7 @@
     <span><i class="dot" style="background:var(--det)"></i><span class="zh">Orchestrator 确定性(Bash/Node,庭外)</span><span class="en">Orchestrator deterministic (Bash/Node, off-court)</span></span>
     <span><i class="dot" style="background:var(--human)"></i><span class="zh">人工参与</span><span class="en">Human in the loop</span></span>
     <span><i class="dot" style="background:var(--agent)"></i>Agent</span>
-    <span><i class="dot" style="background:var(--mem)"></i><span class="zh">Memory / 台账</span><span class="en">Memory / ledger</span></span>
+    <span><i class="dot" style="background:var(--mem)"></i><span class="zh">Memory / ledger</span><span class="en">Memory / ledger</span></span>
   </div>
 
   <!-- 一、三模式 -->
@@ -303,7 +303,7 @@
         <h3><span class="zh">口述改动 → 直接改 LaTeX</span><span class="en">Say the change → edit the LaTeX</span></h3>
         <ul>
           <li><span class="zh">中文(偶尔英文)说要改什么 → 工具箱起草 → 自检 → 作者签字 → 落稿</span><span class="en">Say what to change in Chinese or English → toolkit drafts → self-check → the author signs off → land it</span></li>
-          <li><span class="zh">无面板 / 无台账,快</span><span class="en">No panel / no ledger, fast</span></li>
+          <li><span class="zh">无面板 / 无ledger,快</span><span class="en">No panel / no ledger, fast</span></li>
           <li><span class="zh">版面类编辑接 B「编译 → 渲染 → 视觉确认」闭环</span><span class="en">Layout edits use loop B: compile → render → visual confirm</span></li>
         </ul>
       </div>
@@ -537,7 +537,7 @@
     <div class="h2"><span class="idx">07</span><h2><span class="zh">硬规则</span><span class="en">Hard rules</span></h2><span class="zoom"><span class="zh">贯穿所有模式</span><span class="en">throughout all modes</span></span></div>
     <div class="rules">
       <div class="rule"><b>1 <span class="zh">作者签字</span><span class="en">author sign-off</span></b> <span class="zh">未经作者授权绝不改稿;auto 用「事前策略签字 + 队列」来满足它(具名豁免),而非逐条签。</span><span class="en">never edit the manuscript without the author's authorization; auto satisfies it via up-front policy sign-off + queue (a named carve-out), not per-edit sign-off.</span></div>
-      <div class="rule"><b>2 <span class="zh">隔离</span><span class="en">isolation</span></b> <span class="zh">检方、陪审、审计三方互不通气、也看不到台账;靠「prompt 里不放」加「每个 reviewer 型 prompt 显式写明 ISOLATION 指令」双重保证。</span><span class="en">prosecution/jury/audit never cross-talk and never see the ledger; enforced by what is not in the prompt + an explicit ISOLATION instruction in every reviewer-type prompt.</span></div>
+      <div class="rule"><b>2 <span class="zh">隔离</span><span class="en">isolation</span></b> <span class="zh">检方、陪审、审计三方互不通气、也看不到ledger;靠「prompt 里不放」加「每个 reviewer 型 prompt 显式写明 ISOLATION 指令」双重保证。</span><span class="en">prosecution/jury/audit never cross-talk and never see the ledger; enforced by what is not in the prompt + an explicit ISOLATION instruction in every reviewer-type prompt.</span></div>
       <div class="rule"><b>3 <span class="zh">必带引文 + 判据</span><span class="en">quote + criterion required</span></b> <span class="zh">观察必引原文(可核验),issue 必带 close_criterion。</span><span class="en">every observation must quote the source (verifiable); every issue must carry a close_criterion.</span></div>
       <div class="rule"><b>4 <span class="zh">零泄漏</span><span class="en">zero leakage</span></b> <span class="zh">回译 / 日志 / 自检留 author 侧,绝不进稿。</span><span class="en">back-translations / logs / self-checks stay author-side, never enter the manuscript.</span></div>
       <div class="rule"><b>5 <span class="zh">分歧解决</span><span class="en">disagreement resolves</span></b> <span class="zh">分歧靠讨论解决,然后 override(记录在案),绝不悄悄驳回(动 spine 锚的修复一律入队)。</span><span class="en">disagreement resolves through discussion, then override (logged), never a silent dismissal (any fix touching a spine anchor is queued).</span></div>
