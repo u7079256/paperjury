@@ -56,7 +56,7 @@ Scope is exactly these three families and these venue names: no journals, system
 
 - **Trigger (explicit only):** opt in via `/goal` (or config `mode: auto`) to run the review-revise loop unattended toward a verifiable goal.
 - **Hard constraint:** **auto is never self-detected; it is explicit only.** There is no runtime signal for it, so it is entered only via a `/goal` context or a project config `mode: auto`.
-- **Behavior:** establish the `spine` and the reviewer assignment up front (the human steps), then the engine applies safe fixes under the bounded-aggressive + edit-safety policy, queues the rest, and runs multiple rounds until a clerk-converged stop. See `references/auto-mode.md`.
+- **Behavior:** establish the `spine` and the reviewer assignment up front (the human steps), then the engine applies safe fixes under the bounded-aggressive + edit-safety policy, queues the rest, and runs multiple rounds until it stops — on clerk convergence, or an applied-quiescence / hard-limit backstop. See `references/auto-mode.md`.
 
 ---
 
@@ -89,7 +89,7 @@ The courtroom engine is `assign-reviewers → reading-check → coverage-auditor
 ### Semantic stages (workflow fan-out)
 
 1. `assign-reviewers`: name N subfields, instantiate N domain reviewers from the project gatekeeper core + a generated domain overlay; config-pin / verifier / per-slot degrade headless.
-2. `reading-check`: N holistic reviewers each read the WHOLE paper once → weaknesses (significance + kind + verbatim quote) + one overall_confidence + a per-section coverage report; targeted re-invoke mode for anti-skim.
+2. `reading-check`: N holistic reviewers each read the WHOLE paper once → weaknesses (significance + kind + verbatim quote — a reviewer that cannot quote the source did not read it) + one overall_confidence + a per-section coverage report; targeted re-invoke mode for anti-skim.
 3. `coverage-auditor`: anti-skim L2: flag skimmed (reviewer, section) pairs across the coverage reports.
 4. `merge`: semantic dedup across reviewers; the workflow derives significance (MAX) / kind (substantive-dominates) / corroboration deterministically.
 5. `trial`: a 5-juror trial tier: whole-paper defense → independent local-context jury (with on-demand context expansion) → a deterministic quorum/majority verdict + a judge that routes a decided-valid charge (valid-fixable vs author-required); escalate to a 12-juror tier on no clear majority.
@@ -115,11 +115,13 @@ Also present: `review-panel.workflow.js`: a quick simple 3-lens panel (fast path
 
 ### Reviewers
 
-The panel is N domain-expert HOLISTIC reviewers (default 3), assigned at runtime to the paper's subfields, all sharing a senior-reviewer gatekeeper core (harsh, precise, constructive; separate fatal flaws from fixable nits; reason across sections). When assignment degrades (headless, unconfirmable), the panel falls back to three generic lenses:
+The panel is N domain-expert HOLISTIC reviewers (default 3, range 2-4), assigned at runtime to the paper's subfields, all sharing a senior-reviewer gatekeeper core (harsh, precise, constructive; separate fatal flaws from fixable nits; reason across sections). When a reviewer slot cannot be confirmed (headless, unverifiable), that slot degrades to a generic gatekeeper (one bad slot never degrades the whole panel); the generic fallback lenses are:
 
-- **R1 Theory/Foundations**: definitions, proof gaps, notation, invariance/optimality/generality claims.
-- **R2 Empirical/Benchmark**: baseline fairness/vintage, metric correctness, dataset splits, variance, ablation coverage, cherry-picking.
-- **R3 Applied/Systems**: practicality, efficiency/latency/memory claims, reproducibility, deployment realism, scaling.
+- **Theory / Foundations**: definitions, proof gaps, notation, invariance/optimality/generality claims.
+- **Empirical / Benchmark**: baseline fairness/vintage, metric correctness, dataset splits, variance, ablation coverage, cherry-picking.
+- **Applied / Systems**: practicality, efficiency/latency/memory claims, reproducibility, deployment realism, scaling.
+
+(These are an unordered tendency, not fixed slots; reviewer IDs `R1..RN` are positional, assigned by subfield order.)
 
 The writing toolkit names (prompt bodies not shown here): `translate-to-english`, `polish-english`, `de-ai`, `compress`, `expand`, `caption`, `experiment-analysis`, `logic-check`.
 

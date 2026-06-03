@@ -56,7 +56,7 @@
 
 - **触发方式:** 用户通过 `/goal` 或配置 `mode: auto` 显式开启无人值守循环,让评审与修订循环朝一个可验证的目标推进。
 - **硬约束:** 绝不自动进入 auto 模式,仅能显式开启;它没有任何运行时信号,只能通过 `/goal` 上下文或项目配置 `mode: auto` 进入。
-- **行为:** 先获取作者对核心方向和评审分配的确认,之后引擎按预授权的 bounded-aggressive + 编辑安全策略,自动落安全 fix、把有风险的改动入队,多轮迭代直到书记官判定收敛(详见 `references/auto-mode.md`)。
+- **行为:** 先获取作者对核心方向和评审分配的确认,之后引擎按预授权的 bounded-aggressive + 编辑安全策略,自动落安全 fix、把有风险的改动入队,多轮迭代到停下为止——书记官判定收敛,或 applied-quiescence / 硬上限兜底(详见 `references/auto-mode.md`)。
 
 ---
 
@@ -89,14 +89,14 @@
 ### 语义步骤
 
 1. **评审员分配**:根据论文研究方向,实例化 N 个领域评审者。
-2. **完整阅读检查**:每位评审者读一遍全文,识别弱点(重要性、类别、具体引文)和总体信心度,以及按段落的覆盖报告。
-3. **覆盖审计**:跨评审者检查是否有段落被略读。
+2. **完整阅读检查**:每位 holistic reviewer 通读全文一遍 → 弱点(significance + kind + 逐字引文——引不出原文 = 没真读)+ 一个 overall_confidence + 按节的覆盖报告;反 skim 带定向重读模式。
+3. **覆盖审计**:反 skim 第 2 层,跨覆盖报告标出被略读的(reviewer, 节)对。
 4. **去重**:合并重复的评论,确定性地导出重要性、问题类别和交叉确认。
-5. **审议**:根据可争议性分流。对有争议的问题,进行论证和陪审团判定;无明显多数时升到 12 人陪审团。
+5. **审议(trial)**:对有争议的问题开庭——5 人首层、全文辩护 → 独立陪审员带局部上下文(可按需扩展)→ 确定性 quorum + 一方 >60% 多数裁定,法官给 decided-valid 路由(valid-fixable vs author-required);无明显多数升到 12 人。
 6. **润色**:快路径处理机械性问题和轻微问题;如果判断错误,升级回审议。
-7. **审核补救**:检查是否遗漏或误判的问题。
+7. **审核补救(recall)**:Mode A 救回被误丢的 charge(倾向于救);Mode B 在落稿前抽检强共识的 major(防共识集体出错)。
 8. **编辑起草**:对确认的可修复问题起草最小改动。
-9. **编辑审计** / **含义审计**:审查高风险编辑的通顺性和一致性,以及对核心声明的影响。
+9. **编辑审计 / 含义审计**(edit-safety 的语义半,两个独立 workflow):edit-audit 查高风险非锚改动(通顺性 + 跨节一致性);meaning-audit 是四态的冻结锚 + 论证弧审计。
 10. **书记官**:汇总本轮的结果,去重残留的问题,确定性判定是否收敛。
 
 也支持简化的 3 人评审小组作为快速路径。
@@ -113,11 +113,13 @@
 
 ### Reviewer
 
-panel 是 N 个领域专家 holistic reviewer(默认 3 个),运行时按论文 subfield 分配,共享一个资深 reviewer gatekeeper 内核(严苛、精确、建设性;把致命缺陷与可修补小问题分开;跨 section 推理)。当分配降级(headless 无法确认)时,panel 回退到三个通用 lens:
+panel 是 N 个领域专家 holistic reviewer(默认 3 个,范围 2-4),运行时按论文 subfield 分配,共享一个资深 reviewer gatekeeper 内核(严苛、精确、建设性;把致命缺陷与可修补小问题分开;跨 section 推理)。当某个 reviewer slot 无法确认(headless)时,该 slot 退回通用 gatekeeper(一个坏 slot 不拖垮整个 panel);通用回退 lens 为:
 
-- **R1 Theory/Foundations**:定义、证明缺口、记号、不变性 / 最优性 / 一般性 claim。
-- **R2 Empirical/Benchmark**:baseline 公平性 / 新旧、metric 正确性、数据集划分、方差、ablation 覆盖、cherry-picking。
-- **R3 Applied/Systems**:实用性、效率 / latency / 显存 claim、可复现性、部署现实性、scaling。
+- **Theory / Foundations**:定义、证明缺口、记号、不变性 / 最优性 / 一般性 claim。
+- **Empirical / Benchmark**:baseline 公平性 / 新旧、metric 正确性、数据集划分、方差、ablation 覆盖、cherry-picking。
+- **Applied / Systems**:实用性、效率 / latency / 显存 claim、可复现性、部署现实性、scaling。
+
+(这三类是无固定次序的倾向,不是固定 slot;reviewer 编号 `R1..RN` 是按 subfield 顺序排的位置编号。)
 
 writing toolkit 的工具名(具体 prompt 内容此处不列):`translate-to-english`、`polish-english`、`de-ai`、`compress`、`expand`、`caption`、`experiment-analysis`、`logic-check`。
 
