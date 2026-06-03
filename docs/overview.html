@@ -3,33 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>paper-review-loop · 法庭式审稿引擎 · 工作流总览</title>
-<meta name="description" content="paper-review-loop:面向 CS 会议论文的法庭式对抗审稿引擎。交互式工作流总览,从全局三模式到一案一庭的局部流程。Skill + Workflow + Memory。中英双语。">
+<title>paperjury · 法庭式审稿引擎 · 工作流总览</title>
+<meta name="description" content="paperjury:面向 CS 会议论文的法庭式对抗审稿引擎。交互式工作流总览,从全局三模式到一案一庭的局部流程。Skill + Workflow + Memory。中英双语。">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0e0f13">
 <meta property="og:type" content="website">
-<meta property="og:title" content="paper-review-loop · courtroom review engine">
+<meta property="og:title" content="paperjury · courtroom review engine">
 <meta property="og:description" content="Interactive workflow overview (EN / 中文): global three modes down to one case, one courtroom. Three modes share one engine core.">
 <!-- GH Pages:把 og:image 换成仓库的绝对 https URL 以让社交卡生效;相对路径同目录有 overview-card.png -->
 <meta property="og:image" content="overview-card.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="paper-review-loop · courtroom review engine">
+<meta name="twitter:title" content="paperjury · courtroom review engine">
 <meta name="twitter:description" content="Interactive workflow overview, global to local. EN / 中文.">
 <meta name="twitter:image" content="overview-card.png">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230e0f13'/><circle cx='7.5' cy='16' r='2.8' fill='%23d6a14b'/><circle cx='16' cy='16' r='2.8' fill='%235b9cff'/><circle cx='24.5' cy='16' r='2.8' fill='%2346c98b'/><path d='M10.3 16h2.9M18.8 16h2.9' stroke='%239a9488' stroke-width='1.6'/></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230e0f13'/><circle cx='16' cy='10.5' r='3.4' fill='%23d6a14b'/><path d='M8 19h16M8 23h11' stroke='%23ece7dd' stroke-width='1.9' stroke-linecap='round'/></svg>">
 <script>(function(){var d=document.documentElement;d.className+=' js';var lang=null;try{var m=(location.search||'').match(/[?&]lang=(en|zh)/i);if(m){lang=m[1].toLowerCase();}else{var s=localStorage.getItem('prl-lang');if(s==='en'||s==='zh')lang=s;}}catch(e){}if(lang){d.setAttribute('data-lang',lang);d.setAttribute('lang',lang);try{localStorage.setItem('prl-lang',lang);}catch(e){}}})();</script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@400;700&display=swap');
 
   :root{
     --bg:#0e0f13; --bg2:#0b0c0f;
     --paper:#16171e; --paper2:#1c1e27; --raise:#21232e;
-    --ink:#ece7dd; --muted:#9a9488; --faint:#6f6a61;
+    --ink:#ece7dd; --muted:#9a9488; --faint:#8f8a80;
     --line:#2a2c37; --line2:#363a48;
     --seal:#d6a14b;
     --wf:#5b9cff; --human:#e8a33d; --mem:#46c98b; --det:#8b91a3; --agent:#b98cff; --danger:#e5675f;
-    --serif:"Fraunces",Georgia,"Songti SC","Noto Serif CJK SC",serif;
-    --sans:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
+    --serif:"Fraunces","Noto Serif SC",Georgia,"Songti SC",serif;
+    --sans:"Hanken Grotesk","Noto Sans SC",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
     --mono:"IBM Plex Mono","SF Mono",ui-monospace,Consolas,"Noto Sans Mono CJK SC",monospace;
   }
   *{box-sizing:border-box}
@@ -37,14 +37,7 @@
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
     line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:.005em}
   body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-    background:
-      radial-gradient(120% 80% at 80% -10%, rgba(214,161,75,.07), transparent 60%),
-      radial-gradient(90% 70% at 0% 110%, rgba(91,156,255,.06), transparent 55%),
-      linear-gradient(var(--bg),var(--bg));}
-  body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
-    background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
-      linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
-    background-size:34px 34px;mask-image:radial-gradient(120% 100% at 50% 0,#000,transparent 80%)}
+    background:radial-gradient(110% 75% at 82% -12%, rgba(214,161,75,.06), transparent 58%);}
   .wrap{position:relative;z-index:1;max-width:1160px;margin:0 auto;padding:0 20px 96px}
 
   #prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;
@@ -259,13 +252,32 @@
     nav.bar .inner{overflow-x:auto;flex-wrap:nowrap}
     nav.bar .langbtn{margin-left:8px}
   }
+
+  /* --- docket / legal-filing layer (paperjury signature) --- */
+  .caption{max-width:760px;margin:20px 0 0;border:1px solid var(--line2);border-radius:10px;
+    background:linear-gradient(180deg,rgba(214,161,75,.05),var(--paper));overflow:hidden;font-family:var(--mono)}
+  .caption .cr{display:flex;justify-content:space-between;gap:14px;padding:8px 14px;border-bottom:1px solid var(--line);font-size:11.5px;color:var(--muted)}
+  .caption .cr:last-child{border-bottom:0}
+  .caption b{color:var(--ink);font-weight:600} .caption .no{color:var(--seal)}
+  .proof{margin:24px 0 0}
+  .docket{background:var(--bg2);border:1px solid var(--line2);border-radius:12px;overflow:hidden;font-family:var(--mono);font-size:12.5px}
+  .docket .dh{display:flex;justify-content:space-between;padding:8px 13px;border-bottom:1px solid var(--line);color:var(--faint);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+  .docket .row{padding:11px 14px;border-bottom:1px solid var(--line);color:var(--ink);display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+  .docket .row:last-child{border-bottom:0}
+  .docket .ch{flex:1} .docket .ch .q{display:block;color:var(--muted);margin-top:5px;border-left:2px solid var(--line2);padding-left:9px}
+  .stamp{flex:none;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    padding:3px 9px;border-radius:4px;border:1.5px solid currentColor;white-space:nowrap;transform:rotate(-1.5deg)}
+  .stamp.fix{color:#7ee2b1;border-color:rgba(70,201,139,.55)}
+  .stamp.author{color:#f2c277;border-color:rgba(232,163,61,.55)}
+  .stamp.drop{color:#f0938c;border-color:rgba(229,103,95,.55)}
+  .docket .cap2{padding:8px 14px;color:var(--faint);font-size:10.5px}
 </style>
 </head>
 <body>
 <div id="prog"></div>
 
 <nav class="bar"><div class="inner">
-  <span class="brand">paper-review-loop</span>
+  <span class="brand">paperjury</span>
   <a href="#s1"><span class="z"><span class="zh">全局</span><span class="en">global</span></span> <span class="zh">三模式</span><span class="en">Three modes</span></a>
   <a href="#s1u"><span class="z"><span class="zh">入口</span><span class="en">entry</span></span> <span class="zh">使用方式</span><span class="en">How to use</span></a>
   <a href="#s2"><span class="z"><span class="zh">中观</span><span class="en">mid</span></span> <span class="zh">引擎流水线</span><span class="en">Engine pipeline</span></a>
@@ -280,10 +292,23 @@
 
   <header class="hero reveal">
     <div class="kicker">CS-conference <span class="zh">审稿 / 改稿</span><span class="en">review / editing</span> · Skill + Workflow + Memory</div>
-    <h1><span class="zh">从全局到局部,<br>看一套<em>法庭式</em>审稿引擎如何运转</span><span class="en">From whole to part:<br>how one <em>courtroom-style</em> review engine runs</span></h1>
-    <p class="lede"><span class="zh">三模式共用<b>同一套引擎核心</b>:<b>direct-edit</b>(常态,说一句就改)、<b>review</b>(投稿前加固,法庭式逐 issue 裁决)、<b>auto</b>(无人值守,用 <span class="mono">/goal</span> 启动)。</span><span class="en">Three modes share <b>one engine core</b>: <b>direct-edit</b> (common, say it and it edits), <b>review</b> (pre-submission hardening, courtroom per-issue adjudication), <b>auto</b> (unattended, via <span class="mono">/goal</span>).</span></p>
-    <div class="hint"><span class="zh">▶ 这是<b>交互页</b>:在「引擎流水线」点 <span class="kbd">播放引擎流</span> 看一条 issue 流过;在「法庭」点 <span class="kbd">审一桩案子</span> 看一桩案子从起诉到判决走一遍。右上角 <span class="kbd">EN / 中文</span> 切换语言。</span><span class="en">▶ This is an <b>interactive page</b>. Under "Engine pipeline" click <span class="kbd">Play the engine flow</span> to watch one issue move through; under "Courtroom" click <span class="kbd">Try a case</span> to watch a case from indictment to verdict. Top-right <span class="kbd">EN / 中文</span> switches language.</span></div>
+    <h1><span class="zh">基于多智能体对抗评审的论文审查工具,投稿前就给你 <em>reviewer 级</em>的尖锐批评,让修改更有的放矢。</span><span class="en">Before a reviewer tears it apart,<br>let a <em>jury</em> do it first.</span></h1>
+    <p class="lede"><span class="zh">问 AI「我论文写得怎么样」,多半只换来一句客气话。PaperJury 反着来:N 位评审通读全文、有分歧的交给独立投票、再给出三方裁定(可修 / 需你定夺 / 不予改动),只有经你签字的改动才落地,最后还会真编译一遍。</span><span class="en">Ask an AI if your paper is any good and you get a polite yes. PaperJury argues the other side: N reviewers read the whole paper, disputes go to an independent vote and a three-way verdict (fix it / needs you / no fix), and only edits you sign off on land, then it actually compiles.</span></p>
+    <div class="caption">
+      <div class="cr"><span><b>PaperJury</b> v. Your Paper</span><span class="no">No. 26-CV-0603</span></div>
+      <div class="cr"><span><span class="zh">三模式</span><span class="en">Three modes</span> · direct-edit / review / auto</span><span>Skill + Workflow + Memory</span></div>
+    </div>
   </header>
+
+  <section class="proof reveal">
+    <div class="docket">
+      <div class="dh"><span><span class="zh">案卷 · 三条 issue 的裁定(格式示意)</span><span class="en">Docket · three issues, ruled (format)</span></span><span>ledger.json</span></div>
+      <div class="row"><div class="ch"><b>headline gain mislabeled vs the paper's own table</b><span class="q">"outperforms ... by at least 29.7 and 53.5"</span></div><span class="stamp fix">valid-fixable</span></div>
+      <div class="row"><div class="ch"><b>self-selected CDNet subset, unfalsifiable rule</b><span class="q">"exclude sequences unrelated to MOS"</span></div><span class="stamp author">author-required</span></div>
+      <div class="row"><div class="ch"><b>alleged contradiction is a misread of Table 2</b><span class="q">charge rests on a quote not in the text</span></div><span class="stamp drop">invalid-drop</span></div>
+      <div class="cap2"><span class="zh">真实的账本行 + 三方裁定:可修 / 需你定夺 / 不予改动。能判「不予改动」,一味迎合的改写工具给不出。</span><span class="en">Real ledger rows and the three-way verdict. A charge can land "no fix", which a yes-and rewriter cannot return.</span></div>
+    </div>
+  </section>
 
   <div class="legend reveal">
     <span><i class="dot" style="background:var(--wf)"></i><span class="zh">Workflow(语义 fan-out,沙箱内,无 fs)</span><span class="en">Workflow (semantic fan-out, in sandbox, no fs)</span></span>
@@ -547,7 +572,7 @@
   </section>
 
   <footer>
-    <span class="mono"><span class="zh">paper-review-loop · 工作流总览(全局 → 局部)· 交互页 · 中英双语</span><span class="en">paper-review-loop · workflow overview (global → local) · interactive · EN / 中文</span></span>
+    <span class="mono"><span class="zh">paperjury · 工作流总览(全局 → 局部)· 交互页 · 中英双语</span><span class="en">paperjury · workflow overview (global → local) · interactive · EN / 中文</span></span>
   </footer>
 
 </div>

@@ -33,7 +33,7 @@
 
 export const meta = {
   name: 'trial',
-  description: 'v3 5-tier trial: whole-paper defense -> decorrelated local-context jury (with on-demand context expansion) -> a deterministic quorum/majority verdict + a judge agent that routes a decided-valid charge (valid-fixable vs author-required). Undecided at tier-1 returns escalate (orchestrator re-runs at 12). paper-review-loop review-engine v3.',
+  description: 'v3 5-tier trial: whole-paper defense -> decorrelated local-context jury (with on-demand context expansion) -> a deterministic quorum/majority verdict + a judge agent that routes a decided-valid charge (valid-fixable vs author-required). Undecided at tier-1 returns escalate (orchestrator re-runs at 12). paperjury review-engine v3.',
   phases: [
     { title: 'Defense', detail: 'author advocate steelmans with WHOLE-PAPER context' },
     { title: 'Jury', detail: 'decorrelated jurors vote on LOCAL context, expand on demand' },

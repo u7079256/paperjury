@@ -20,7 +20,7 @@
 
 export const meta = {
   name: 'merge',
-  description: 'v3 merge: one agent semantically clusters the N reviewers\' weaknesses (and writes the wiser framing); the workflow then derives significance(MAX)/kind(substantive-dominates)/raised_by/corroboration/confidence deterministically per cluster, with a singleton fallback so nothing is dropped. paper-review-loop review-engine v3.',
+  description: 'v3 merge: one agent semantically clusters the N reviewers\' weaknesses (and writes the wiser framing); the workflow then derives significance(MAX)/kind(substantive-dominates)/raised_by/corroboration/confidence deterministically per cluster, with a singleton fallback so nothing is dropped. paperjury review-engine v3.',
   phases: [{ title: 'Merge', detail: 'cluster duplicate weaknesses across reviewers by index + pick the clearest framing' }],
 }
 

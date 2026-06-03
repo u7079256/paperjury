@@ -23,7 +23,7 @@
 
 export const meta = {
   name: 'recall-audit',
-  description: 'v3 recall: Mode A revives wrongly-dropped charges (bias to revive), Mode B spot-checks strong-consensus valid-fixable majors for correlated-wrong consensus before the edit (sound -> hold, else -> author-required). Fresh skeptics, after trial+polish, before drafter. paper-review-loop review-engine v3.',
+  description: 'v3 recall: Mode A revives wrongly-dropped charges (bias to revive), Mode B spot-checks strong-consensus valid-fixable majors for correlated-wrong consensus before the edit (sound -> hold, else -> author-required). Fresh skeptics, after trial+polish, before drafter. paperjury review-engine v3.',
   phases: [
     { title: 'Recall', detail: 'fresh skeptics try to revive each dropped charge' },
     { title: 'Spotcheck', detail: 'fresh skeptics stress-test strong-consensus valid majors' },

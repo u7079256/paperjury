@@ -20,7 +20,7 @@
 
 export const meta = {
   name: 'assign-reviewers',
-  description: 'v3 assignment: read the paper, name N subfields, instantiate N domain reviewers from the project gatekeeper persona core; config-pin wins; an optional verifier degrades an unconfirmable slot to a generic reviewer (never blocks). paper-review-loop review-engine v3.',
+  description: 'v3 assignment: read the paper, name N subfields, instantiate N domain reviewers from the project gatekeeper persona core; config-pin wins; an optional verifier degrades an unconfirmable slot to a generic reviewer (never blocks). paperjury review-engine v3.',
   phases: [
     { title: 'Assign', detail: 'one agent names N subfields + writes a domain overlay per slot' },
     { title: 'Verify', detail: 'optional cap-1 per-slot on-topic check; degrade an unconfirmable slot' },

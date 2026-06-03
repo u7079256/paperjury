@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// journal.js -- append-only, per-edit patch journal for the paper-review-loop.
+// journal.js -- append-only, per-edit patch journal for the paperjury.
 // Git-independent (so the skill stays generic): every auto-applied edit is logged
 // as its own atomic, reversible unit, so on return the author can undo ANY single
 // edit without disturbing the others. Decided 2026-05-31 (AUTO_MODE_DESIGN §7).

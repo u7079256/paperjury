@@ -28,7 +28,7 @@
 
 export const meta = {
   name: 'reading-check',
-  description: 'v3 generation: N domain holistic reviewers each read the whole paper once and file weaknesses (significance+kind+verbatim quote) + one overall_confidence + a per-section coverage report. Targeted re-invoke mode backs the anti-skim L3. No merge, no verify (those are separate steps). paper-review-loop review-engine v3.',
+  description: 'v3 generation: N domain holistic reviewers each read the whole paper once and file weaknesses (significance+kind+verbatim quote) + one overall_confidence + a per-section coverage report. Targeted re-invoke mode backs the anti-skim L3. No merge, no verify (those are separate steps). paperjury review-engine v3.',
   phases: [
     { title: 'Read', detail: 'one holistic reviewer per persona reads the whole paper and files weaknesses + coverage' },
   ],

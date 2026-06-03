@@ -1,7 +1,7 @@
-# paper-review-loop — agent guide (install, invocation, and the technical model)
+# paperjury — agent guide (install, invocation, and the technical model)
 
 > Audience: a coding agent (e.g. Claude Code) that has been asked to install or use
-> paper-review-loop / papercourt. This document is optimized for **unambiguous machine
+> paperjury / paperjury. This document is optimized for **unambiguous machine
 > parsing**, not for human readability. It is the authoritative "how to drive this skill"
 > reference. If a statement here conflicts with marketing copy in `README.md`, this file
 > and the files it cites win. Source-of-truth files are cited inline; read them when you
@@ -11,7 +11,7 @@
 
 ## 0. One-paragraph model
 
-paper-review-loop is a Claude Code **skill** (`SKILL.md` is auto-loaded when the skill is
+paperjury is a Claude Code **skill** (`SKILL.md` is auto-loaded when the skill is
 active). It edits and hardens CS-conference LaTeX papers in **three modes**: `direct-edit`
 (draft+apply one LaTeX change), `review` (run an adversarial multi-agent "courtroom" engine
 that adjudicates each issue), `auto` (run that engine unattended toward a verifiable goal).
@@ -31,15 +31,15 @@ The repo is a **bare skill directory**: `SKILL.md` at its root, plus `references
 
 Install = make the directory discoverable as a skill:
 
-1. Obtain the repo: `git clone https://github.com/u7079256/papercourt`.
+1. Obtain the repo: `git clone https://github.com/u7079256/paperjury`.
 2. Place the cloned directory under a Claude Code skills path:
    - user scope: `~/.claude/skills/<dir>/` (auto-loads for every session), or
    - project scope: `<project>/.claude/skills/<dir>/`.
    The `<dir>` name is irrelevant; discovery is by the presence of `SKILL.md` and its
-   frontmatter `name: paper-review-loop`. (On the author's machine it lives at
-   `~/.claude/skills/paper-review-loop/`.)
+   frontmatter `name: paperjury`. (On the author's machine it lives at
+   `~/.claude/skills/paperjury/`.)
 3. Verify: the skill should appear in the session's available-skills list as
-   `paper-review-loop`. No build step, no dependency install for the skill itself.
+   `paperjury`. No build step, no dependency install for the skill itself.
 
 Runtime tools the engine USES (must exist in the host environment, not bundled by the skill):
 `node` (all deterministic guards), `git` (diffing), and — only for the
@@ -78,7 +78,7 @@ This is the most commonly conflated point. Keep three layers distinct:
 | Layer | What it is | Scope | Provides |
 |---|---|---|---|
 | Claude Code **auto permission mode** | a tool-approval mode in the host (often called "auto"/"放行") | within ONE turn | removes per-TOOL approval prompts. Does NOT continue across turns. |
-| paper-review-loop **`auto` mode** (`mode: auto`) | this skill's 3rd mode = a POLICY | per candidate edit | the bounded-aggressive apply rule (apply a safe fix iff it meets `close_criterion` + edit-safety + within the rounds-cap + not an anchor; else QUEUE) + the anti-drift envelope. Sets WHAT happens to each issue. Does NOT itself loop across turns. |
+| paperjury **`auto` mode** (`mode: auto`) | this skill's 3rd mode = a POLICY | per candidate edit | the bounded-aggressive apply rule (apply a safe fix iff it meets `close_criterion` + edit-safety + within the rounds-cap + not an anchor; else QUEUE) + the anti-drift envelope. Sets WHAT happens to each issue. Does NOT itself loop across turns. |
 | **`/goal`** | a Claude Code native feature = a multi-turn DRIVER | across MANY turns | a verifiable completion condition + an independent evaluator after each turn + AUTO-CONTINUE to the next turn until the condition holds. This is what makes the loop run unattended. |
 
 Consequences (load-bearing for running `auto`):

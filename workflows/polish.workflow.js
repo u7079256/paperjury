@@ -21,7 +21,7 @@
 
 export const meta = {
   name: 'polish',
-  description: 'v3 polish track: batch copy-edit for mechanical items + batch light-check for minor-substantive items (edit/drop/escalate/flag). Off-gate, never-drop; returns exact-string patches for the edit-safety guard. paper-review-loop review-engine v3.',
+  description: 'v3 polish track: batch copy-edit for mechanical items + batch light-check for minor-substantive items (edit/drop/escalate/flag). Off-gate, never-drop; returns exact-string patches for the edit-safety guard. paperjury review-engine v3.',
   phases: [{ title: 'Polish', detail: 'one agent per item: copy-edit (mechanical) or light-check (minor-substantive)' }],
 }
 

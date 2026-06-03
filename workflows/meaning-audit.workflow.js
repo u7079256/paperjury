@@ -16,7 +16,7 @@
 
 export const meta = {
   name: 'meaning-audit',
-  description: 'Four-state spine meaning audit: judge each flagged frozen anchor (holds/weakened/contradicted/now-unsupported) + an arc-intactness pass. paper-review-loop engine core.',
+  description: 'Four-state spine meaning audit: judge each flagged frozen anchor (holds/weakened/contradicted/now-unsupported) + an arc-intactness pass. paperjury engine core.',
   phases: [
     { title: 'Audit', detail: 'one agent per flagged anchor, four-state verdict' },
     { title: 'Arc', detail: 'one agent checks the problem->solution->evidence->resolution arc is unbroken' },

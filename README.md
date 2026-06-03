@@ -1,52 +1,51 @@
 **English** · [中文](README.zh-CN.md)
 
-# paper-review-loop
+# PaperJury
 
-> A portable approach to editing and hardening any CS-conference paper, in three modes.
+> Before a reviewer tears it apart, let a jury do it first.
 
 <p align="center">
-  <a href="https://u7079256.github.io/papercourt/overview.html?lang=en"><img alt="Open the live interactive overview" src="https://img.shields.io/badge/Open_the_interactive_overview-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
+  <a href="https://u7079256.github.io/paperjury/overview.html?lang=en"><img alt="Open the live interactive overview" src="https://img.shields.io/badge/Open_the_interactive_overview-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
+  <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-3b3d47?style=for-the-badge">
 </p>
 
-A Claude Code skill that edits and hardens CS-conference papers. It is one skill exposing three modes (direct-edit, review, auto), backed by a courtroom-style review engine and deterministic guards.
+Ask an AI "is my paper any good?" and you mostly get a polite, non-committal yes. PaperJury does the opposite: it puts your manuscript in front of a panel that argues the other side. N domain reviewers read the whole paper, contested issues go to a jury that deliberates and a judge that returns a three-way verdict (fix it / needs you / no fix), and only safe, signed-off edits land. Then it runs a real LaTeX compile and deterministic desk-reject checks, so the result is verified, not just suggested.
 
-Interactive overview: the [live site](https://u7079256.github.io/papercourt/overview.html?lang=en) (GitHub Pages), or [`docs/overview.html`](docs/overview.html) in-repo.
+It is one Claude Code skill exposing three modes (direct-edit, review, auto), backed by a courtroom-style review engine and deterministic guards.
+
+Interactive overview: the [live site](https://u7079256.github.io/paperjury/overview.html?lang=en) (GitHub Pages), or [`docs/overview.html`](docs/overview.html) in-repo.
 
 ---
 
 ## Install
 
-It is a Claude Code skill (no plugin-marketplace entry yet). Install it by cloning the repo into the folder Claude Code reads skills from:
+It is a Claude Code skill. Install it by cloning the repo into the folder Claude Code reads skills from:
 
 ```bash
-git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-loop
+# macOS / Linux
+git clone https://github.com/u7079256/paperjury ~/.claude/skills/paperjury
 ```
 
-(or under `<project>/.claude/skills/` to scope it to one project). Claude Code auto-discovers it through `SKILL.md` and it shows up as the `paper-review-loop` skill. `node` is required (the deterministic checks run on it); a LaTeX toolchain is optional (only the layout/compile check uses it).
+```powershell
+# Windows (PowerShell)
+git clone https://github.com/u7079256/paperjury "$env:USERPROFILE\.claude\skills\paperjury"
+```
+
+(or under `<project>/.claude/skills/` to scope it to one project). Claude Code auto-discovers it through `SKILL.md` and it shows up as the `paperjury` skill. `node` is required (the deterministic checks run on it); a LaTeX toolchain is optional (the real-compile and layout checks use it, and degrade honestly when it is absent).
 
 **For Claude / coding agents:** the deep "how to drive this" reference is [`docs/AGENT-GUIDE.md`](docs/AGENT-GUIDE.md): install, the three modes and their triggers, the engine pipeline, the `auto` vs `/goal` distinction, and how the fan-out launches, written for an agent to read. Curious about the internals? Just point Claude at that file and ask.
 
 ---
 
-## What and why
+## What you get
 
-**What:** one skill, three modes (direct-edit, review, auto), backed by a courtroom-style review engine and deterministic guards.
+Most writing tools only push your paper forward: they draft and they polish. None of them argues the other side of your claims the way a reviewer will. PaperJury is built around that gap, in four parts.
 
-**Why this design:**
+- **Adversarial by construction.** Your paper gets due process, not one pass of suggestions: N domain reviewers read the whole paper, a contestability router sends the real disputes to a two-sided trial, a jury of 5 (escalating to 12 only when it cannot reach a clear majority) deliberates under isolation, and a judge returns one of three verdicts: fix it, needs you, or no fix. A verdict can land "no fix", which a yes-and rewriter structurally cannot return.
+- **Closed-loop, not forward-only.** Each round is a clean re-review of the edited paper (the panel never sees the prior ledger, so a re-raised issue is real corroboration, not anchoring), and a deterministic clerk reconciles every round into one ledger until a clean round surfaces nothing new. Before any edit, fresh skeptics try to revive whatever got wrongly dropped and stress-test strong-consensus verdicts.
+- **Guardrails, not autopilot.** Safe fixes land under risk-proportional safety (frozen anchors, a per-passage edit cap, an anchor and cross-section meaning audit), always behind your sign-off. Risky edits are not applied silently; they queue for one human pass.
+- **Real compile, not just critique.** It runs an actual LaTeX build on your machine and reports true errors, undefined refs, overfull boxes, and the page count, or degrades honestly to a structural lint when no toolchain is present. Deterministic desk-reject checks catch the classics: anonymization leaks, margin and spacing hacks, documentclass drift, missing required sections, page-limit overflow, checked against the constraints your project owns.
 
-- One approach spanning quick LaTeX edits through adversarial multi-agent review, instead of separate tools.
-- Adversarial by design: rigorous, precise, constructive domain reviewers that separate critical flaws from minor fixes.
-- Routing by CONTESTABILITY, not severity: deep deliberation is spent only where a charge is genuinely contested; mechanical and minor issues take a cheap polish track.
-- Human gates and author sign-off are built in, not added as an afterthought.
-- Durable cross-round, cross-session state via a machine-readable `ledger`, with a multi-round loop the clerk drives to convergence.
-
-## Scope
-
-**CS conferences only.** Three venue families, each with its own style profile:
-
-- **Vision:** CVPR, ICCV, ECCV, WACV
-- **NLP:** ACL, EMNLP, NAACL, COLING
-- **ML:** ICLR, NeurIPS, ICML, AAAI, COLM
 ---
 
 ## Three modes
@@ -120,7 +119,7 @@ The courtroom engine is `assign-reviewers → reading-check → coverage-auditor
 2. `reading-check`: N holistic reviewers each read the WHOLE paper once → weaknesses (significance + kind + verbatim quote; a reviewer that cannot quote the source did not read it) + one overall_confidence + a per-section coverage report; targeted re-invoke mode for anti-skim.
 3. `coverage-auditor`: anti-skim L2: flag skimmed (reviewer, section) pairs across the coverage reports.
 4. `merge`: semantic dedup across reviewers; the workflow derives significance (MAX) / kind (substantive-dominates) / corroboration deterministically.
-5. `trial`: a 5-juror trial tier: whole-paper defense → independent local-context jury (with on-demand context expansion) → a deterministic majority verdict (quorum reached, one side >60%) + a judge that routes a decided-valid charge (valid-fixable vs author-required); escalate to a 12-juror tier on no clear majority.
+5. `trial`: a 5-juror trial tier: whole-paper defense → independent local-context jury (with on-demand context expansion) → a deterministic majority verdict (quorum reached, one side >60%) + a judge that routes a decided-valid charge (valid-fixable vs author-required); escalate to a 12-juror tier only on no clear majority.
 6. `polish`: the track that skips the jury: batch copy-edit (mechanical) + batch light-check (minor-substantive); can escalate a misrouted major back to trial.
 7. `recall-audit`: Mode A revives wrongly-dropped charges (bias to revive); Mode B spot-checks strong-consensus majors before the edit (guards against the whole panel agreeing on the same mistake).
 8. `drafter`: minimal-edit patch for valid-fixable charges.
@@ -172,6 +171,20 @@ The writing toolkit names (prompt bodies not shown here): `translate-to-english`
 - `compile-guard.js` is explicit about what it cannot verify: when it cannot truly compile, it degrades to structural lint and reports `compiled:null`.
 - Submission-readiness is cross-mode, two parts: **A** = `compliance-check.js` plus a semantic agent; **B** = a compile-driven layout loop reusing `compile-guard.js` plus Read-on-PDF.
 
+Your paper stays local. PaperJury runs inside your own Claude Code session; it ships no venue files and writes only your `.tex`, the ledger, the journal, and the patches, in your own project. Nothing is uploaded.
+
+---
+
+## Roadmap
+
+Where this is going (planned, not yet shipped):
+
+- **Reviewer personas tuned to each venue community's taste.** CVPR, ACL, and NeurIPS reviewers do not critique the same way; the goal is a reviewer that carries each community's expectations, beyond the current three-family style context.
+- **`/plugin install` from the Claude Code plugin marketplace**, alongside the clone install above.
+- **Vision-based layout verification**: compile, render, and check the visual layout (column overflow, figure placement), not just the compile log.
+- **Automatic venue detection** from your `.cls` / template.
+- **Validation of the engine on real papers at scale.**
+
 ---
 
 ## File and path reference
@@ -189,4 +202,4 @@ The writing toolkit names (prompt bodies not shown here): `translate-to-english`
 
 ## Credits
 
-The spine and anti-drift design (the anchor logic-transfer audit, the claim register, and the minimal-edit, intent-preserving revision policy) is inspired by [PaperSpine](https://github.com/WUBING2023/PaperSpine), a motivation-driven paper drafting and rewriting skill. PaperSpine is a forward generate/rewrite tool with no adversarial loop; paper-review-loop borrows its anchoring idea and its "deterministic scripts for checkable steps, model agents for judgment" mechanism, then adds the adversarial courtroom review engine on top.
+The spine and anti-drift design (the anchor logic-transfer audit, the claim register, and the minimal-edit, intent-preserving revision policy) is inspired by [PaperSpine](https://github.com/WUBING2023/PaperSpine), a motivation-driven paper drafting and rewriting skill. PaperSpine is a forward generate/rewrite tool with no adversarial loop; PaperJury borrows its anchoring idea and its "deterministic scripts for checkable steps, model agents for judgment" mechanism, then adds the adversarial courtroom review engine on top.

@@ -23,7 +23,7 @@
 
 export const meta = {
   name: 'drafter',
-  description: 'v2 drafter: for each valid-fixable charge, draft the minimal-edit patch meeting the close_criterion without drifting a spine anchor. Proposes {before,after}; the orchestrator applies + guards. paper-review-loop review-engine v2.',
+  description: 'v2 drafter: for each valid-fixable charge, draft the minimal-edit patch meeting the close_criterion without drifting a spine anchor. Proposes {before,after}; the orchestrator applies + guards. paperjury review-engine v2.',
   phases: [{ title: 'Draft', detail: 'one author-agent per fixable charge proposes a minimal exact-string patch' }],
 }
 

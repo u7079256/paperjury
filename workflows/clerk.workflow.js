@@ -25,7 +25,7 @@
 
 export const meta = {
   name: 'clerk',
-  description: 'v3 clerk: reconcile carried open-questions vs this round\'s edits (closed/invalidated/still-open) and dedup this round\'s issues vs carried via a deterministic passage_id + similarity merge key (borderline -> genuinely-new). Emits the deterministic convergence counts. paper-review-loop review-engine v3.',
+  description: 'v3 clerk: reconcile carried open-questions vs this round\'s edits (closed/invalidated/still-open) and dedup this round\'s issues vs carried via a deterministic passage_id + similarity merge key (borderline -> genuinely-new). Emits the deterministic convergence counts. paperjury review-engine v3.',
   phases: [
     { title: 'Reconcile', detail: 'judge each carried open-question against this round\'s edits' },
     { title: 'Dedup', detail: 'match this round\'s issues to carried rows by passage_id + similarity' },

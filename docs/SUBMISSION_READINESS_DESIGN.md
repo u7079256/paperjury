@@ -142,7 +142,7 @@ explaining when the venue's two-column rules make the exact request impossible
 ## Where this fits
 Submission-readiness is a THIRD concern area for the skill, alongside (1) the
 review / edit loop and (2) auto mode. A applies across all modes as a gate / guard;
-B is a direct-edit capability. Neither is built; this note is the design record.
+B is a direct-edit capability. A ships as `scripts/compliance-check.js` (built); B (vision-based layout verification) is not yet built. This note is the design record.
 
 ## Changelog
 - 2026-06-01 v0: A (template compliance: identify + report-link + project-owned

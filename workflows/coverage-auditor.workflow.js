@@ -17,7 +17,7 @@
 
 export const meta = {
   name: 'coverage-auditor',
-  description: 'v3 anti-skim L2: one auditor judges coverage QUALITY across all reviewers\' per-section coverage reports + the whole paper, flagging skimmed (reviewer,section) pairs incl. cross-reviewer disagreement. Files no charges. paper-review-loop review-engine v3.',
+  description: 'v3 anti-skim L2: one auditor judges coverage QUALITY across all reviewers\' per-section coverage reports + the whole paper, flagging skimmed (reviewer,section) pairs incl. cross-reviewer disagreement. Files no charges. paperjury review-engine v3.',
   phases: [{ title: 'Coverage', detail: 'audit per-section coverage across reviewers; flag skims' }],
 }
 

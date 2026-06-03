@@ -19,7 +19,7 @@
 
 export const meta = {
   name: 'edit-audit',
-  description: 'v3 edit-safety: judge each RISKY non-anchor edit for make-sense + cross-section alignment against the other passages its changed tokens appear in. holds -> apply; drift -> queue. Generalizes meaning-audit beyond frozen anchors. paper-review-loop review-engine v3.',
+  description: 'v3 edit-safety: judge each RISKY non-anchor edit for make-sense + cross-section alignment against the other passages its changed tokens appear in. holds -> apply; drift -> queue. Generalizes meaning-audit beyond frozen anchors. paperjury review-engine v3.',
   phases: [{ title: 'EditAudit', detail: 'one agent per risky edit: in-place sense + cross-section consistency' }],
 }
 

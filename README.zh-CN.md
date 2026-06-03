@@ -1,52 +1,51 @@
 [English](README.md) · **中文**
 
-# paper-review-loop
+# PaperJury
 
-> 一套可复用的方法,用来编辑并加固任意 CS 会议论文,提供三种模式。
+> PaperJury:基于多智能体对抗评审的论文审查工具,投稿前就给你 reviewer 级的尖锐批评,让修改更有的放矢。
 
 <p align="center">
-  <a href="https://u7079256.github.io/papercourt/overview.html?lang=zh"><img alt="打开在线交互式总览" src="https://img.shields.io/badge/在线交互式总览-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
+  <a href="https://u7079256.github.io/paperjury/overview.html?lang=zh"><img alt="打开在线交互式总览" src="https://img.shields.io/badge/在线交互式总览-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
+  <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-3b3d47?style=for-the-badge">
 </p>
 
-一个 Claude Code skill,负责编辑并加固 CS 会议论文。它是同一个 skill 暴露出的三种模式(direct-edit、review、auto),底层由一套庭审式(courtroom)review 引擎和确定性 guards 支撑。
+问 AI「我论文写得怎么样」,多半只换来一句客气、不痛不痒的肯定。PaperJury 反着来:让一支严苛的多视角评审团替反方把关。N 位领域评审各自通读全文,有分歧的问题交给多位互相独立的评审投票、再由裁决环节给出三种结论(可修 / 需你定夺 / 不予改动);只有安全、且经你签字的改动才会落地。之后它还会在本机真编译一遍 LaTeX、跑一遍确定性的 desk-reject 检查,所以结论是验证过的,不只是嘴上建议。
 
-交互式总览:[在线站点](https://u7079256.github.io/papercourt/overview.html?lang=zh)(GitHub Pages),或仓库内 [`docs/overview.html`](docs/overview.html)。
+它是一个 Claude Code skill,同一个 skill 暴露三种模式(direct-edit、review、auto),底层是一套把这些角色按「庭审」组织起来的对抗式评审引擎(检方 = 各评审、陪审团 = 独立投票、法官 = 三方裁决、书记官 = 多轮收敛)加一组确定性 guards。
+
+交互式总览:[在线站点](https://u7079256.github.io/paperjury/overview.html?lang=zh)(GitHub Pages),或仓库内 [`docs/overview.html`](docs/overview.html)。
 
 ---
 
 ## 安装
 
-它是一个 Claude Code skill(暂无 plugin 市场入口)。把仓库 clone 进 Claude Code 读取 skill 的目录即可:
+它是一个 Claude Code skill。把仓库 clone 进 Claude Code 读取 skill 的目录即可:
 
 ```bash
-git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-loop
+# macOS / Linux
+git clone https://github.com/u7079256/paperjury ~/.claude/skills/paperjury
 ```
 
-(或放在 `<项目>/.claude/skills/` 下,只对单个项目生效)。Claude Code 通过 `SKILL.md` 自动发现它,随后以 `paper-review-loop` 出现在 skill 列表里。需要 `node`(确定性检查在它上面跑);LaTeX 工具链可选(只有版面/编译检查用得到)。
+```powershell
+# Windows (PowerShell)
+git clone https://github.com/u7079256/paperjury "$env:USERPROFILE\.claude\skills\paperjury"
+```
+
+(或放在 `<项目>/.claude/skills/` 下,只对单个项目生效)。Claude Code 通过 `SKILL.md` 自动发现它,随后以 `paperjury` 出现在 skill 列表里。需要 `node`(确定性检查在它上面跑);LaTeX 工具链可选(真编译和版面检查用得到,没有时会诚实降级)。
 
 **给 Claude / 编码 agent:** 更深的「怎么驱动它」参考是 [`docs/AGENT-GUIDE.md`](docs/AGENT-GUIDE.md):安装、三种模式及触发、引擎管线、`auto` 与 `/goal` 的区别、fan-out 怎么启动,都是写给 agent 读的。想了解内部细节,让 Claude 读这个文件后再问它。
 
 ---
 
-## 这是什么 / 为什么
+## 它能给你什么
 
-**是什么:** 一个 skill,三种模式(direct-edit、review、auto),底层由一套庭审式 review 引擎和确定性 guards 支撑。
+大多数写作工具只会把论文往前推:起草、润色。没有一个会像审稿人那样,站到你论断的对立面去较真。PaperJury 就是冲着这个缺口设计的,分四块。
 
-**为什么这样设计:**
+- **对抗式,机制内建。** 不是一遍改写建议,而是一整套正当程序:N 位领域评审通读全文,可争议性路由把真正有分歧的问题送去双方对辩,5 位(只有迟迟没有明显多数时才升到 12 位)互相独立的评审在隔离下审议,裁决给出三种结论:可修、需你定夺、不予改动。能给出「不予改动」,一味迎合的改写工具在机制上就做不到。
+- **闭环多轮,而非单向前推。** 每一轮都是对改后稿的干净复评(评审看不到上一轮的台账,所以同一个问题被再次提出就是真正的相互印证,而不是被锚定),书记官按确定性规则把每一轮归并进同一份台账,直到某一轮干净复评不再冒出新问题。落任何改动之前,新的怀疑者会先试着救回被错误丢弃的问题,并复核强共识的结论。
+- **是护栏,不是自动驾驶。** 安全的改动在风险匹配的防护下落地(冻结锚点、单段改动次数上限、锚点与跨节的语义复核),而且始终经你签字。有风险的改动不会被悄悄写入,而是排队等你过一遍。
+- **真编译,不只是嘴上批评。** 它在你本机真跑一次 LaTeX 构建,报出真实的报错、未定义引用、overfull box 和页数;本机没有工具链时,诚实降级为结构性检查。确定性的 desk-reject 检查抓那些经典坑:去匿名泄漏、页边距和行距的小动作、documentclass 漂移、缺失的必需章节、超页,全部对照你项目自己持有的约束来查。
 
-- 一套方法覆盖从快速 LaTeX 编辑到对抗式多 agent review 的全过程,而不是各自为政的零散工具。
-- 对抗式 review 是构造层面就定下的:一支严苛、精确、建设性的领域 reviewer,把致命缺陷和可修补的小问题分开。
-- 路由按 CONTESTABILITY(可争议性)而非 severity:只在指控真正存在争议时才投入深度审议,机械类和 minor 问题走廉价的 polish track。
-- 人工把关与作者签字是内置的核心环节,不是事后补上的。
-- 跨轮、跨会话的持久状态靠一份机器可读的 `ledger`,并由书记官(clerk)收敛的多轮循环驱动。
-
-## 适用范围
-
-**仅限 CS 会议。** 三大 venue 家族,各有自己的 style profile:
-
-- **Vision**: CVPR, ICCV, ECCV, WACV
-- **NLP**: ACL, EMNLP, NAACL, COLING
-- **ML**: ICLR, NeurIPS, ICML, AAAI, COLM
 ---
 
 ## 三种模式
@@ -59,8 +58,8 @@ git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-l
 
 ### Review(偶尔)
 
-- **触发方式:** 用户想给论文挑问题、做加固:review / critique / 审稿 / 评审 / mock-review,或迭代草稿、逐一解决评审者提出的问题。
-- **行为:** 启动庭审式评审引擎(`references/review-engine-v3.md`)。
+- **触发方式:** 用户想给论文挑问题、做审查:review / critique / 审稿 / 评审 / mock-review,或迭代草稿、逐一解决评审者提出的问题。
+- **行为:** 启动对抗式评审引擎(`references/review-engine-v3.md`)。
 - **范围子触发:** `full`(整篇)或 `passage`(某一节 / 段落 / claim)。
 
 ### Auto(无人值守)
@@ -87,7 +86,7 @@ git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-l
 - "这是评审提的问题,迭代草稿逐一解决。"
 - → 它跑对抗引擎,挑出真正的弱点(把致命缺陷和小问题分开),逐条和你过一遍:你给方向,它起草,经你授权才改;未经你签字不改稿。
 
-**无人值守朝目标加固(→ auto,需要 `/goal`):**
+**无人值守朝目标打磨(→ auto,需要 `/goal`):**
 - `/goal "harden the paper until ledger.js gate passes(0 个阻断 gate 的 major)"`
 - → 它自己跑多轮评审-修订循环,自动落安全 fix,把有风险的改动入队,等你回来一次性处理。这需要 `/goal` 驱动:只开 "auto" 工具放行 + 发普通 prompt 只跑一轮就停,不会循环(原因见 [`docs/AGENT-GUIDE.md`](docs/AGENT-GUIDE.md) §3)。
 
@@ -100,11 +99,11 @@ git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-l
 
 ## 引擎总览
 
-庭审引擎的步骤为:评审员分配 → 完整阅读检查 → 覆盖审计 → 去重 →(审议 ‖ 润色) → 召回审计 → 编辑起草 → 编辑 / 含义审计 → 书记官收敛。生成端有界(N 个领域评审者),审议端按争议程度分流,多轮循环由确定性的书记官判定收敛。
+引擎把这些环节按「庭审」组织起来,步骤为:评审员分配 → 完整阅读检查 → 覆盖审计 → 去重 →(审议 ‖ 润色) → 召回审计 → 编辑起草 → 编辑 / 含义审计 → 书记官收敛。生成端有界(N 个领域评审者),审议端按争议程度分流,多轮循环由确定性的书记官判定收敛。
 
 ### 确定性步骤
 
-1. **读稿分解**:把手稿切成阅读单元、规范的段落列表、稳定的段落编号(防止漂移,为陪审团提供局部上下文)。
+1. **读稿分解**:把手稿切成阅读单元、规范的段落列表、稳定的段落编号(防止漂移,为评审提供局部上下文)。
 2. **核心声明**(仅 auto 模式):提取核心声明,获得作者确认,冻结为配置。
 3. **账本**:活跃问题状态的机器可读源,跨轮跨会话持久化。包含 gate 逻辑(没有阻断 gate 的活跃 major 即为完成;author-required 不阻断 gate,累计进人工队列)。
 4. **日志**:编辑历史的仅追加记录,支持回滚。
@@ -120,7 +119,7 @@ git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-l
 2. **完整阅读检查**:每位 holistic reviewer 通读全文一遍 → 弱点(significance + kind + 逐字引文,引不出原文 = 没真读)+ 一个 overall_confidence + 按节的覆盖报告;反 skim 带定向重读模式。
 3. **覆盖审计**:反 skim 第 2 层,跨覆盖报告标出被略读的(reviewer, 节)对。
 4. **去重**:合并重复的评论,确定性地导出重要性、问题类别和交叉确认。
-5. **审议(trial)**:对有争议的问题开庭:5 人首层、全文辩护 → 独立陪审员带局部上下文(可按需扩展)→ 确定性 quorum + 一方 >60% 多数裁定,法官给 decided-valid 路由(valid-fixable vs author-required);无明显多数升到 12 人。
+5. **审议(trial)**:对有争议的问题开庭:5 人首层、全文辩护 → 独立陪审员带局部上下文(可按需扩展)→ 确定性 quorum + 一方 >60% 多数裁定,法官给 decided-valid 路由(valid-fixable vs author-required);只有迟迟没有明显多数时才升到 12 人。
 6. **润色**:快路径处理机械性问题和轻微问题;如果判断错误,升级回审议。
 7. **审核补救(recall)**:Mode A 救回被误丢的 charge(倾向于救);Mode B 在落稿前抽检强共识的 major(防共识集体出错)。
 8. **编辑起草**:对确认的可修复问题起草最小改动。
@@ -134,7 +133,7 @@ git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-l
 ## 三原语:Skill + Workflow + Memory
 
 1. **Skill(入口 + 方法论):** 协议、reviewer 分配、consensus gate、writing toolkit、人工 gate。详见 `references/review-engine-v3.md`、`references/reviewer-personas.md`、`references/writing-toolkit.md`。
-2. **Workflow(fan-out 引擎):** 语义层、无人居中的步骤以 Workflow 运行(并行 + 构造上即 schema 校验的输出)。简单 panel = `workflows/review-panel.workflow.js`;庭审引擎 = `assign-reviewers → reading-check → coverage-auditor → merge → {trial ‖ polish} → recall-audit → drafter → {edit-audit | meaning-audit} → clerk`。确定性 guards 由 orchestrator 侧经 Bash 在各 workflow 调用之间运行,因为 Workflow sandbox 没有 fs:`scripts/` 里有 `decompose`、`ledger`、`journal`、`apply-patch`、`anchor-diff`、`cross-ref`、`spine`、`compile-guard`、`compliance-check`。
+2. **Workflow(fan-out 引擎):** 语义层、无人居中的步骤以 Workflow 运行(并行 + 构造上即 schema 校验的输出)。简单 panel = `workflows/review-panel.workflow.js`;评审引擎 = `assign-reviewers → reading-check → coverage-auditor → merge → {trial ‖ polish} → recall-audit → drafter → {edit-audit | meaning-audit} → clerk`。确定性 guards 由 orchestrator 侧经 Bash 在各 workflow 调用之间运行,因为 Workflow sandbox 没有 fs:`scripts/` 里有 `decompose`、`ledger`、`journal`、`apply-patch`、`anchor-diff`、`cross-ref`、`spine`、`compile-guard`、`compliance-check`。
 3. **Memory(持久状态 + 习得约定),两层:**
    - **Ledger**:运行时解析出的 `LEDGER.json` 是机器层的 source of truth,外加一份渲染出的 `LEDGER.md` 视图;由 `scripts/ledger.js` 管理。它是跨轮、跨会话的活的、可变的 issue 状态。schema 与状态机见 `references/ledger-schema.md`。
    - **Claude memory**:当前项目的 memory:值得下次会话回忆起的稳定约定(本论文的 house style、venue、persona 调校)。
@@ -169,6 +168,19 @@ writing toolkit 的工具名(具体 prompt 内容此处不列):`translate-to-eng
 - Workflow sandbox 没有文件系统、也没有子进程;正因如此,所有确定性 guards 都由 orchestrator 侧经 Bash 在各 workflow 调用之间运行。
 - compile-guard.js 对不可验证性诚实:无法真正编译时,降级到结构 lint 并报告 compiled:null。
 - 提交就绪检查跨模式,分两部分:A = compliance-check.js + 一个语义 agent;B = 复用 compile-guard.js 的编译驱动版面循环,配合对 PDF 的 Read。
+- 你的论文留在本地。PaperJury 全程在你自己的 Claude Code session 里跑,不内置任何会议文件,只写你项目里的 `.tex`、台账、日志和补丁,什么都不上传。
+
+---
+
+## Roadmap / 即将到来
+
+还在路上(规划中,尚未上线):
+
+- **评审人格带上每个会议 community 的 taste。** CVPR、ACL、NeurIPS 的 reviewer 挑刺的口味并不一样;目标是让评审带上各自社区的预期,而不只是现在的三族 style 上下文。
+- **支持 `/plugin install`**,从 Claude Code 的 plugin 市场直接装(clone 安装仍保留)。
+- **基于视觉的版面校验**:编译、渲染、再检查版面(分栏溢出、图表摆放),不只看编译日志。
+- **从 `.cls` / 模板自动识别 venue。**
+- **在更多真实论文上规模化验证引擎。**
 
 ---
 
@@ -187,4 +199,4 @@ writing toolkit 的工具名(具体 prompt 内容此处不列):`translate-to-eng
 
 ## Credits / 致谢
 
-spine 与防漂移设计(anchor logic-transfer audit、claim register、minimal-edit 且保义的改写策略)受 [PaperSpine](https://github.com/WUBING2023/PaperSpine) 启发,它是一个 motivation-driven 的论文起草与改写 skill。PaperSpine 是 forward generate/rewrite 工具、没有对抗 loop;paper-review-loop 借用它的 anchoring 思路,以及「可检查步骤交给确定性脚本、判断交给 model agent」这一机制,再在其上加了对抗式庭审 review 引擎。
+spine 与防漂移设计(anchor logic-transfer audit、claim register、minimal-edit 且保义的改写策略)受 [PaperSpine](https://github.com/WUBING2023/PaperSpine) 启发,它是一个 motivation-driven 的论文起草与改写 skill。PaperSpine 是 forward generate/rewrite 工具、没有对抗 loop;PaperJury 借用它的 anchoring 思路,以及「可检查步骤交给确定性脚本、判断交给 model agent」这一机制,再在其上加了对抗式庭审 review 引擎。

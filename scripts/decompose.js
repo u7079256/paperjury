@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// decompose.js -- a pragmatic, LaTeX-aware sectioner for the paper-review-loop.
+// decompose.js -- a pragmatic, LaTeX-aware sectioner for the paperjury.
 // Produces (a) section-level UNITS for the reading-check fan-out (one agent reads
 // one coherent unit) and (b) paragraph-level PASSAGES each with a cross-round
 // STABLE passage_id, which the auto per-passage rounds-touched counter and the

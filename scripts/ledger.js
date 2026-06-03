@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// ledger.js -- the paper-review-loop ledger: JSON source of truth + rendered
+// ledger.js -- the paperjury ledger: JSON source of truth + rendered
 // Markdown view (decided 2026-06-01, D1). Dependency-free Node. Works as a
 // require() module AND as a Bash-callable CLI, because the deterministic guards
 // run orchestrator-side between workflow calls (the Workflow sandbox has no fs).

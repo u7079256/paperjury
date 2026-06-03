@@ -1,5 +1,5 @@
 ---
-name: paper-review-loop
+name: paperjury
 description: Three modes for CS-conference papers (CVPR/ICCV/ECCV vision, ACL/EMNLP/NAACL NLP, ICLR/NeurIPS/ICML/AAAI ML). DIRECT-EDIT mode (common): the user describes a change in Chinese or English and the LaTeX is edited directly through a CS-venue writing toolkit with author sign-off (use for 改这段 / 把中文想法写成 latex / polish / de-AI / translate / compress a passage). REVIEW mode (occasional, pre-submission): harden the paper through an adversarial courtroom review engine (N holistic domain reviewers / contestability routing / two-sided trial / three-way verdict / clerk-converged multi-round loop) with consensus-gated, author-signed revisions (use for review / critique / 审稿 / 评审 / mock-review). AUTO mode (unattended, opt-in via /goal): run the review-revise loop toward a verifiable goal, applying safe fixes under a drift-bounded policy and queueing risky ones. Resolves all inputs at runtime, no hardcoded paths. Not a from-scratch drafter (use ml-paper-writing) and not an official-venue rebuttal.
 version: 0.5.0
 author: Yiran Wang
@@ -7,9 +7,9 @@ license: MIT
 tags: [Academic Writing, Peer Review, Adversarial Review, CVPR, ICCV, ECCV, ACL, EMNLP, NAACL, ICLR, NeurIPS, ICML, AAAI, Workflow, LaTeX]
 ---
 
-# Paper Review Loop (CS-conference paper editing and review)
+# PaperJury (CS-conference paper review and editing)
 
-A portable paradigm for editing and hardening any CS-conference paper. It runs in
+PaperJury edits and hardens any CS-conference paper. It runs in
 three modes. In **direct-edit mode** (the common case) the user describes a change
 in Chinese or English and the LaTeX is edited directly through a CS-venue writing
 toolkit, with author sign-off. In **review mode** (occasional, pre-submission) it
@@ -91,8 +91,9 @@ each input by **discovery first, then asking**:
 
 - **manuscript**: detect the main source (the `.tex` with `\documentclass` /
   `\begin{document}`, or the file the user names). If several candidates, ask.
-- **venue_family**: infer from the template / class file or content (e.g. a
-  cvpr/iccv style, an acl style, a neurips/iclr style). If unclear, ask.
+- **venue_family**: the user can name it, or an agent reads the class file to
+  GUESS the family (e.g. a cvpr/iccv style, an acl style, a neurips/iclr style).
+  There is no hardcoded venue list and no deterministic detector; if unclear, ask.
 - **ledger**: default to `<manuscript-dir>/.paper-review/LEDGER.json` (the machine
   source of truth; `scripts/ledger.js` also renders a `LEDGER.md` view). Create if
   absent, reuse if present. The user may point elsewhere.
@@ -253,7 +254,7 @@ runs low.
 
 ## Capabilities and status
 
-The review engine is built and has been adversarially validated. The submission-readiness checker prevents desk rejection and ensures layout compliance. Auto mode runs the review-revise loop toward a goal under a drift-bounded policy, applying safe fixes and queueing risky ones for author review. Known limitation: auto mode has not yet been validated end-to-end on a real paper.
+Built: the review engine; the submission-readiness checker (deterministic desk-reject screening plus a real LaTeX compile, degrading to a structural lint when no toolchain is present); and auto mode (the review-revise loop toward a goal under a drift-bounded policy, applying safe fixes and queueing risky ones for author review). Roadmap: vision-based layout verification, automatic venue detection from the class file, and reviewer personas tuned to each venue community.
 
 ## Related skills
 

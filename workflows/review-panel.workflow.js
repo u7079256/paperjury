@@ -1,4 +1,4 @@
-// review-panel.workflow.js  -- the fan-out engine for the paper-review-loop skill.
+// review-panel.workflow.js  -- the fan-out engine for the paperjury skill.
 //
 // Under ultracode this runs the STRONG form: loop-until-dry panels with
 // adversarial verification. With ultracode off, pass {maxRounds:1, verify:false}
@@ -45,7 +45,7 @@
 
 export const meta = {
   name: 'review-panel',
-  description: 'Adversarial N-reviewer panel over one frozen paper unit, with loop-until-dry re-runs and perspective-diverse refutation of each issue. paper-review-loop skill.',
+  description: 'Adversarial N-reviewer panel over one frozen paper unit, with loop-until-dry re-runs and perspective-diverse refutation of each issue. paperjury skill.',
   phases: [
     { title: 'Review', detail: 'N isolated reviewers per pass, each returns a schema-validated issue table' },
     { title: 'Merge', detail: 'dedupe within the pass and against everything seen so far' },
