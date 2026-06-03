@@ -14,6 +14,20 @@ Interactive overview: the [live site](https://u7079256.github.io/papercourt/over
 
 ---
 
+## Install
+
+It is a Claude Code skill (no plugin-marketplace entry yet). Install it by cloning the repo into the folder Claude Code reads skills from:
+
+```bash
+git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-loop
+```
+
+(or under `<project>/.claude/skills/` to scope it to one project). Claude Code auto-discovers it through `SKILL.md` and it shows up as the `paper-review-loop` skill. `node` is required (the deterministic checks run on it); a LaTeX toolchain is optional (only the layout/compile check uses it).
+
+**For Claude / coding agents:** the deep "how to drive this" reference is [`docs/AGENT-GUIDE.md`](docs/AGENT-GUIDE.md) — install, the three modes and their triggers, the engine pipeline, the `auto` vs `/goal` distinction, and how the fan-out launches, written for an agent to read. Curious about the internals? Just point Claude at that file and ask.
+
+---
+
 ## What and why
 
 **What:** one skill, three modes (direct-edit, review, auto), backed by a courtroom-style review engine and deterministic guards.
@@ -60,13 +74,30 @@ Scope is exactly these three families and these venue names: no journals, system
 
 ---
 
-## How to trigger / quick start
+## Usage examples — what to do when
 
-Say what you want; the skill routes to a mode:
+You don't run commands; you say what you want and the skill picks the mode.
 
-- Want a direct LaTeX edit → just describe the change (e.g., "polish this paragraph", "把这段改成…"). → **Direct-Edit mode.**
-- Want critique or hardening → say review / critique / 审稿 / 评审 / mock-review, optionally scoped `full` or `passage`. → **Review mode.**
-- Want an unattended loop toward a goal → opt in explicitly via `/goal` or config `mode: auto`. → **Auto mode.**
+**Edit one thing (the everyday case → direct-edit):**
+- "Polish this paragraph." / "把这段 intro 改紧一些。"
+- "Turn my Chinese note for the intro into LaTeX: `<your idea>`."
+- "De-AI this paragraph." / "Compress this sentence to one line." / "Rewrite this caption."
+- → it drafts the LaTeX change, self-checks it, shows you the patch, and applies it after you approve. No panel.
+
+**Get the paper critiqued before submission (→ review):**
+- "Review my paper." / "审稿。" / "Mock-review this before I submit."
+- "Critique just Section 3.2." / "review passage `<the claim you paste>`."
+- "Here are the issues a reviewer raised — iterate the draft to clear them."
+- → it runs the adversarial engine, surfaces the real weaknesses (separating fatal flaws from nits), and walks you through each: you give direction, it drafts fixes you authorize. Nothing changes without your sign-off.
+
+**Harden it unattended toward a goal (→ auto, needs `/goal`):**
+- `/goal "harden the paper until ledger.js gate passes (0 gate-blocking major)"`
+- → it runs the review-revise loop across many rounds on its own, applying safe fixes and queueing risky ones for one pass when you return. This needs the `/goal` driver: turning on "auto" tool-permission and sending a normal prompt runs one round and stops, it does not loop (see [`docs/AGENT-GUIDE.md`](docs/AGENT-GUIDE.md) §3).
+
+**Make sure it won't get desk-rejected:**
+- "Run the submission-readiness / compliance check." → deterministic format screening + a compile-driven layout check.
+
+Rule of thumb: **one change → just say it; want it picked apart → say "review"; want it run unattended → `/goal`.**
 
 ---
 

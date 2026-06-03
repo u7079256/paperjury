@@ -14,6 +14,20 @@
 
 ---
 
+## 安装
+
+它是一个 Claude Code skill(暂无 plugin 市场入口)。把仓库 clone 进 Claude Code 读取 skill 的目录即可:
+
+```bash
+git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-loop
+```
+
+(或放在 `<项目>/.claude/skills/` 下,只对单个项目生效)。Claude Code 通过 `SKILL.md` 自动发现它,随后以 `paper-review-loop` 出现在 skill 列表里。需要 `node`(确定性检查在它上面跑);LaTeX 工具链可选(只有版面/编译检查用得到)。
+
+**给 Claude / 编码 agent:** 更深的「怎么驱动它」参考是 [`docs/AGENT-GUIDE.md`](docs/AGENT-GUIDE.md) —— 安装、三种模式及触发、引擎管线、`auto` 与 `/goal` 的区别、fan-out 怎么启动,都是写给 agent 读的。好奇内部细节,直接让 Claude 读这个文件再问它。
+
+---
+
 ## 这是什么 / 为什么
 
 **是什么:** 一个 skill,三种模式(direct-edit、review、auto),底层由一套庭审式 review 引擎和确定性 guards 支撑。
@@ -60,13 +74,30 @@
 
 ---
 
-## 如何触发 / quick start
+## 使用示例:什么情况该怎么做
 
-说出想要什么,skill 会把请求路由到对应模式:
+你不用敲命令;说出想要什么,skill 自己选模式。
 
-- 想直接改 LaTeX → 直接描述改动(如 "polish this paragraph"、"把这段改成…")。→ **Direct-Edit 模式。**
-- 想批评 / 加固 → 说 review / critique / 审稿 / 评审 / mock-review,可选范围 `full` 或 `passage`。→ **Review 模式。**
-- 想要朝目标无人值守循环 → 通过 `/goal` 或配置 `mode: auto` 显式开启。→ **Auto 模式。**
+**改一处(日常 → direct-edit):**
+- "把这段 intro 改紧一些。" / "Polish this paragraph."
+- "把我对 intro 的中文想法写成 LaTeX:`<你的想法>`。"
+- "de-AI 这段。" / "这句压到一行。" / "重写这个 caption。"
+- → 它起草 LaTeX 改动、自检、把补丁给你看,你批准后才落。不开面板。
+
+**投稿前让它挑刺(→ review):**
+- "审稿。" / "Review my paper." / "投之前 mock-review 一下。"
+- "只评 Section 3.2。" / "review passage `<你贴的那条 claim>`。"
+- "这是评审提的问题,迭代草稿把它们清掉。"
+- → 它跑对抗引擎,挑出真正的弱点(把致命缺陷和小毛病分开),逐条带你走:你给方向,它起草、你授权才改。没你签字不动稿。
+
+**无人值守朝目标加固(→ auto,需要 `/goal`):**
+- `/goal "harden the paper until ledger.js gate passes(0 个阻断 gate 的 major)"`
+- → 它自己跑多轮评审-修订循环,自动落安全 fix、把有风险的入队等你回来一次过。这需要 `/goal` 驱动:只开 "auto" 工具放行 + 发普通 prompt 只跑一轮就停,不会循环(原因见 [`docs/AGENT-GUIDE.md`](docs/AGENT-GUIDE.md) §3)。
+
+**确认不会被 desk-reject:**
+- "跑一下 submission-readiness / 合规检查。" → 确定性的格式筛查 + 编译驱动的版面检查。
+
+一句话:**改一处 → 直接说;想被挑刺 → 说「审稿」;想无人值守 → `/goal`。**
 
 ---
 
