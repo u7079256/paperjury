@@ -2,7 +2,7 @@
 
 # paper-review-loop
 
-> 一套可移植的范式,用来编辑并加固任意 CS 会议论文,提供三种模式。
+> 一套可复用的方法,用来编辑并加固任意 CS 会议论文,提供三种模式。
 
 <p align="center">
   <a href="https://u7079256.github.io/papercourt/overview.html?lang=zh"><img alt="打开在线交互式总览" src="https://img.shields.io/badge/在线交互式总览-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
@@ -24,7 +24,7 @@ git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-l
 
 (或放在 `<项目>/.claude/skills/` 下,只对单个项目生效)。Claude Code 通过 `SKILL.md` 自动发现它,随后以 `paper-review-loop` 出现在 skill 列表里。需要 `node`(确定性检查在它上面跑);LaTeX 工具链可选(只有版面/编译检查用得到)。
 
-**给 Claude / 编码 agent:** 更深的「怎么驱动它」参考是 [`docs/AGENT-GUIDE.md`](docs/AGENT-GUIDE.md) —— 安装、三种模式及触发、引擎管线、`auto` 与 `/goal` 的区别、fan-out 怎么启动,都是写给 agent 读的。好奇内部细节,直接让 Claude 读这个文件再问它。
+**给 Claude / 编码 agent:** 更深的「怎么驱动它」参考是 [`docs/AGENT-GUIDE.md`](docs/AGENT-GUIDE.md):安装、三种模式及触发、引擎管线、`auto` 与 `/goal` 的区别、fan-out 怎么启动,都是写给 agent 读的。想了解内部细节,让 Claude 读这个文件后再问它。
 
 ---
 
@@ -34,10 +34,10 @@ git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-l
 
 **为什么这样设计:**
 
-- 一套范式覆盖从快速 LaTeX 编辑到对抗式多 agent review 的全过程,而不是各自为政的零散工具。
+- 一套方法覆盖从快速 LaTeX 编辑到对抗式多 agent review 的全过程,而不是各自为政的零散工具。
 - 对抗式 review 是构造层面就定下的:一支严苛、精确、建设性的领域 reviewer,把致命缺陷和可修补的小问题分开。
 - 路由按 CONTESTABILITY(可争议性)而非 severity:只在指控真正存在争议时才投入深度审议,机械类和 minor 问题走廉价的 polish track。
-- 人工 gate 与作者 sign-off 是一等公民,不是事后补的。
+- 人工把关与作者签字是内置的核心环节,不是事后补上的。
 - 跨轮、跨会话的持久状态靠一份机器可读的 `ledger`,并由书记官(clerk)收敛的多轮循环驱动。
 
 ## 适用范围
@@ -47,9 +47,6 @@ git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-l
 - **Vision**: CVPR, ICCV, ECCV, WACV
 - **NLP**: ACL, EMNLP, NAACL, COLING
 - **ML**: ICLR, NeurIPS, ICML, AAAI, COLM
-
-范围就是这三个家族、这些会议名,不含期刊、系统类 venue 或 workshop。
-
 ---
 
 ## 三种模式
@@ -62,7 +59,7 @@ git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-l
 
 ### Review(偶尔)
 
-- **触发方式:** 用户想给论文挑刺、做加固:review / critique / 审稿 / 评审 / mock-review,或者迭代一份草稿来清掉评审者提出的问题。
+- **触发方式:** 用户想给论文挑问题、做加固:review / critique / 审稿 / 评审 / mock-review,或迭代草稿、逐一解决评审者提出的问题。
 - **行为:** 启动庭审式评审引擎(`references/review-engine-v3.md`)。
 - **范围子触发:** `full`(整篇)或 `passage`(某一节 / 段落 / claim)。
 
@@ -70,13 +67,13 @@ git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-l
 
 - **触发方式:** 用户通过 `/goal` 或配置 `mode: auto` 显式开启无人值守循环,让评审与修订循环朝一个可验证的目标推进。
 - **硬约束:** 绝不自动进入 auto 模式,仅能显式开启;它没有任何运行时信号,只能通过 `/goal` 上下文或项目配置 `mode: auto` 进入。
-- **行为:** 先获取作者对核心方向和评审分配的确认,之后引擎按预授权的 bounded-aggressive + 编辑安全策略,自动落安全 fix、把有风险的改动入队,多轮迭代到停下为止——书记官判定收敛,或 applied-quiescence / 硬上限兜底(详见 `references/auto-mode.md`)。
+- **行为:** 先获取作者对核心方向和评审分配的确认,之后引擎按预授权的 bounded-aggressive + 编辑安全策略,自动落安全 fix、把有风险的改动入队,多轮迭代到停下为止:书记官判定收敛,或 applied-quiescence / 硬上限兜底(详见 `references/auto-mode.md`)。
 
 ---
 
 ## 使用示例:什么情况该怎么做
 
-你不用敲命令;说出想要什么,skill 自己选模式。
+你不用输入命令;说出想要什么,skill 会自己选对模式。
 
 **改一处(日常 → direct-edit):**
 - "把这段 intro 改紧一些。" / "Polish this paragraph."
@@ -84,20 +81,20 @@ git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-l
 - "de-AI 这段。" / "这句压到一行。" / "重写这个 caption。"
 - → 它起草 LaTeX 改动、自检、把补丁给你看,你批准后才落。不开面板。
 
-**投稿前让它挑刺(→ review):**
+**投稿前让它挑问题(→ review):**
 - "审稿。" / "Review my paper." / "投之前 mock-review 一下。"
 - "只评 Section 3.2。" / "review passage `<你贴的那条 claim>`。"
-- "这是评审提的问题,迭代草稿把它们清掉。"
-- → 它跑对抗引擎,挑出真正的弱点(把致命缺陷和小毛病分开),逐条带你走:你给方向,它起草、你授权才改。没你签字不动稿。
+- "这是评审提的问题,迭代草稿逐一解决。"
+- → 它跑对抗引擎,挑出真正的弱点(把致命缺陷和小问题分开),逐条和你过一遍:你给方向,它起草,经你授权才改;未经你签字不改稿。
 
 **无人值守朝目标加固(→ auto,需要 `/goal`):**
 - `/goal "harden the paper until ledger.js gate passes(0 个阻断 gate 的 major)"`
-- → 它自己跑多轮评审-修订循环,自动落安全 fix、把有风险的入队等你回来一次过。这需要 `/goal` 驱动:只开 "auto" 工具放行 + 发普通 prompt 只跑一轮就停,不会循环(原因见 [`docs/AGENT-GUIDE.md`](docs/AGENT-GUIDE.md) §3)。
+- → 它自己跑多轮评审-修订循环,自动落安全 fix,把有风险的改动入队,等你回来一次性处理。这需要 `/goal` 驱动:只开 "auto" 工具放行 + 发普通 prompt 只跑一轮就停,不会循环(原因见 [`docs/AGENT-GUIDE.md`](docs/AGENT-GUIDE.md) §3)。
 
 **确认不会被 desk-reject:**
 - "跑一下 submission-readiness / 合规检查。" → 确定性的格式筛查 + 编译驱动的版面检查。
 
-一句话:**改一处 → 直接说;想被挑刺 → 说「审稿」;想无人值守 → `/goal`。**
+一句话:**改一处 → 直接说;想挑问题 → 说「审稿」;想无人值守 → `/goal`。**
 
 ---
 
@@ -120,10 +117,10 @@ git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-l
 ### 语义步骤
 
 1. **评审员分配**:根据论文研究方向,实例化 N 个领域评审者。
-2. **完整阅读检查**:每位 holistic reviewer 通读全文一遍 → 弱点(significance + kind + 逐字引文——引不出原文 = 没真读)+ 一个 overall_confidence + 按节的覆盖报告;反 skim 带定向重读模式。
+2. **完整阅读检查**:每位 holistic reviewer 通读全文一遍 → 弱点(significance + kind + 逐字引文,引不出原文 = 没真读)+ 一个 overall_confidence + 按节的覆盖报告;反 skim 带定向重读模式。
 3. **覆盖审计**:反 skim 第 2 层,跨覆盖报告标出被略读的(reviewer, 节)对。
 4. **去重**:合并重复的评论,确定性地导出重要性、问题类别和交叉确认。
-5. **审议(trial)**:对有争议的问题开庭——5 人首层、全文辩护 → 独立陪审员带局部上下文(可按需扩展)→ 确定性 quorum + 一方 >60% 多数裁定,法官给 decided-valid 路由(valid-fixable vs author-required);无明显多数升到 12 人。
+5. **审议(trial)**:对有争议的问题开庭:5 人首层、全文辩护 → 独立陪审员带局部上下文(可按需扩展)→ 确定性 quorum + 一方 >60% 多数裁定,法官给 decided-valid 路由(valid-fixable vs author-required);无明显多数升到 12 人。
 6. **润色**:快路径处理机械性问题和轻微问题;如果判断错误,升级回审议。
 7. **审核补救(recall)**:Mode A 救回被误丢的 charge(倾向于救);Mode B 在落稿前抽检强共识的 major(防共识集体出错)。
 8. **编辑起草**:对确认的可修复问题起草最小改动。

@@ -2,7 +2,7 @@
 
 # paper-review-loop
 
-> A portable paradigm for editing and hardening any CS-conference paper, in three modes.
+> A portable approach to editing and hardening any CS-conference paper, in three modes.
 
 <p align="center">
   <a href="https://u7079256.github.io/papercourt/overview.html?lang=en"><img alt="Open the live interactive overview" src="https://img.shields.io/badge/Open_the_interactive_overview-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
@@ -24,7 +24,7 @@ git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-l
 
 (or under `<project>/.claude/skills/` to scope it to one project). Claude Code auto-discovers it through `SKILL.md` and it shows up as the `paper-review-loop` skill. `node` is required (the deterministic checks run on it); a LaTeX toolchain is optional (only the layout/compile check uses it).
 
-**For Claude / coding agents:** the deep "how to drive this" reference is [`docs/AGENT-GUIDE.md`](docs/AGENT-GUIDE.md) — install, the three modes and their triggers, the engine pipeline, the `auto` vs `/goal` distinction, and how the fan-out launches, written for an agent to read. Curious about the internals? Just point Claude at that file and ask.
+**For Claude / coding agents:** the deep "how to drive this" reference is [`docs/AGENT-GUIDE.md`](docs/AGENT-GUIDE.md): install, the three modes and their triggers, the engine pipeline, the `auto` vs `/goal` distinction, and how the fan-out launches, written for an agent to read. Curious about the internals? Just point Claude at that file and ask.
 
 ---
 
@@ -34,11 +34,11 @@ git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-l
 
 **Why this design:**
 
-- One paradigm spanning quick LaTeX edits through adversarial multi-agent review, instead of separate tools.
-- Adversarial-by-construction review: harsh, precise, constructive domain reviewers that separate fatal flaws from fixable nits.
+- One approach spanning quick LaTeX edits through adversarial multi-agent review, instead of separate tools.
+- Adversarial by design: rigorous, precise, constructive domain reviewers that separate critical flaws from minor fixes.
 - Routing by CONTESTABILITY, not severity: deep deliberation is spent only where a charge is genuinely contested; mechanical and minor issues take a cheap polish track.
-- Human gates and author sign-off are first-class, not bolted on.
-- Durable cross-round, cross-session state via a machine-readable `ledger`, with a clerk-converged multi-round loop.
+- Human gates and author sign-off are built in, not added as an afterthought.
+- Durable cross-round, cross-session state via a machine-readable `ledger`, with a multi-round loop the clerk drives to convergence.
 
 ## Scope
 
@@ -47,9 +47,6 @@ git clone https://github.com/u7079256/papercourt ~/.claude/skills/paper-review-l
 - **Vision:** CVPR, ICCV, ECCV, WACV
 - **NLP:** ACL, EMNLP, NAACL, COLING
 - **ML:** ICLR, NeurIPS, ICML, AAAI, COLM
-
-Scope is exactly these three families and these venue names: no journals, systems venues, or workshops.
-
 ---
 
 ## Three modes
@@ -70,11 +67,11 @@ Scope is exactly these three families and these venue names: no journals, system
 
 - **Trigger (explicit only):** opt in via `/goal` (or config `mode: auto`) to run the review-revise loop unattended toward a verifiable goal.
 - **Hard constraint:** **auto is never self-detected; it is explicit only.** There is no runtime signal for it, so it is entered only via a `/goal` context or a project config `mode: auto`.
-- **Behavior:** establish the `spine` and the reviewer assignment up front (the human steps), then the engine applies safe fixes under the bounded-aggressive + edit-safety policy, queues the rest, and runs multiple rounds until it stops — on clerk convergence, or an applied-quiescence / hard-limit backstop. See `references/auto-mode.md`.
+- **Behavior:** establish the `spine` and the reviewer assignment up front (the human steps), then the engine applies safe fixes under the bounded-aggressive + edit-safety policy, queues the rest, and runs multiple rounds until it stops: on clerk convergence, or an applied-quiescence / hard-limit backstop. See `references/auto-mode.md`.
 
 ---
 
-## Usage examples — what to do when
+## Usage examples: what to do when
 
 You don't run commands; you say what you want and the skill picks the mode.
 
@@ -87,7 +84,7 @@ You don't run commands; you say what you want and the skill picks the mode.
 **Get the paper critiqued before submission (→ review):**
 - "Review my paper." / "审稿。" / "Mock-review this before I submit."
 - "Critique just Section 3.2." / "review passage `<the claim you paste>`."
-- "Here are the issues a reviewer raised — iterate the draft to clear them."
+- "Here are the issues a reviewer raised; iterate the draft to clear them."
 - → it runs the adversarial engine, surfaces the real weaknesses (separating fatal flaws from nits), and walks you through each: you give direction, it drafts fixes you authorize. Nothing changes without your sign-off.
 
 **Harden it unattended toward a goal (→ auto, needs `/goal`):**
@@ -107,25 +104,25 @@ The courtroom engine is `assign-reviewers → reading-check → coverage-auditor
 
 ### Deterministic stages (orchestrator-side, Node via Bash)
 
-1. `decompose`: split manuscript into reading units, the canonical section list, and stable `passage-id`s (the anti-drift substrate and the juror local-context source).
+1. `decompose`: split manuscript into reading units, the canonical section list, and stable `passage-id`s (which prevent text drift and give jurors local context).
 2. `spine` (auto only): extract anchors, author confirm, freeze → `spine.json`.
 3. `ledger.js`: JSON ledger plus MD view; **gate = `/goal` completion fact** (0 gate-blocking active major; author-required is gate-OK and accumulates to the human queue). CLI: init/add/set/count/gate/get/docket/unadjudicated/render.
 4. `journal.js`: append-only per-edit revert log (JSONL).
 5. `apply-patch.js`: atomic apply plus journal of a drafted patch, and revert (exact-once guard on `before` text).
 6. `anchor-diff.js`: locate frozen anchors; flag which `need_audit` when the support region changed.
-7. `cross-ref.js`: edit-safety risk pre-filter: does a CHANGED salient token in a patch appear in OTHER passages?
-8. `compile-guard.js`: real LaTeX compile (latexmk/pdflatex) or a degraded structural-lint path with `compiled:null` (honest unverifiability).
+7. `cross-ref.js`: edit-safety risk pre-filter: does a changed salient token in a patch appear in other passages?
+8. `compile-guard.js`: real LaTeX compile (latexmk/pdflatex) or a degraded structural-lint path with `compiled:null` (it reports when it cannot verify).
 9. `compliance-check.js`: submission-readiness A: deterministic desk-reject screening.
 
 ### Semantic stages (workflow fan-out)
 
 1. `assign-reviewers`: name N subfields, instantiate N domain reviewers from the project gatekeeper core + a generated domain overlay; config-pin / verifier / per-slot degrade headless.
-2. `reading-check`: N holistic reviewers each read the WHOLE paper once → weaknesses (significance + kind + verbatim quote — a reviewer that cannot quote the source did not read it) + one overall_confidence + a per-section coverage report; targeted re-invoke mode for anti-skim.
+2. `reading-check`: N holistic reviewers each read the WHOLE paper once → weaknesses (significance + kind + verbatim quote; a reviewer that cannot quote the source did not read it) + one overall_confidence + a per-section coverage report; targeted re-invoke mode for anti-skim.
 3. `coverage-auditor`: anti-skim L2: flag skimmed (reviewer, section) pairs across the coverage reports.
 4. `merge`: semantic dedup across reviewers; the workflow derives significance (MAX) / kind (substantive-dominates) / corroboration deterministically.
-5. `trial`: a 5-juror trial tier: whole-paper defense → independent local-context jury (with on-demand context expansion) → a deterministic quorum/majority verdict + a judge that routes a decided-valid charge (valid-fixable vs author-required); escalate to a 12-juror tier on no clear majority.
-6. `polish`: the off-gate track: batch copy-edit (mechanical) + batch light-check (minor-substantive); can escalate a misrouted major back to trial.
-7. `recall-audit`: Mode A revives wrongly-dropped charges (bias to revive); Mode B spot-checks strong-consensus majors before the edit (guards a correlated-wrong consensus).
+5. `trial`: a 5-juror trial tier: whole-paper defense → independent local-context jury (with on-demand context expansion) → a deterministic majority verdict (quorum reached, one side >60%) + a judge that routes a decided-valid charge (valid-fixable vs author-required); escalate to a 12-juror tier on no clear majority.
+6. `polish`: the track that skips the jury: batch copy-edit (mechanical) + batch light-check (minor-substantive); can escalate a misrouted major back to trial.
+7. `recall-audit`: Mode A revives wrongly-dropped charges (bias to revive); Mode B spot-checks strong-consensus majors before the edit (guards against the whole panel agreeing on the same mistake).
 8. `drafter`: minimal-edit patch for valid-fixable charges.
 9. `edit-audit` / `meaning-audit`: the edit-safety semantic half: `edit-audit` checks a risky non-anchor edit (make-sense + cross-section alignment); `meaning-audit` is the four-state frozen-anchor + arc audit.
 10. `clerk`: the round boundary: reconcile carried open-questions against this round's edits, dedup re-raises via a deterministic passage_id + similarity merge key, and emit the deterministic convergence counts.
@@ -172,7 +169,7 @@ The writing toolkit names (prompt bodies not shown here): `translate-to-english`
 ## Architecture notes
 
 - The Workflow sandbox has **no filesystem and no subprocess**; that is why all deterministic guards run orchestrator-side via Bash between workflow calls.
-- `compile-guard.js` is honest about unverifiability: when it cannot truly compile, it degrades to structural lint and reports `compiled:null`.
+- `compile-guard.js` is explicit about what it cannot verify: when it cannot truly compile, it degrades to structural lint and reports `compiled:null`.
 - Submission-readiness is cross-mode, two parts: **A** = `compliance-check.js` plus a semantic agent; **B** = a compile-driven layout loop reusing `compile-guard.js` plus Read-on-PDF.
 
 ---
