@@ -145,7 +145,7 @@ per-issue direction, authorizes edits, breaks ties). Workflows run to completion
 and return a result; they do not pause mid-run for hours of human input. So:
 
 - fan-out steps (reviewers, trial, polish, recall, merge) -> **Workflow**
-- human gates (direction, authorization, tiebreak) -> **main conversation turns**
+- human gates (per-issue direction, authorization, override) -> **main conversation turns**
 - cross-round truth (the ledger) + stable conventions -> **Memory**
 
 ## Review mode: one round, end to end
@@ -227,7 +227,7 @@ ledger schema + status machine: `references/review-engine-v3.md`,
 - At round start: recall the paper's conventions (house style, venue, persona
   tuning) from memory; read the resolved `LEDGER.json` for open issues.
 - During the round: the ledger is the only mutable truth; update it at merge,
-  discussion, tiebreak, and close.
+  trial verdicts, recall, and close.
 - After the round: persist any newly learned stable convention to memory (e.g. a
   house-style rule a reviewer surfaced), not the transient issue state.
 
