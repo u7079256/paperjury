@@ -291,22 +291,22 @@
 <div class="wrap">
 
   <header class="hero reveal">
-    <div class="kicker">CS-conference <span class="zh">审稿 / 改稿</span><span class="en">review / editing</span> · Skill + Workflow + Memory</div>
-    <h1><span class="zh">基于多智能体对抗评审的论文审查工具,投稿前就给你 <em>reviewer 级</em>的尖锐批评,让修改更有的放矢。</span><span class="en">Before a reviewer tears it apart,<br>let a <em>jury</em> do it first.</span></h1>
-    <p class="lede"><span class="zh">问 AI「我论文写得怎么样」,多半只换来一句客气话。PaperJury 反着来:N 位评审通读全文、有分歧的交给独立投票、再给出三方裁定(可修 / 需你定夺 / 不予改动),只有经你签字的改动才落地,最后还会真编译一遍。</span><span class="en">Ask an AI if your paper is any good and you get a polite yes. PaperJury argues the other side: N reviewers read the whole paper, disputes go to an independent vote and a three-way verdict (fix it / needs you / no fix), and only edits you sign off on land, then it actually compiles.</span></p>
+    <div class="kicker"><span class="zh">CS 论文预审 / 改稿 · Claude Code Skill · Workflow + Memory</span><span class="en">CS-conference review / editing · Skill + Workflow + Memory</span></div>
+    <h1><span class="zh">投稿前,先做一轮<br>AI 审稿压力测试。</span><span class="en">Before a reviewer tears it apart,<br>let a <em>jury</em> do it first.</span></h1>
+    <p class="lede"><span class="zh">直接问 AI「我论文怎么样」,答案常常像抽奖:要么泛泛夸好,要么无限挑刺。<br><br>PaperJury 会把审稿、裁定、修改、复查做成闭环:多位 reviewer 通读全文,争议问题进入裁定;能修的自动修,缺实验或证据的交给作者,不成立的问题直接丢弃;修改到收益变小时就停止,避免越改越偏。</span><span class="en">Ask an AI if your paper is any good and you get a polite yes. PaperJury argues the other side: N reviewers read the whole paper, disputes go to an independent vote and a three-way verdict (fix it / needs you / no fix), and only edits you sign off on land, then it actually compiles.</span></p>
     <div class="caption">
       <div class="cr"><span><b>PaperJury</b> v. Your Paper</span><span class="no">No. 26-CV-0603</span></div>
-      <div class="cr"><span><span class="zh">三模式</span><span class="en">Three modes</span> · direct-edit / review / auto</span><span>Skill + Workflow + Memory</span></div>
+      <div class="cr"><span><span class="zh">三种模式</span><span class="en">Three modes</span> · direct-edit / review / auto</span><span>Skill + Workflow + Memory</span></div>
     </div>
   </header>
 
   <section class="proof reveal">
     <div class="docket">
-      <div class="dh"><span><span class="zh">案卷 · 三条 issue 的裁定(格式示意)</span><span class="en">Docket · three issues, ruled (format)</span></span><span>ledger.json</span></div>
-      <div class="row"><div class="ch"><b>headline gain mislabeled vs the paper's own table</b><span class="q">"outperforms ... by at least 29.7 and 53.5"</span></div><span class="stamp fix">valid-fixable</span></div>
-      <div class="row"><div class="ch"><b>self-selected CDNet subset, unfalsifiable rule</b><span class="q">"exclude sequences unrelated to MOS"</span></div><span class="stamp author">author-required</span></div>
-      <div class="row"><div class="ch"><b>alleged contradiction is a misread of Table 2</b><span class="q">charge rests on a quote not in the text</span></div><span class="stamp drop">invalid-drop</span></div>
-      <div class="cap2"><span class="zh">真实的账本行 + 三方裁定:可修 / 需你定夺 / 不予改动。能判「不予改动」,一味迎合的改写工具给不出。</span><span class="en">Real ledger rows and the three-way verdict. A charge can land "no fix", which a yes-and rewriter cannot return.</span></div>
+      <div class="dh"><span><span class="zh">案卷 · 三类问题,三种处理(格式示意)</span><span class="en">Docket · three issues, ruled (format)</span></span><span>ledger.json</span></div>
+      <div class="row"><div class="ch"><b>headline gain mislabeled vs the paper's own table</b><span class="q">"outperforms ... by at least 29.7 and 53.5"</span></div><span class="stamp fix"><span class="zh">可自动修</span><span class="en">valid-fixable</span></span></div>
+      <div class="row"><div class="ch"><b>self-selected CDNet subset, unfalsifiable rule</b><span class="q">"exclude sequences unrelated to MOS"</span></div><span class="stamp author"><span class="zh">需作者补</span><span class="en">author-required</span></span></div>
+      <div class="row"><div class="ch"><b>alleged contradiction is a misread of Table 2</b><span class="q">charge rests on a quote not in the text</span></div><span class="stamp drop"><span class="zh">不成立</span><span class="en">invalid-drop</span></span></div>
+      <div class="cap2"><span class="zh">真实 issue 会进入 ledger:能修的写成补丁;缺证据的交给作者;误判的问题不进入稿件。</span><span class="en">Real ledger rows and the three-way verdict. A charge can land "no fix", which a yes-and rewriter cannot return.</span></div>
     </div>
   </section>
 
@@ -347,7 +347,7 @@
         <ul>
           <li><span class="zh">同一引擎,移除人类,人工确认环节 → 预授权策略 + 待办队列</span><span class="en">Same engine, human removed; gates → pre-authorized policy + return queue</span></li>
           <li><span class="zh">防漂移:冻结 spine + 四个状态的 meaning audit + 每段改动上限</span><span class="en">Anti-drift: frozen spine + four-state meaning audit + per-passage cap</span></li>
-          <li><span class="zh">书记官判定收敛即止(或无新改动 / 触发硬上限)· 完成 = <span class="mono">ledger.js gate</span></span><span class="en">stops at clerk convergence (or applied-quiescence / a hard limit) · completion = <span class="mono">ledger.js gate</span></span></li>
+          <li><span class="zh">收敛检查通过后停止迭代(或无新改动 / 触发硬上限)· 完成 = <span class="mono">ledger.js gate</span></span><span class="en">stops at clerk convergence (or applied-quiescence / a hard limit) · completion = <span class="mono">ledger.js gate</span></span></li>
         </ul>
       </div>
     </div>
