@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>paperjury · 投稿前的 AI 审稿压力测试 · 工作流总览</title>
-<meta name="description" content="paperjury：面向 CS 会议论文的投稿前 AI 审稿。把审稿、裁定、修改、复查做成闭环：能修的自动修，缺实验或证据的交给作者，不成立的丢弃。交互式工作流总览，Skill + Workflow + Memory，中英双语，界面沿用法庭式呈现。">
+<title>PaperJury · 投稿前的 AI 审稿压力测试 · 工作流总览</title>
+<meta name="description" content="PaperJury：面向 CS 会议论文的投稿前 AI 审稿压力测试。把审稿、裁定、修改、复查做成闭环：能安全改的交给补丁流程，缺实验或证据的交给作者，不成立的意见直接驳回。">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0e0f13">
 <meta property="og:type" content="website">
@@ -22,10 +22,10 @@
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@400;700&display=swap');
 
   :root{
-    --bg:#0e0f13; --bg2:#0b0c0f;
-    --paper:#16171e; --paper2:#1c1e27; --raise:#21232e;
-    --ink:#ece7dd; --muted:#9a9488; --faint:#8f8a80;
-    --line:#2a2c37; --line2:#363a48;
+    --bg:#10100d; --bg2:#0b0b09;
+    --paper:#171713; --paper2:#202019; --raise:#29281f;
+    --ink:#f0eadf; --muted:#aaa194; --faint:#898175;
+    --line:#302f27; --line2:#484335;
     --seal:#d6a14b;
     --wf:#5b9cff; --human:#e8a33d; --mem:#46c98b; --det:#8b91a3; --agent:#b98cff; --danger:#e5675f;
     --serif:"Fraunces","Noto Serif SC",Georgia,"Songti SC",serif;
@@ -35,49 +35,71 @@
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
-    line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:.005em}
+    line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:0}
   body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-    background:radial-gradient(110% 75% at 82% -12%, rgba(214,161,75,.06), transparent 58%);}
-  .wrap{position:relative;z-index:1;max-width:1160px;margin:0 auto;padding:0 20px 96px}
+    background:
+      linear-gradient(90deg,rgba(214,161,75,.05),transparent 36%,transparent 64%,rgba(91,156,255,.04)),
+      repeating-linear-gradient(0deg,transparent 0 31px,rgba(236,231,221,.035) 32px),
+      repeating-linear-gradient(90deg,transparent 0 39px,rgba(236,231,221,.025) 40px);
+    opacity:.75}
+  body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:linear-gradient(180deg,rgba(11,11,9,.2),rgba(11,11,9,.72));}
+  .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 24px 104px}
 
   #prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;
     background:linear-gradient(90deg,var(--seal),var(--wf));box-shadow:0 0 12px rgba(214,161,75,.5)}
-  nav.bar{position:sticky;top:0;z-index:30;margin:0 -20px;
-    backdrop-filter:blur(10px);background:rgba(14,15,19,.72);border-bottom:1px solid var(--line)}
-  nav.bar .inner{max-width:1160px;margin:0 auto;padding:9px 20px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  nav.bar{position:sticky;top:0;z-index:30;margin:0;
+    backdrop-filter:blur(16px);background:rgba(16,16,13,.82);border-bottom:1px solid rgba(214,161,75,.18)}
+  nav.bar .inner{max-width:1180px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
   nav.bar .brand{font-family:var(--mono);font-size:12px;color:var(--seal);font-weight:600;margin-right:8px;white-space:nowrap}
-  nav.bar a{font-size:12px;color:var(--muted);text-decoration:none;padding:5px 9px;border-radius:7px;
+  nav.bar a{font-size:12px;color:var(--muted);text-decoration:none;padding:5px 9px;border-radius:8px;
     border:1px solid transparent;display:inline-flex;gap:6px;align-items:center;white-space:nowrap;transition:.18s}
-  nav.bar a .z{font-family:var(--mono);font-size:9.5px;color:var(--faint);letter-spacing:.06em}
+  nav.bar a .z{font-family:var(--mono);font-size:9.5px;color:var(--faint);letter-spacing:0}
   nav.bar a:hover{color:var(--ink);background:var(--paper2)}
   nav.bar a.active{color:var(--ink);border-color:var(--line2);background:var(--paper2)}
   nav.bar a.active .z{color:var(--seal)}
   nav.bar .langbtn{margin-left:auto;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--seal);
-    background:var(--paper2);border:1px solid var(--line2);border-radius:7px;padding:5px 11px;cursor:pointer;white-space:nowrap;transition:.18s}
+    background:var(--paper2);border:1px solid var(--line2);border-radius:8px;padding:5px 11px;cursor:pointer;white-space:nowrap;transition:.18s}
   nav.bar .langbtn:hover{color:#f2d59a;border-color:var(--seal);background:var(--paper)}
   nav.bar .langbtn:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
 
-  header.hero{padding:54px 0 26px;border-bottom:1px solid var(--line)}
-  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--seal)}
-  h1{font-family:var(--serif);font-weight:900;font-size:clamp(34px,6vw,58px);line-height:1.02;margin:14px 0 0;letter-spacing:-.01em}
+  header.hero{padding:72px 0 36px;border-bottom:1px solid rgba(214,161,75,.16)}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(330px,.92fr);gap:34px;align-items:center;min-height:min(620px,calc(100vh - 190px))}
+  .hero-copy{min-width:0}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:0;text-transform:uppercase;color:var(--seal)}
+  h1{font-family:var(--serif);font-weight:900;font-size:clamp(38px,6vw,70px);line-height:.98;margin:16px 0 0;letter-spacing:0}
   h1 em{font-style:italic;color:var(--seal)}
-  .lede{max-width:760px;color:var(--muted);font-size:16px;margin:16px 0 0}
+  .mobbr{display:none}
+  .lede{max-width:760px;color:var(--muted);font-size:17px;margin:18px 0 0}
   .lede b{color:var(--ink);font-weight:600}
+  .hero-visual{border:1px solid rgba(214,161,75,.28);background:linear-gradient(180deg,rgba(214,161,75,.08),rgba(23,23,19,.92));border-radius:8px;overflow:hidden;box-shadow:0 22px 60px rgba(0,0,0,.28)}
+  .verdict-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:15px 16px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .verdict-title{font-family:var(--serif);font-size:18px;color:var(--ink);font-weight:600}
+  .verdict-case{color:var(--seal);white-space:nowrap}
+  .verdict-body{padding:16px;display:grid;gap:10px}
+  .verdict-row{display:grid;grid-template-columns:78px 1fr;gap:12px;align-items:start;border:1px solid var(--line);border-left:4px solid var(--line2);border-radius:8px;background:rgba(11,11,9,.38);padding:11px 12px}
+  .verdict-row.fix{border-left-color:var(--mem)}
+  .verdict-row.author{border-left-color:var(--human)}
+  .verdict-row.drop{border-left-color:var(--danger)}
+  .verdict-tag{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--ink);text-transform:uppercase}
+  .verdict-copy b{display:block;font-size:14px;margin-bottom:3px}
+  .verdict-copy span{display:block;color:var(--muted);font-size:12.5px}
+  .verdict-foot{padding:10px 16px 14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--faint);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
   .status{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}
   .pill{font-family:var(--mono);font-size:11px;font-weight:500;padding:5px 11px;border-radius:999px;border:1px solid var(--line2);color:var(--muted);background:var(--paper)}
   .pill.live{color:#bfeed6;border-color:rgba(70,201,139,.45);background:rgba(70,201,139,.1)}
   .pill.live::before{content:"●";color:var(--mem);margin-right:6px;font-size:9px;vertical-align:1px}
   .pill.seal{color:#f2d59a;border-color:rgba(214,161,75,.45);background:rgba(214,161,75,.1)}
   .hint{margin-top:18px;font-size:13px;color:var(--muted);background:var(--paper);border:1px solid var(--line2);
-    border-left:3px solid var(--seal);border-radius:10px;padding:10px 14px;max-width:760px}
+    border-left:3px solid var(--seal);border-radius:8px;padding:10px 14px;max-width:760px}
   .hint b{color:#f2d59a}
   .hint .kbd{font-family:var(--mono);font-size:11px}
 
   section{scroll-margin-top:62px;padding:46px 0 4px}
   .h2{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:0 0 6px}
   .h2 .idx{font-family:var(--mono);font-size:13px;color:var(--seal);font-weight:600}
-  .h2 h2{font-family:var(--serif);font-weight:600;font-size:27px;margin:0;letter-spacing:-.01em}
-  .zoom{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+  .h2 h2{font-family:var(--serif);font-weight:600;font-size:27px;margin:0;letter-spacing:0}
+  .zoom{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:0;text-transform:uppercase;color:var(--faint);border:1px solid var(--line);border-radius:6px;padding:3px 8px}
   .sub{color:var(--muted);font-size:14px;margin:2px 0 20px;max-width:880px}
   .sub b{color:var(--ink)}
 
@@ -92,18 +114,18 @@
   .tag.mem{background:rgba(70,201,139,.15);color:#7ee2b1;border:1px solid rgba(70,201,139,.4)}
   .tag.det{background:rgba(139,145,163,.15);color:#bcc1cd;border:1px solid rgba(139,145,163,.4)}
 
-  .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 18px;position:relative}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px 18px;position:relative}
 
   .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-  .mode{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 17px;border-top:3px solid;overflow:hidden}
-  .mode .lab{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.06em}
+  .mode{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(23,23,19,.92));border:1px solid var(--line);border-radius:8px;padding:16px 17px;border-top:3px solid;overflow:hidden}
+  .mode .lab{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:0}
   .mode h3{font-family:var(--serif);font-weight:600;font-size:18px;margin:8px 0 2px}
   .mode .freq{font-size:11.5px;color:var(--faint);font-family:var(--mono)}
   .mode ul{margin:11px 0 0;padding-left:17px;font-size:13px;color:var(--muted)}
   .mode li{margin:5px 0}
   .mode .ok{font-family:var(--mono);font-size:10px;color:#7ee2b1;border:1px solid rgba(70,201,139,.4);background:rgba(70,201,139,.1);border-radius:5px;padding:1px 7px;margin-left:7px;font-weight:600}
 
-  .core{margin-top:16px;background:linear-gradient(180deg,rgba(214,161,75,.07),var(--paper));border:1px solid var(--line2);border-left:3px solid var(--seal);border-radius:14px;padding:16px 18px}
+  .core{margin-top:16px;background:linear-gradient(180deg,rgba(214,161,75,.07),var(--paper));border:1px solid var(--line2);border-left:3px solid var(--seal);border-radius:8px;padding:16px 18px}
   .core .ttl{font-family:var(--serif);font-size:16px;font-weight:600;margin-bottom:8px}
   .core .ttl span{font-size:12px;color:var(--muted);font-family:var(--sans);font-weight:400}
   .chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
@@ -122,14 +144,14 @@
   .runbtn.primary{background:linear-gradient(180deg,rgba(214,161,75,.22),var(--paper2));border-color:rgba(214,161,75,.55);color:#f2d59a}
   .stepind{font-family:var(--mono);font-size:11px;color:var(--muted)}
   .cap{min-height:40px;font-size:13px;color:var(--ink);background:var(--paper2);border:1px solid var(--line);
-    border-left:3px solid var(--seal);border-radius:10px;padding:10px 13px;margin-top:13px;transition:border-color .3s}
+    border-left:3px solid var(--seal);border-radius:8px;padding:10px 13px;margin-top:13px;transition:border-color .3s}
   .cap .ph{color:var(--faint)}
   .cap b{color:#f2d59a}
 
   /* 流水线 */
-  .flow{display:grid;grid-template-columns:repeat(8,1fr);gap:0;align-items:stretch;margin-top:6px;position:relative}
-  .node{position:relative;padding:0 6px}
-  .node .box{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:11px 11px 12px;height:100%;
+  .flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:stretch;margin-top:6px;position:relative}
+  .node{position:relative;padding:0}
+  .node .box{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:12px 12px 13px;height:100%;
     border-top:3px solid var(--line2);transition:border-color .3s,box-shadow .3s,transform .3s,background .3s}
   .node.det .box{border-top-color:var(--det)} .node.wf .box{border-top-color:var(--wf)} .node.human .box{border-top-color:var(--human)}
   .node .n{font-family:var(--mono);font-size:10px;color:var(--faint)}
@@ -137,7 +159,7 @@
   .node p{font-size:11.5px;color:var(--muted);margin:0}
   .node .file{font-family:var(--mono);font-size:10px;color:var(--wf);margin-top:7px;display:block;word-break:break-all}
   .node.det .file{color:var(--det)} .node.human .file{color:var(--human)}
-  .node::after{content:"›";position:absolute;right:-7px;top:50%;transform:translateY(-50%);color:var(--line2);font-size:20px;z-index:2;transition:color .3s,text-shadow .3s}
+  .node::after{display:none}
   .node:last-child::after{display:none}
   .node.lit .box{border-top-color:var(--seal)}
   .node.lit::after{color:var(--seal);text-shadow:0 0 10px rgba(214,161,75,.6)}
@@ -150,10 +172,10 @@
   .band{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 2px;font-size:11.5px;color:var(--muted)} .band b{color:var(--ink)}
 
   /* 法庭平面图 */
-  .court{background:radial-gradient(120% 90% at 50% 0,rgba(214,161,75,.06),transparent 60%),var(--bg2);
-    border:1.5px solid var(--line2);border-radius:18px;padding:20px;margin-top:4px}
+  .court{background:linear-gradient(180deg,rgba(214,161,75,.06),transparent 42%),var(--bg2);
+    border:1.5px solid var(--line2);border-radius:8px;padding:20px;margin-top:4px}
   .court .bench{display:flex;justify-content:center;margin-bottom:14px}
-  .seat{border-radius:11px;padding:10px 13px;border:1px solid var(--line2);background:var(--paper);text-align:center;min-width:0;
+  .seat{border-radius:8px;padding:10px 13px;border:1px solid var(--line2);background:var(--paper);text-align:center;min-width:0;
     transition:border-color .3s,box-shadow .3s,transform .3s,background .3s}
   .seat .role{font-family:var(--serif);font-weight:600;font-size:14px}
   .seat .who{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:3px;display:block}
@@ -163,8 +185,8 @@
   .side-col{display:flex;flex-direction:column;gap:10px}
   .seat.pros{border-color:rgba(229,103,95,.45)} .seat.pros .role{color:#f0938c}
   .seat.def{border-color:rgba(91,156,255,.45)} .seat.def .role{color:#9cc0ff}
-  .jurybox{border:1px dashed var(--line2);border-radius:12px;padding:12px;background:rgba(185,140,255,.05)}
-  .jurybox .cap-j{font-family:var(--mono);font-size:10.5px;color:#cdb4ff;text-align:center;margin-bottom:9px;letter-spacing:.04em}
+  .jurybox{border:1px dashed var(--line2);border-radius:8px;padding:12px;background:rgba(185,140,255,.05)}
+  .jurybox .cap-j{font-family:var(--mono);font-size:10.5px;color:#cdb4ff;text-align:center;margin-bottom:9px;letter-spacing:0}
   .jseats{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
   .j{aspect-ratio:1;border-radius:7px;background:rgba(185,140,255,.13);border:1px solid rgba(185,140,255,.32);
     display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9.5px;color:#cdb4ff;
@@ -179,9 +201,9 @@
   .seat.appeal{border-color:rgba(232,163,61,.5);background:linear-gradient(180deg,rgba(232,163,61,.12),var(--paper))} .seat.appeal .role{color:#f2c277}
   .seat.lit{transform:translateY(-3px);box-shadow:0 8px 26px rgba(214,161,75,.2);border-color:rgba(214,161,75,.6)}
   .seat.judge.lit{box-shadow:0 8px 32px rgba(214,161,75,.34)}
-  .court .floorlab{text-align:center;font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.16em;text-transform:uppercase;margin:2px 0 12px}
+  .court .floorlab{text-align:center;font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:0;text-transform:uppercase;margin:2px 0 12px}
 
-  details.roster{margin-top:16px;border:1px solid var(--line);border-radius:12px;background:var(--paper);overflow:hidden}
+  details.roster{margin-top:16px;border:1px solid var(--line);border-radius:8px;background:var(--paper);overflow:hidden}
   details.roster summary{cursor:pointer;padding:13px 16px;font-family:var(--serif);font-weight:600;font-size:15px;list-style:none;display:flex;align-items:center;gap:10px}
   details.roster summary::-webkit-details-marker{display:none}
   details.roster summary::before{content:"▸";color:var(--seal);transition:.2s}
@@ -191,20 +213,20 @@
   table.roster th,table.roster td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
   table.roster th{background:var(--paper2);color:var(--muted);font-weight:600;font-family:var(--mono);font-size:11px}
   table.roster td .warn{color:#f0938c}
-  .side{display:inline-block;font-family:var(--mono);font-size:9.5px;font-weight:600;padding:1px 7px;border-radius:999px;letter-spacing:.03em;white-space:nowrap}
+  .side{display:inline-block;font-family:var(--mono);font-size:9.5px;font-weight:600;padding:1px 7px;border-radius:999px;letter-spacing:0;white-space:nowrap}
   .side.pros{background:rgba(229,103,95,.15);color:#f0938c;border:1px solid rgba(229,103,95,.4)}
   .side.def{background:rgba(91,156,255,.15);color:#9cc0ff;border:1px solid rgba(91,156,255,.4)}
   .side.neu{background:rgba(185,140,255,.15);color:#cdb4ff;border:1px solid rgba(185,140,255,.4)}
   .side.hum{background:rgba(232,163,61,.15);color:#f2c277;border:1px solid rgba(232,163,61,.4)}
   .side.det{background:rgba(139,145,163,.15);color:#bcc1cd;border:1px solid rgba(139,145,163,.4)}
 
-  .casepipe{display:grid;grid-template-columns:repeat(6,1fr);gap:0;margin-top:16px}
+  .casepipe{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
   .casepipe .node::after{content:"›"}
 
-  .engine{background:linear-gradient(180deg,rgba(91,156,255,.06),var(--bg2));border:1.5px solid rgba(91,156,255,.32);border-radius:16px;padding:18px}
+  .engine{background:linear-gradient(180deg,rgba(91,156,255,.06),var(--bg2));border:1.5px solid rgba(91,156,255,.32);border-radius:8px;padding:18px}
   .stages{display:grid;grid-template-columns:1fr 26px 1fr 26px 1.1fr;align-items:stretch}
   .arrow{display:flex;align-items:center;justify-content:center;color:var(--wf);font-size:20px}
-  .stage{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:13px}
+  .stage{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:13px}
   .stage h4{font-family:var(--serif);font-weight:600;margin:0 0 9px;font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .ac{background:var(--paper2);border:1px solid var(--line);border-left:3px solid var(--agent);border-radius:8px;padding:6px 9px;margin:6px 0;font-size:12px}
   .ac b{color:#cdb4ff;font-family:var(--mono);font-size:11.5px}
@@ -217,14 +239,14 @@
   .route h3{font-family:var(--serif);font-weight:600;margin:2px 0 6px;font-size:16px}
   .route p{margin:0;font-size:12.5px;color:var(--muted)}
   .route .rc{font-family:var(--mono);font-size:10.5px;color:var(--faint);display:block;margin-top:8px}
-  .formula{background:var(--paper2);border:1px solid var(--line2);border-radius:12px;padding:14px 16px;font-size:13px;margin-top:14px}
+  .formula{background:var(--paper2);border:1px solid var(--line2);border-radius:8px;padding:14px 16px;font-size:13px;margin-top:14px}
   .formula b{color:var(--ink)} .formula .mono{color:#9cc0ff}
 
   .rules{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;font-size:13px}
-  .rule{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--danger);border-radius:10px;padding:10px 13px}
+  .rule{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--danger);border-radius:8px;padding:10px 13px}
   .rule b{color:#f0938c;font-family:var(--mono);font-size:12px}
   .caveats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:11px}
-  .caveat{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--human);border-radius:10px;padding:9px 13px;font-size:12.5px;color:var(--muted)}
+  .caveat{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--human);border-radius:8px;padding:9px 13px;font-size:12.5px;color:var(--muted)}
   .caveat b{color:#f2c277;font-family:var(--mono);font-size:11.5px}
 
   footer{margin-top:54px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--faint)}
@@ -244,6 +266,7 @@
   }
   @media(max-width:900px){
     .modes,.route,.rules,.caveats,.gallery{grid-template-columns:1fr}
+    .hero-grid{grid-template-columns:1fr;min-height:0}
     .flow,.casepipe{grid-template-columns:repeat(2,1fr)}
     .node::after{display:none}
     .court .mid{grid-template-columns:1fr}
@@ -254,23 +277,39 @@
   }
 
   /* --- docket / legal-filing layer (paperjury signature) --- */
-  .caption{max-width:760px;margin:20px 0 0;border:1px solid var(--line2);border-radius:10px;
+  .caption{max-width:760px;margin:22px 0 0;border:1px solid var(--line2);border-radius:8px;
     background:linear-gradient(180deg,rgba(214,161,75,.05),var(--paper));overflow:hidden;font-family:var(--mono)}
-  .caption .cr{display:flex;justify-content:space-between;gap:14px;padding:8px 14px;border-bottom:1px solid var(--line);font-size:11.5px;color:var(--muted)}
+  .caption .cr{display:flex;justify-content:space-between;gap:10px 14px;padding:8px 14px;border-bottom:1px solid var(--line);font-size:11.5px;color:var(--muted);flex-wrap:wrap}
   .caption .cr:last-child{border-bottom:0}
   .caption b{color:var(--ink);font-weight:600} .caption .no{color:var(--seal)}
-  .proof{margin:24px 0 0}
-  .docket{background:var(--bg2);border:1px solid var(--line2);border-radius:12px;overflow:hidden;font-family:var(--mono);font-size:12.5px}
-  .docket .dh{display:flex;justify-content:space-between;padding:8px 13px;border-bottom:1px solid var(--line);color:var(--faint);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+  .proof{margin:32px 0 0}
+  .docket{background:var(--bg2);border:1px solid var(--line2);border-radius:8px;overflow:hidden;font-family:var(--mono);font-size:12.5px}
+  .docket .dh{display:flex;justify-content:space-between;padding:8px 13px;border-bottom:1px solid var(--line);color:var(--faint);font-size:10px;letter-spacing:0;text-transform:uppercase}
   .docket .row{padding:11px 14px;border-bottom:1px solid var(--line);color:var(--ink);display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
   .docket .row:last-child{border-bottom:0}
   .docket .ch{flex:1} .docket .ch .q{display:block;color:var(--muted);margin-top:5px;border-left:2px solid var(--line2);padding-left:9px}
-  .stamp{flex:none;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  .stamp{flex:none;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:0;text-transform:uppercase;
     padding:3px 9px;border-radius:4px;border:1.5px solid currentColor;white-space:nowrap;transform:rotate(-1.5deg)}
   .stamp.fix{color:#7ee2b1;border-color:rgba(70,201,139,.55)}
   .stamp.author{color:#f2c277;border-color:rgba(232,163,61,.55)}
   .stamp.drop{color:#f0938c;border-color:rgba(229,103,95,.55)}
   .docket .cap2{padding:8px 14px;color:var(--faint);font-size:10.5px}
+  @media(max-width:520px){
+    .wrap{padding-left:24px;padding-right:24px}
+    header.hero{padding-top:62px}
+    h1{font-size:36px;line-height:1.02}
+    .mobbr{display:block}
+    .lede{font-size:15.5px}
+    .hero-grid,.hero-copy,.hero-visual,.caption,.docket{min-width:0;width:100%;max-width:100%}
+    .caption .cr,.verdict-head,.verdict-foot{display:grid;grid-template-columns:1fr;justify-items:start}
+    .verdict-case,.caption .no,.verdict-foot span{min-width:0;overflow-wrap:anywhere;white-space:normal}
+    .verdict-row{grid-template-columns:1fr;gap:6px}
+    .verdict-foot span:first-child{overflow-wrap:anywhere}
+    .docket .row{flex-wrap:wrap}
+    .stamp{margin-left:auto}
+    nav.bar .inner{scrollbar-width:none}
+    nav.bar .inner::-webkit-scrollbar{display:none}
+  }
 </style>
 </head>
 <body>
@@ -291,22 +330,50 @@
 <div class="wrap">
 
   <header class="hero reveal">
-    <div class="kicker"><span class="zh">CS 论文预审 / 改稿 · Claude Code Skill · Workflow + Memory</span><span class="en">CS-conference review / editing · Skill + Workflow + Memory</span></div>
-    <h1><span class="zh">投稿前，先做一轮<br>AI 审稿压力测试。</span><span class="en">Before a reviewer tears it apart,<br>let a <em>jury</em> do it first.</span></h1>
-    <p class="lede"><span class="zh">直接问 AI「我论文怎么样」，答案常常像抽奖：要么泛泛夸好，要么无限挑刺。<br><br>PaperJury 把审稿、裁定、修改、复查做成闭环：能修的自动修，缺实验或证据的留给作者；改到收益变小时停止，避免越改越偏。</span><span class="en">Ask an AI if your paper is any good and you get a polite yes. PaperJury argues the other side: N reviewers read the whole paper, disputes go to an independent vote and a three-way verdict (fix it / needs you / no fix), and only edits you sign off on land, then it actually compiles.</span></p>
-    <div class="caption">
-      <div class="cr"><span><b>PaperJury</b> v. Your Paper</span><span class="no">No. 26-CV-0603</span></div>
-      <div class="cr"><span><span class="zh">三种模式</span><span class="en">Three modes</span> · direct-edit / review / auto</span><span>Skill + Workflow + Memory</span></div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <div class="kicker"><span class="zh">CS 论文预审 / 改稿 · Claude Code Skill · Workflow + Memory</span><span class="en">CS-conference review / editing · Skill + Workflow + Memory</span></div>
+        <h1><span class="zh">投稿前，先让<br>AI 陪审团<br class="mobbr">审一遍。</span><span class="en">Before a reviewer tears it apart,<br>let a <em>jury</em> do it first.</span></h1>
+        <p class="lede"><span class="zh">直接问 AI「我论文怎么样」，通常只会得到两种没用的答案：礼貌夸好，或者漫天挑刺。<br><br>PaperJury 把它改成一套闭环：先找问题，再裁定是否成立；能安全改的写成补丁，缺实验或证据的交给作者，不成立的意见直接驳回。</span><span class="en">Ask an AI if your paper is any good and you get a polite yes. PaperJury argues the other side: N reviewers read the whole paper, disputes go to an independent vote and a three-way verdict (fix it / needs you / no fix), and only edits you sign off on land, then it actually compiles.</span></p>
+        <div class="caption">
+          <div class="cr"><span><b>PaperJury</b> v. Your Paper</span><span class="no">No. 26-CV-0603</span></div>
+          <div class="cr"><span><span class="zh">三种模式</span><span class="en">Three modes</span> · direct-edit / review / auto</span><span>Skill + Workflow + Memory</span></div>
+        </div>
+      </div>
+      <div class="hero-visual" aria-label="PaperJury verdict board">
+        <div class="verdict-head">
+          <div>
+            <div class="verdict-title"><span class="zh">三路裁定板</span><span class="en">Verdict board</span></div>
+            <span><span class="zh">每条 issue 都必须有去向</span><span class="en">every issue must route somewhere</span></span>
+          </div>
+          <span class="verdict-case">ledger.json</span>
+        </div>
+        <div class="verdict-body">
+          <div class="verdict-row fix">
+            <span class="verdict-tag">fix</span>
+            <span class="verdict-copy"><b><span class="zh">安全修复</span><span class="en">valid-fixable</span></b><span class="zh">文本层面能改，不需要新实验，也不会让论断漂移。</span><span class="en">Text-level, no new experiment, no drift.</span></span>
+          </div>
+          <div class="verdict-row author">
+            <span class="verdict-tag">queue</span>
+            <span class="verdict-copy"><b><span class="zh">交作者处理</span><span class="en">author-required</span></b><span class="zh">缺实验、缺证据，或需要研究判断；进入待办队列。</span><span class="en">Needs evidence, experiment, or a judgment call.</span></span>
+          </div>
+          <div class="verdict-row drop">
+            <span class="verdict-tag">drop</span>
+            <span class="verdict-copy"><b><span class="zh">不成立</span><span class="en">invalid-drop</span></b><span class="zh">误读、幻觉、重复或越界；记录证据后驳回。</span><span class="en">Misread, hallucinated, duplicate, or out of scope.</span></span>
+          </div>
+        </div>
+        <div class="verdict-foot"><span>review → verdict → revise → verify</span><span><span class="zh">不静默改稿</span><span class="en">no silent edit</span></span></div>
+      </div>
     </div>
   </header>
 
   <section class="proof reveal">
     <div class="docket">
-      <div class="dh"><span><span class="zh">案卷 · 三类问题，三种处理</span><span class="en">Docket · three issues, ruled (format)</span></span><span>ledger.json</span></div>
-      <div class="row"><div class="ch"><b>headline gain mislabeled vs the paper's own table</b><span class="q">"outperforms ... by at least 29.7 and 53.5"</span></div><span class="stamp fix"><span class="zh">可自动修</span><span class="en">valid-fixable</span></span></div>
-      <div class="row"><div class="ch"><b>self-selected CDNet subset, unfalsifiable rule</b><span class="q">"exclude sequences unrelated to MOS"</span></div><span class="stamp author"><span class="zh">需作者补</span><span class="en">author-required</span></span></div>
+      <div class="dh"><span><span class="zh">判决样例 · 三类问题，三种去向</span><span class="en">Docket · three issues, ruled (format)</span></span><span>ledger.json</span></div>
+      <div class="row"><div class="ch"><b>headline gain mislabeled vs the paper's own table</b><span class="q">"outperforms ... by at least 29.7 and 53.5"</span></div><span class="stamp fix"><span class="zh">安全修复</span><span class="en">valid-fixable</span></span></div>
+      <div class="row"><div class="ch"><b>self-selected CDNet subset, unfalsifiable rule</b><span class="q">"exclude sequences unrelated to MOS"</span></div><span class="stamp author"><span class="zh">作者处理</span><span class="en">author-required</span></span></div>
       <div class="row"><div class="ch"><b>alleged contradiction is a misread of Table 2</b><span class="q">charge rests on a quote not in the text</span></div><span class="stamp drop"><span class="zh">不成立</span><span class="en">invalid-drop</span></span></div>
-      <div class="cap2"><span class="zh">真实问题会进入 ledger：能修的写成补丁；缺实验或证据的交给作者；误判的问题不会写进稿件。</span><span class="en">Real ledger rows and the three-way verdict. A charge can land "no fix", which a yes-and rewriter cannot return.</span></div>
+      <div class="cap2"><span class="zh">真实问题进入 ledger 后不会被一股脑写进稿件：能安全改的才写补丁；缺实验或证据的留给作者；误判不会混进论文。</span><span class="en">Real ledger rows and the three-way verdict. A charge can land "no fix", which a yes-and rewriter cannot return.</span></div>
     </div>
   </section>
 
@@ -314,18 +381,18 @@
     <span><i class="dot" style="background:var(--wf)"></i><span class="zh">自动流程</span><span class="en">Workflow (semantic fan-out, in sandbox, no fs)</span></span>
     <span><i class="dot" style="background:var(--det)"></i><span class="zh">确定性检查</span><span class="en">Orchestrator deterministic (Bash/Node, off-court)</span></span>
     <span><i class="dot" style="background:var(--human)"></i><span class="zh">作者参与</span><span class="en">Human in the loop</span></span>
-    <span><i class="dot" style="background:var(--agent)"></i><span class="zh">AI reviewer</span><span class="en">Agent</span></span>
+    <span><i class="dot" style="background:var(--agent)"></i><span class="zh">AI 评审</span><span class="en">Agent</span></span>
     <span><i class="dot" style="background:var(--mem)"></i><span class="zh">Memory + ledger</span><span class="en">Memory / ledger</span></span>
   </div>
 
   <!-- 一、三模式 -->
   <section id="s1" class="reveal">
-    <div class="h2"><span class="idx">01</span><h2><span class="zh">三种模式，对应三种改稿场景</span><span class="en">Three modes for three editing scenarios</span></h2><span class="zoom"><span class="zh">全局</span><span class="en">global</span></span></div>
-    <p class="sub"><span class="zh">不是三个孤立命令，而是三种改稿意图：小改动走 direct-edit，投稿前自查走 review，需要多轮自动收敛时再显式开启 auto。</span><span class="en">Three entries, one engine. review and auto run the same courtroom engine; auto just removes the human second instance and swaps each human gate for a <b>pre-authorized policy + return queue</b>.</span></p>
+    <div class="h2"><span class="idx">01</span><h2><span class="zh">三种模式，对应三种改稿意图</span><span class="en">Three modes for three editing scenarios</span></h2><span class="zoom"><span class="zh">全局</span><span class="en">global</span></span></div>
+    <p class="sub"><span class="zh">不是三个孤立命令，而是三种使用意图：小改动走 direct-edit，投稿前自查走 review；只有需要多轮自动收敛时，才显式开启 auto。</span><span class="en">Three entries, one engine. review and auto run the same courtroom engine; auto just removes the human second instance and swaps each human gate for a <b>pre-authorized policy + return queue</b>.</span></p>
     <div class="modes">
       <div class="mode" style="border-top-color:var(--human)">
         <span class="lab" style="color:#f2c277">DIRECT-EDIT</span><span class="freq"> · <span class="zh">常态</span><span class="en">common</span></span>
-        <h3><span class="zh">改一段，直接落到 LaTeX</span><span class="en">Say the change → edit the LaTeX</span></h3>
+        <h3><span class="zh">只改一处，直接回到 LaTeX</span><span class="en">Say the change → edit the LaTeX</span></h3>
         <ul>
           <li><span class="zh">适合局部改写、压缩表达、去 AI 味，或把中文想法整理成英文论文段落</span><span class="en">Say what to change in Chinese or English → toolkit drafts → self-check → the author signs off → land it</span></li>
           <li><span class="zh">系统先起草，再自检，最后由作者确认后落稿</span><span class="en">No panel / no ledger, fast</span></li>
@@ -338,15 +405,15 @@
         <ul>
           <li><span class="zh">适合投稿前做一次严格自查</span><span class="en">Courtroom <b>per-issue adjudication engine</b> (zoomed in the next sections)</span></li>
           <li><span class="zh">多个 reviewer 通读全文、提出问题，有争议的进入裁定</span><span class="en">Core = N domain reviewers each read the whole paper + routing by contestability</span></li>
-          <li><span class="zh">最后分成「可自动修 / 需作者补 / 不成立」三类</span><span class="en">A simple fixed 3-reviewer panel is also available as a quick check</span></li>
+          <li><span class="zh">最后裁成「安全修复 / 作者处理 / 不成立」三类</span><span class="en">A simple fixed 3-reviewer panel is also available as a quick check</span></li>
         </ul>
       </div>
       <div class="mode" style="border-top-color:var(--agent)">
         <span class="lab" style="color:#cdb4ff">AUTO</span><span class="freq"> · <span class="zh">自动迭代</span><span class="en">unattended</span> · /goal</span>
         <h3><span class="zh">多轮 review-revise，改到收敛</span><span class="en">Run under /goal to convergence</span></h3>
         <ul>
-          <li><span class="zh">适合让它连续处理一批明显问题</span><span class="en">Same engine, human removed; gates → pre-authorized policy + return queue</span></li>
-          <li><span class="zh">能安全修改的自动落稿；缺实验、缺数据、判断不确定的问题进入待办队列</span><span class="en">Anti-drift: frozen spine + four-state meaning audit + per-passage cap</span></li>
+          <li><span class="zh">适合让它连续处理一批已经授权的明确问题</span><span class="en">Same engine, human removed; gates → pre-authorized policy + return queue</span></li>
+          <li><span class="zh">安全改动自动落稿；缺实验、缺数据、判断不确定的问题进入待办队列</span><span class="en">Anti-drift: frozen spine + four-state meaning audit + per-passage cap</span></li>
           <li><span class="zh">当修改收益变小或触发上限时停止，避免越改越偏。完成 = 收敛检查通过。</span><span class="en">stops at clerk convergence (or applied-quiescence / a hard limit) · completion = <span class="mono">ledger.js gate</span></span></li>
         </ul>
       </div>
@@ -358,13 +425,13 @@
         <span class="c det">apply-patch.js</span><span class="c det">anchor-diff.js</span><span class="c det">cross-ref.js</span><span class="c det">spine.js</span>
         <span class="c det">compile-guard.js</span><span class="c det">compliance-check.js</span><span class="c agent"><span class="zh">meaning-audit · 四态</span><span class="en">meaning-audit · four-state</span></span>
       </div>
-      <div class="note"><span class="zh">设计原则：把确定性护栏与语义 fan-out 分开，让确定性检查可追溯、可重跑。</span><span class="en">Design principle: deterministic guards and semantic fan-out are kept separate, so the deterministic checks stay traceable and re-runnable.</span></div>
+      <div class="note"><span class="zh">设计原则：确定性护栏和语义 fan-out 分开跑，前者可追溯、可重放，后者专心处理判断问题。</span><span class="en">Design principle: deterministic guards and semantic fan-out are kept separate, so the deterministic checks stay traceable and re-runnable.</span></div>
     </div>
   </section>
 
   <!-- 二、使用方式 -->
   <section id="s1u" class="reveal">
-    <div class="h2"><span class="idx">02</span><h2><span class="zh">如何触发：自然语言默认安全，auto 必须显式开启</span><span class="en">How to use: triggering each mode</span></h2><span class="zoom"><span class="zh">全局 · 入口</span><span class="en">global · entry</span></span></div>
+    <div class="h2"><span class="idx">02</span><h2><span class="zh">如何触发：自然语言默认保守，auto 必须明说</span><span class="en">How to use: triggering each mode</span></h2><span class="zoom"><span class="zh">全局 · 入口</span><span class="en">global · entry</span></span></div>
     <p class="sub"><span class="zh">三模式不是三个命令，而是<b>三种意图</b>：direct-edit 与 review 按用户的描述<b>自动路由</b>，<b>只有 auto 需要你显式开启</b>（<span class="mono">/goal</span>），系统不会自己切到 auto。</span><span class="en">The three modes are not three commands but <b>three intents</b>: direct-edit and review are <b>auto-routed</b> by what is said; <b>auto is the only explicit switch</b> (<span class="mono">/goal</span>) and is <b>never self-detected</b>.</span></p>
     <div class="modes">
       <div class="mode" style="border-top-color:var(--human)">
@@ -373,7 +440,7 @@
         <ul>
           <li><span class="zh">中/英口述一处改动，<b>无需任何前缀</b>：<br><span class="mono">「把这段 intro 改紧些」「polish 这段」「把我这段中文想法写成 LaTeX」「de-AI 这段」「这句压到一行」</span></span><span class="en">Describe one change in Chinese or English, <b>no prefix needed</b>:<br><span class="mono">"tighten this intro", "polish this", "turn my Chinese idea for intro into LaTeX", "de-AI this", "compress this to one line"</span></span></li>
           <li><span class="zh">自动选 writing-toolkit prompt 起草 → <span class="mono">logic-check</span> 自检 → <b>作者确认</b> → 落稿</span><span class="en">It picks the matching writing-toolkit prompt to draft → <span class="mono">logic-check</span> self-check → <b>the author signs off</b> → land it</span></li>
-          <li><span class="zh">大文件里指代不清 → 先问是哪一段，而不是猜</span><span class="en">On a large file with an ambiguous target → it asks which passage rather than guessing</span></li>
+          <li><span class="zh">大文件里指代不清时，先问是哪一段，不硬猜</span><span class="en">On a large file with an ambiguous target → it asks which passage rather than guessing</span></li>
         </ul>
       </div>
       <div class="mode" style="border-top-color:var(--wf)">
@@ -391,7 +458,7 @@
         <ul>
           <li><span class="zh">auto 的唯一入口：<span class="mono">/goal "&lt;可验证完成条件&gt;"</span>（或 config <span class="mono">mode: auto</span>）</span><span class="en">The only explicit entry: <span class="mono">/goal "&lt;verifiable completion condition&gt;"</span> (or config <span class="mono">mode: auto</span>)</span></li>
           <li><span class="zh"><b>不会自动进入 auto</b>；先两步前置确认（spine + reviewer 分配）+ 预授权 bounded-aggressive 策略 = auto 的事前授权</span><span class="en"><b>Never self-detected</b>; two up-front confirmations (spine + reviewer assignment) + the pre-authorized bounded-aggressive policy = auto's sign-off</span></li>
-          <li><span class="zh">安全修改自动落稿，有风险的改动放入<b>待办队列</b>；完成 = <span class="mono">ledger.js gate</span> PASS，到收敛检查通过 / applied-quiescence / 硬上限收尾</span><span class="en">Safe fixes land automatically, risky ones go to the <b>return queue</b>; completion = <span class="mono">ledger.js gate</span> PASS, ending at clerk convergence / applied-quiescence / a hard limit</span></li>
+          <li><span class="zh">安全修改自动落稿，有风险的改动放入<b>待办队列</b>；完成 = <span class="mono">ledger.js gate</span> PASS，最后停在收敛、applied-quiescence 或硬上限</span><span class="en">Safe fixes land automatically, risky ones go to the <b>return queue</b>; completion = <span class="mono">ledger.js gate</span> PASS, ending at clerk convergence / applied-quiescence / a hard limit</span></li>
         </ul>
       </div>
     </div>
@@ -402,42 +469,42 @@
         <span class="c"><span class="zh">想挑问题 → <b>说「审稿」</b>（可带 full / passage）</span><span class="en">Want critique → <b>say "review"</b> (optionally full / passage)</span></span>
         <span class="c"><span class="zh">想让它自动跑多轮 → <b>/goal + 完成条件</b></span><span class="en">Run unattended → <b>/goal + completion condition</b></span></span>
       </div>
-      <div class="note"><span class="zh">三模式共用<b>同一套引擎核心、同一组硬规则、同一个 ledger、同一道作者确认环节</b>（auto 的确认 = 事前策略 + 待办队列，见护栏 1）。direct-edit / review 走对话即可，只有 auto 需要显式开 <span class="mono">/goal</span>。</span><span class="en">All three share <b>one engine core, one set of hard rules, one ledger, one author sign-off gate</b> (auto's sign-off = up-front policy + queue, see guardrail 1). direct-edit / review go through conversation; only auto needs an explicit <span class="mono">/goal</span>.</span></div>
+      <div class="note"><span class="zh">三种模式共用<b>同一套引擎核心、同一组硬规则、同一个 ledger、同一道作者确认环节</b>（auto 的确认 = 事前策略 + 待办队列，见护栏 1）。direct-edit / review 走正常对话即可，只有 auto 需要显式开 <span class="mono">/goal</span>。</span><span class="en">All three share <b>one engine core, one set of hard rules, one ledger, one author sign-off gate</b> (auto's sign-off = up-front policy + queue, see guardrail 1). direct-edit / review go through conversation; only auto needs an explicit <span class="mono">/goal</span>.</span></div>
     </div>
   </section>
 
   <!-- 三、流水线 -->
   <section id="s2" class="reveal">
-    <div class="h2"><span class="idx">03</span><h2><span class="zh">引擎流水线：一条意见怎么走完全程</span><span class="en">The engine pipeline: how one issue flows through</span></h2><span class="zoom"><span class="zh">中观</span><span class="en">mid-level</span></span></div>
-    <p class="sub"><span class="zh">下面是引擎处理一条意见的顺序，逐步走完这些步骤；机械、轻微的问题不进庭审，走单独的快速润色流程。</span><span class="en">Below is the order the engine processes one issue, step by step; mechanical and minor issues skip the trial and take a separate quick polish path.</span></p>
+    <div class="h2"><span class="idx">03</span><h2><span class="zh">引擎流水线：一条 issue 怎么走完全程</span><span class="en">The engine pipeline: how one issue flows through</span></h2><span class="zoom"><span class="zh">中观</span><span class="en">mid-level</span></span></div>
+    <p class="sub"><span class="zh">下面是一条 issue 从提出到落稿或入队的路径。机械、轻微的问题不进庭审，走单独的快速 polish 流程；真正有争议的才进入裁定。</span><span class="en">Below is the order the engine processes one issue, step by step; mechanical and minor issues skip the trial and take a separate quick polish path.</span></p>
     <div class="runbar">
-      <button class="runbtn primary" id="flow-play" aria-label="play the engine flow"><span class="zh">▶ 播放引擎流</span><span class="en">▶ Play the engine flow</span></button>
+      <button class="runbtn primary" id="flow-play" aria-label="play the engine flow"><span class="zh">▶ 播放流程</span><span class="en">▶ Play the engine flow</span></button>
       <button class="runbtn" id="flow-step" aria-label="step forward"><span class="zh">步进 ›</span><span class="en">Step ›</span></button>
       <button class="runbtn" id="flow-reset" aria-label="reset"><span class="zh">↺ 重置</span><span class="en">↺ Reset</span></button>
-      <span class="stepind" id="flow-ind"><span class="zh">就绪 · 点播放看 charge 流过</span><span class="en">Ready · click play to watch a charge flow through</span></span>
+      <span class="stepind" id="flow-ind"><span class="zh">就绪 · 点播放看 issue 流过</span><span class="en">Ready · click play to watch a charge flow through</span></span>
     </div>
     <div class="flow" id="pipeline-flow">
-      <div class="node det"><div class="box"><span class="n">0</span><h4><span class="zh">分解</span><span class="en">Decompose</span></h4><p><span class="zh">切成 claim 单元 + 稳定 passage-id</span><span class="en">Split into claim units + stable passage-id</span></p><span class="file">decompose.js</span></div></div>
+      <div class="node det"><div class="box"><span class="n">0</span><h4><span class="zh">分解</span><span class="en">Decompose</span></h4><p><span class="zh">切成 claim 单元，保留稳定 passage-id</span><span class="en">Split into claim units + stable passage-id</span></p><span class="file">decompose.js</span></div></div>
       <div class="node wf"><div class="box"><span class="n">1 · WF</span><h4><span class="zh">分派 + 通读</span><span class="en">Assign + holistic read</span></h4><p><span class="zh">分派 N 个子领域，N 位领域 reviewer 各通读全文一遍</span><span class="en">assign N subfields; N domain reviewers each read the whole paper once</span></p><span class="file">assign-reviewers · reading-check</span></div></div>
       <div class="node wf"><div class="box"><span class="n">2 · WF</span><h4><span class="zh">覆盖 + 合并</span><span class="en">Coverage + merge</span></h4><p><span class="zh">防略读审计 + 跨 reviewer 去重 → 按可争议性分流</span><span class="en">anti-skim audit + cross-reviewer dedup → route by contestability</span></p><span class="file">coverage-auditor · merge</span></div></div>
-      <div class="node wf"><div class="box"><span class="n">3 · WF</span><h4><span class="zh">庭审（5→12 个评审视角）</span><span class="en">Trial (5→12 jurors)</span></h4><p><span class="zh">全文辩护 / 5 人陪审团带局部上下文 / 无多数升 12 → 法官三路裁定</span><span class="en">whole-paper defense / 5-juror local-context tier / escalate to 12 → judge routes three ways</span></p><span class="file">trial</span></div></div>
+      <div class="node wf"><div class="box"><span class="n">3 · WF</span><h4><span class="zh">庭审（5→12 个评审视角）</span><span class="en">Trial (5→12 jurors)</span></h4><p><span class="zh">全文辩护 / 5 人陪审带局部上下文 / 无多数升 12 → 法官三路裁定</span><span class="en">whole-paper defense / 5-juror local-context tier / escalate to 12 → judge routes three ways</span></p><span class="file">trial</span></div></div>
       <div class="node wf"><div class="box"><span class="n">4 · WF</span><h4><span class="zh">召回审计</span><span class="en">Recall audit</span></h4><p><span class="zh">A 救回误丢的问题 + B 落稿前抽检强共识 major</span><span class="en">Mode A revives wrong drops + Mode B spot-checks consensus majors before the edit</span></p><span class="file">recall-audit</span></div></div>
-      <div class="node wf"><div class="box"><span class="n">5 · WF</span><h4><span class="zh">起草</span><span class="en">Drafter</span></h4><p><span class="zh">valid-fixable → 起草最小补丁</span><span class="en">valid-fixable → a minimal patch</span></p><span class="file">drafter</span></div></div>
+      <div class="node wf"><div class="box"><span class="n">5 · WF</span><h4><span class="zh">起草</span><span class="en">Drafter</span></h4><p><span class="zh">valid-fixable → 写最小补丁</span><span class="en">valid-fixable → a minimal patch</span></p><span class="file">drafter</span></div></div>
       <div class="node det"><div class="box"><span class="n">6</span><h4><span class="zh">编辑安全 + 落稿</span><span class="en">Edit-safety + apply</span></h4><p><span class="zh">anchor-diff + cross-ref → meaning / edit-audit → apply</span><span class="en">anchor-diff + cross-ref → meaning / edit-audit → apply</span></p><span class="file">anchor-diff · cross-ref · apply-patch</span></div></div>
-      <div class="node human"><div class="box"><span class="n">7 · <span class="zh">作者</span><span class="en">author</span></span><h4><span class="zh">书记官 / 终审</span><span class="en">Clerk / final</span></h4><p><span class="zh">在每轮结束时把残留问题理清、判断是否收敛；review 阶段由作者把关，auto 由书记官判定收敛</span><span class="en">round-boundary reconcile + converge; review = the author's gate, auto = clerk converges</span></p><span class="file">clerk / queue</span></div></div>
+      <div class="node human"><div class="box"><span class="n">7 · <span class="zh">作者</span><span class="en">author</span></span><h4><span class="zh">书记官 / 终审</span><span class="en">Clerk / final</span></h4><p><span class="zh">每轮结束时核对残留问题并判断是否收敛；review 由作者把关，auto 由 clerk 收尾</span><span class="en">round-boundary reconcile + converge; review = the author's gate, auto = clerk converges</span></p><span class="file">clerk / queue</span></div></div>
       <div class="flowtoken" id="flow-token">charge</div>
     </div>
-    <div class="cap" id="flow-cap"><span class="ph"><span class="zh">点「播放引擎流」，跟着一条 charge 走完八步。</span><span class="en">Click "Play the engine flow" to follow one charge through all eight steps.</span></span></div>
+    <div class="cap" id="flow-cap"><span class="ph"><span class="zh">点「播放流程」，跟着一条 issue 走完八步。</span><span class="en">Click "Play the engine flow" to follow one charge through all eight steps.</span></span></div>
     <div class="band">
       <span><b>review:</b> <span class="zh">第 7 步由作者把关（停在这里，不自动进下一轮）</span><span class="en">step 7 is the author's gate (it stops here, no auto-advance)</span></span>
-      <span><b>auto:</b> <span class="zh">第 7 步 → 书记官把这一轮已处理干净的结果并入累计 ledger。外层循环在 /goal 下持续跑，直到书记官判定收敛、或没有新改动可做、或触发硬上限才停，gate 随之翻 PASS</span><span class="en">step 7 → the clerk reconciles this clean round into the cumulative ledger; the outer loop runs under /goal, ending at clerk convergence / applied-quiescence / a hard limit, then the gate flips PASS</span></span>
+      <span><b>auto:</b> <span class="zh">第 7 步 → 书记官把本轮结果并入累计 ledger。外层循环在 /goal 下继续跑，直到收敛、没有新改动可做，或触发硬上限，gate 随后翻 PASS</span><span class="en">step 7 → the clerk reconciles this clean round into the cumulative ledger; the outer loop runs under /goal, ending at clerk convergence / applied-quiescence / a hard limit, then the gate flips PASS</span></span>
     </div>
   </section>
 
   <!-- 四、法庭平面图 -->
   <section id="s3" class="reveal">
-    <div class="h2"><span class="idx">04</span><h2><span class="zh">一案一庭：法庭平面图</span><span class="en">One case, one courtroom: the floor plan</span></h2><span class="zoom"><span class="zh">局部 · trial</span><span class="en">local · trial</span></span></div>
-    <p class="sub"><span class="zh"><b>每个 issue 单独处理：</b>提出问题的 reviewer 只找问题、不参与裁定，独立评审组依据双方证据投票，judge 给出三路裁定。下图把每个角色摆在它的位置上（沿用法庭隐喻：检方 / 辩方 / 陪审团 / 法官）。</span><span class="en"><b>Each issue = one case; the defendant = the passage under attack, not the issue itself.</b> Position is stance: prosecution left, defense right, jury center, judge above, appeal outside.</span></p>
+    <div class="h2"><span class="idx">04</span><h2><span class="zh">一案一庭：谁找问题，谁来裁定</span><span class="en">One case, one courtroom: the floor plan</span></h2><span class="zoom"><span class="zh">局部 · trial</span><span class="en">local · trial</span></span></div>
+    <p class="sub"><span class="zh"><b>每个 issue 单独处理：</b>提出问题的 reviewer 只负责找问题，不参与裁定；独立评审组看双方证据后投票，judge 再给出三路裁定。下图沿用法庭隐喻，把检方、辩方、陪审团、法官和作者放到各自位置上。</span><span class="en"><b>Each issue = one case; the defendant = the passage under attack, not the issue itself.</b> Position is stance: prosecution left, defense right, jury center, judge above, appeal outside.</span></p>
     <div class="runbar">
       <button class="runbtn primary" id="case-run" aria-label="try a case"><span class="zh">▶ 审一桩案子</span><span class="en">▶ Try a case</span></button>
       <span class="stepind" id="case-ind"><span class="zh">连续点击会依次演示 valid-fixable → invalid-drop → author-required 三条分流</span><span class="en">Click repeatedly to cycle the three routings: valid-fixable → invalid-drop → author-required</span></span>
@@ -446,42 +513,42 @@
     <div class="court">
       <div class="floorlab"><span class="zh">第一审 · agents</span><span class="en">first instance · agents</span></div>
       <div class="bench">
-        <div class="seat judge" id="c-judge"><div class="role"><span class="zh">法官 · 主持裁定</span><span class="en">Judge · presides, rules</span></div><span class="who"><span class="zh">1 presiding agent · 只裁定、不投票 · 设定 close_criterion</span><span class="en">1 presiding agent · rules only, no vote · sets close_criterion</span></span></div>
+        <div class="seat judge" id="c-judge"><div class="role"><span class="zh">法官 · 主持裁定</span><span class="en">Judge · presides, rules</span></div><span class="who"><span class="zh">1 个 presiding agent · 只裁定、不投票 · 设定 close_criterion</span><span class="en">1 presiding agent · rules only, no vote · sets close_criterion</span></span></div>
       </div>
       <div class="mid">
         <div class="side-col">
-          <div class="seat pros" id="c-pros"><div class="role"><span class="zh">检方</span><span class="en">Prosecution</span></div><span class="who"><span class="zh">N 位领域 reviewer 通读全文 · 提 charge + 引文 → 退场</span><span class="en">N domain reviewers read the whole paper · file charge + quote → step away</span></span></div>
-          <div class="seat pros" id="c-grand"><div class="role"><span class="zh">覆盖 + 合并 · 防略读</span><span class="en">Coverage + merge · anti-skim</span></div><span class="who"><span class="zh">coverage-auditor + merge · 去重 · 按可争议性分流（机械/轻微 → polish）</span><span class="en">coverage-auditor + merge · dedup · route by contestability (mechanical/minor → polish)</span></span></div>
+          <div class="seat pros" id="c-pros"><div class="role"><span class="zh">检方</span><span class="en">Prosecution</span></div><span class="who"><span class="zh">N 位领域 reviewer 通读全文 · 提 charge + 引文，随后退场</span><span class="en">N domain reviewers read the whole paper · file charge + quote → step away</span></span></div>
+          <div class="seat pros" id="c-grand"><div class="role"><span class="zh">覆盖 + 合并 · 防略读</span><span class="en">Coverage + merge · anti-skim</span></div><span class="who"><span class="zh">coverage-auditor + merge · 去重 · 按争议程度分流（机械/轻微 → polish）</span><span class="en">coverage-auditor + merge · dedup · route by contestability (mechanical/minor → polish)</span></span></div>
         </div>
         <div class="jurybox">
-          <div class="cap-j"><span class="zh">庭审陪审团 · 先派 5 位视角彼此独立的全新陪审员 · 无明显多数升 12 · 够票数且一方 >60% 才判</span><span class="en">Trial jury · 5 fresh jurors with independent perspectives · escalate to 12 on no clear majority · decided at quorum + >60% one side</span></div>
+          <div class="cap-j"><span class="zh">庭审陪审团 · 先派 5 位视角彼此独立的全新陪审员 · 无明显多数再升 12 · 够票数且一方 >60% 才判</span><span class="en">Trial jury · 5 fresh jurors with independent perspectives · escalate to 12 on no clear majority · decided at quorum + >60% one side</span></div>
           <div class="jseats" id="jury">
             <div class="j">methodo</div><div class="j">repro</div><div class="j">theory</div>
             <div class="j">empirics</div><div class="j">claims</div><div class="j">novelty</div>
             <div class="j">stats</div><div class="j">clarity</div><div class="j">scope</div>
             <div class="j">deploy</div><div class="j hostile"><span class="zh">最敌意</span><span class="en">most hostile</span></div><div class="j charit"><span class="zh">最善意</span><span class="en">most charitable</span></div>
           </div>
-          <div class="note" style="text-align:center"><span class="zh">第一审先派 5 人（最敌意、最善意各一端，视角彼此独立），拿到<b>局部上下文</b>、可按需扩展；只有在没有明显多数时才升到 12，因为陪审员视角差异够大，多加人手才更有意义</span><span class="en">the first tier sends 5 (one at the most-hostile end, one at the most-charitable), given <b>local context</b> with on-demand expansion; it escalates to 12 only on no clear majority, since adding jurors helps mainly when their perspectives genuinely differ</span></div>
+          <div class="note" style="text-align:center"><span class="zh">第一审先派 5 人：最敌意和最善意各占一端，其余视角彼此独立。每位拿到<b>局部上下文</b>，也能按需扩展；只有没有明显多数时才升到 12，因为视角差异足够大时，多加人手才有意义。</span><span class="en">the first tier sends 5 (one at the most-hostile end, one at the most-charitable), given <b>local context</b> with on-demand expansion; it escalates to 12 only on no clear majority, since adding jurors helps mainly when their perspectives genuinely differ</span></div>
         </div>
         <div class="side-col">
-          <div class="seat def" id="c-def"><div class="role"><span class="zh">辩方</span><span class="en">Defense</span></div><span class="who"><span class="zh">author <b>agent</b> · 带证据为其辩护</span><span class="en">author <b>agent</b> · argues its case with evidence</span></span></div>
+          <div class="seat def" id="c-def"><div class="role"><span class="zh">辩方</span><span class="en">Defense</span></div><span class="who"><span class="zh">author <b>agent</b> · 带证据替被攻击段落辩护</span><span class="en">author <b>agent</b> · argues its case with evidence</span></span></div>
           <div class="seat def" id="c-drafter"><div class="role"><span class="zh">起草 drafter</span><span class="en">Drafter</span></div><span class="who"><span class="zh">同一 agent 转换角色 · 只对 valid-fixable</span><span class="en">same agent, a different stage · valid-fixable only</span></span></div>
         </div>
       </div>
       <div class="clerk">
-        <div class="seat clerk"><div class="role"><span class="zh">法警 · orchestrator · 庭外</span><span class="en">Bailiff · orchestrator · off-court</span></div><span class="who"><span class="zh">orchestrator + 确定性脚本 · 跑护栏 / 维护 ledger / 写 journal / gate</span><span class="en">orchestrator + deterministic scripts · run guards / keep ledger / write journal / gate</span></span></div>
+        <div class="seat clerk"><div class="role"><span class="zh">执行官 · orchestrator · 庭外</span><span class="en">Bailiff · orchestrator · off-court</span></div><span class="who"><span class="zh">orchestrator + 确定性脚本 · 跑护栏 / 维护 ledger / 写 journal / gate</span><span class="en">orchestrator + deterministic scripts · run guards / keep ledger / write journal / gate</span></span></div>
       </div>
 
       <div class="floorlab" style="margin-top:18px"><span class="zh">上诉 · 召回审计 → 第二审</span><span class="en">appeal · recall audit → second instance</span></div>
       <div class="gallery">
-        <div class="seat recall" id="c-recall"><div class="role"><span class="zh">召回审计（检方侧上诉）</span><span class="en">Recall audit (prosecution-side appeal)</span></div><span class="who"><span class="zh">fresh skeptic，非原 reviewer · A 复查每条 drop、找回误丢的问题 · B 落稿前抽检强共识 major → 重审 / 升二审</span><span class="en">fresh skeptic, not the original reviewer · Mode A re-checks every drop for wrongful drops · Mode B spot-checks consensus majors before the edit → retry / escalate</span></span></div>
-        <div class="seat appeal" id="c-appeal"><div class="role"><span class="zh">二审 / 终审 = 作者（人）</span><span class="en">Second instance / final = the author (human)</span></div><span class="who"><span class="zh">只看 referral + 有据上诉 + 召回升级 · 终裁记录在案（override 审计）</span><span class="en">sees only referrals + grounded appeals + recall escalations · final ruling logged (override audited)</span></span></div>
+        <div class="seat recall" id="c-recall"><div class="role"><span class="zh">召回审计（检方侧上诉）</span><span class="en">Recall audit (prosecution-side appeal)</span></div><span class="who"><span class="zh">fresh skeptic，非原 reviewer · A 复查每条 drop、救回误丢的问题 · B 落稿前抽检强共识 major → 重审 / 升二审</span><span class="en">fresh skeptic, not the original reviewer · Mode A re-checks every drop for wrongful drops · Mode B spot-checks consensus majors before the edit → retry / escalate</span></span></div>
+        <div class="seat appeal" id="c-appeal"><div class="role"><span class="zh">二审 / 终审 = 作者（人）</span><span class="en">Second instance / final = the author (human)</span></div><span class="who"><span class="zh">只看 referral、有据上诉和召回升级；最终裁定记录在案（override 审计）</span><span class="en">sees only referrals + grounded appeals + recall escalations · final ruling logged (override audited)</span></span></div>
       </div>
     </div>
     <div class="cap" id="case-cap"><span class="ph"><span class="zh">点「审一桩案子」，看一条指控从起诉走到判决与分流。</span><span class="en">Click "Try a case" to watch one charge go from indictment to verdict and routing.</span></span></div>
 
     <details class="roster">
-      <summary><span class="zh">展开角色花名册 · 角色对照表（搭建时对照角色，避免混淆）</span><span class="en">Expand the roster · anti-confusion table (use it to keep roles straight)</span></summary>
+      <summary><span class="zh">展开角色对照表 · 搭建时用来避免混淆</span><span class="en">Expand the roster · anti-confusion table (use it to keep roles straight)</span></summary>
       <div class="pad">
       <table class="roster">
         <thead><tr><th style="width:110px"><span class="zh">法庭角色</span><span class="en">Courtroom role</span></th><th style="width:160px"><span class="zh">引擎实体</span><span class="en">Engine entity</span></th><th><span class="zh">立场 / 职责</span><span class="en">Stance / duty</span></th><th style="width:280px"><span class="zh">⚠ 别混淆</span><span class="en">⚠ Do not confuse</span></th></tr></thead>
@@ -496,7 +563,7 @@
           <tr><td><span class="side def"><span class="zh">起草 drafter</span><span class="en">drafter</span></span></td><td><span class="zh">author agent（转换角色）</span><span class="en">author agent (different stage)</span></td><td><span class="zh">对 valid-fixable 起草 minimal-edit；需新数据则诚实软化或升人</span><span class="en">minimal-edit for valid-fixable; for needs-data, honest softening or escalate</span></td><td class="warn"><span class="zh">同 persona、<b>不同阶段</b></span><span class="en">same persona, <b>different stage</b></span></td></tr>
           <tr><td><span class="side pros"><span class="zh">召回审计</span><span class="en">recall audit</span></span></td><td><span class="zh">fresh skeptic</span><span class="en">fresh skeptic</span></td><td><span class="zh">A 复查每条 drop；B 落稿前抽检强共识 major</span><span class="en">Mode A re-checks every drop; Mode B spot-checks consensus majors before the edit</span></td><td class="warn"><span class="zh"><b>不是原 reviewer</b>（避免固守先前判断）</span><span class="en"><b>not the original reviewer</b> (avoids entrenched positions)</span></td></tr>
           <tr><td><span class="side hum"><span class="zh">二审 / 终审</span><span class="en">second / final</span></span></td><td><span class="zh"><b>人类作者</b></span><span class="en"><b>the human author</b></span></td><td><span class="zh">只看升级件，终裁记录在案</span><span class="en">sees only escalations, final ruling logged</span></td><td class="warn"><span class="zh">= <b>人</b>，不是 author agent</span><span class="en">= the <b>human</b>, not the author agent</span></td></tr>
-          <tr><td><span class="side det"><span class="zh">法警 / orchestrator</span><span class="en">bailiff / orchestrator</span></span></td><td><span class="zh">orchestrator + 确定性脚本</span><span class="en">orchestrator + deterministic scripts</span></td><td><span class="zh">跑护栏 / 维护 ledger / 写 journal</span><span class="en">runs guards / keeps ledger / writes journal</span></td><td class="warn"><span class="zh">庭外，不 judge，只跑确定性 + gate</span><span class="en">off-court, does not judge, only runs the deterministic guards + gate</span></td></tr>
+          <tr><td><span class="side det"><span class="zh">执行官 / orchestrator</span><span class="en">bailiff / orchestrator</span></span></td><td><span class="zh">orchestrator + 确定性脚本</span><span class="en">orchestrator + deterministic scripts</span></td><td><span class="zh">跑护栏 / 维护 ledger / 写 journal</span><span class="en">runs guards / keeps ledger / writes journal</span></td><td class="warn"><span class="zh">庭外，不 judge，只跑确定性 + gate</span><span class="en">off-court, does not judge, only runs the deterministic guards + gate</span></td></tr>
           <tr><td><span class="side neu"><span class="zh">书记官 clerk</span><span class="en">clerk</span></span></td><td><span class="zh">clerk(workflow)</span><span class="en">clerk (workflow)</span></td><td><span class="zh">轮边界：核对遗留问题 vs 本轮改动、去重、判定是否收敛</span><span class="en">round boundary: reconcile carried open-questions vs this round's edits, dedup, decide convergence</span></td><td class="warn"><span class="zh">语义 workflow，<b>不是</b>上面的法警（确定性脚本）</span><span class="en">a semantic workflow, <b>not</b> the bailiff (deterministic scripts) above</span></td></tr>
         </tbody>
       </table>
@@ -506,14 +573,14 @@
 
   <!-- 五、阅读取证 -->
   <section id="s4" class="reveal">
-    <div class="h2"><span class="idx">05</span><h2><span class="zh">找全靠阅读，判准靠裁定</span><span class="en">Reading check, zoomed</span></h2><span class="zoom"><span class="zh">局部 · reading-check</span><span class="en">local · reading-check</span></span></div>
-    <p class="sub"><span class="zh">分工原则：<b>找全靠阅读、判准靠裁定</b>（对应 recall 与 precision）。阅读这一环只负责找问题、给引证，不判定是否成立；每处都必须能引出原文（引不出 = 没真读，既防略读也防凭空捏造）。<b>N 位领域 reviewer 各通读全文一遍</b>，由三层防略读机制托底。</span><span class="en">Organizing principle: <b>recall belongs to reading, precision to the courtroom</b>. Readers only find + cite, they do not judge validity; they must quote the source (cannot quote = did not read, anti-skim and anti-hallucination). <b>N domain reviewers each read the whole paper once</b>, backstopped by a three-layer anti-skim.</span></p>
+    <div class="h2"><span class="idx">05</span><h2><span class="zh">先读全，再判准</span><span class="en">Reading check, zoomed</span></h2><span class="zoom"><span class="zh">局部 · reading-check</span><span class="en">local · reading-check</span></span></div>
+    <p class="sub"><span class="zh">分工原则很简单：<b>找全靠阅读，判准靠裁定</b>。阅读阶段只负责找问题和给引文，不负责判定是否成立；每条观察都必须引用原文（引不出 = 没真读，也可能是在编）。<b>N 位领域 reviewer 各自通读全文一遍</b>，再用三层机制防略读。</span><span class="en">Organizing principle: <b>recall belongs to reading, precision to the courtroom</b>. Readers only find + cite, they do not judge validity; they must quote the source (cannot quote = did not read, anti-skim and anti-hallucination). <b>N domain reviewers each read the whole paper once</b>, backstopped by a three-layer anti-skim.</span></p>
     <div class="engine">
       <div class="stages">
         <div class="stage">
           <h4><span class="tag wf">Stage 1</span> <span class="zh">分派 + 通读全文</span><span class="en">Assign + holistic read</span></h4>
-          <div class="ac"><b>assign-reviewers</b> <span class="zh">先为论文指定 N 个子领域，实例化 N 位领域 reviewer</span><span class="en">name N subfields for the paper, instantiate N domain reviewers</span></div>
-          <div class="ac"><b>reading-check</b> <span class="zh">每位各通读全文一遍 → weaknesses + overall_confidence + 每节覆盖报告</span><span class="en">each reads the whole paper once → weaknesses + overall_confidence + a per-section coverage report</span></div>
+          <div class="ac"><b>assign-reviewers</b> <span class="zh">先识别论文涉及的 N 个子领域，再实例化 N 位领域 reviewer</span><span class="en">name N subfields for the paper, instantiate N domain reviewers</span></div>
+          <div class="ac"><b>reading-check</b> <span class="zh">每位 reviewer 各通读全文一遍 → weaknesses + overall_confidence + 每节覆盖报告</span><span class="en">each reads the whole paper once → weaknesses + overall_confidence + a per-section coverage report</span></div>
           <div class="note"><span class="zh">每条观察必带逐字引文（可验证）。</span><span class="en">Each finding must include a verbatim quote (verifiable).</span></div>
         </div>
         <div class="arrow">→</div>
@@ -522,7 +589,7 @@
           <div class="ac"><b>L1</b> <span class="zh">逐节强制覆盖：确定性核验每节的 in_section_quote</span><span class="en">forced per-section coverage: deterministically verify each in_section_quote</span></div>
           <div class="ac"><b>L2 coverage-auditor</b> <span class="zh">标出 skim 掉的（reviewer，节）对</span><span class="en">flag skimmed (reviewer, section) pairs</span></div>
           <div class="ac"><b>L3</b> <span class="zh">每个 flag → cap-1 定向重读补回</span><span class="en">each flag → a cap-1 targeted re-read to fill the gap</span></div>
-          <div class="note"><span class="zh">通读靠这三层防住「看似读了、实则略过」。</span><span class="en">These three layers backstop "looked-read but actually skimmed".</span></div>
+          <div class="note"><span class="zh">这三层专门防「看似读了，其实略过」。</span><span class="en">These three layers backstop "looked-read but actually skimmed".</span></div>
         </div>
         <div class="arrow">→</div>
         <div class="stage">
@@ -530,26 +597,26 @@
           <div class="ac"><b>merge</b> <span class="zh">跨 reviewer 语义去重，合并 raised_by(corroboration)</span><span class="en">semantic dedup across reviewers, merge raised_by (corroboration)</span></div>
           <div class="ac"><b>significance / kind</b> <span class="zh">确定性派生（MAX / substantive-dominates）</span><span class="en">deterministically derived (MAX / substantive-dominates)</span></div>
           <div class="ac"><b><span class="zh">按可争议性分流</span><span class="en">route by contestability</span></b> <span class="zh">机械 / 轻微 → polish；substantive-major → 庭审</span><span class="en">mechanical / minor → polish; substantive-major → trial</span></div>
-          <div class="keep"><span class="zh">产出：已去重、引文已核验、覆盖情况可查证的 issue → 路由器分两路</span><span class="en">Output: deduped · quote-verified · coverage-provable issues → the router splits two ways</span></div>
+          <div class="keep"><span class="zh">产出：去重后、引文可核验、覆盖情况可查的 issue → 交给路由器分两路</span><span class="en">Output: deduped · quote-verified · coverage-provable issues → the router splits two ways</span></div>
         </div>
       </div>
-      <div class="note" style="margin-top:14px"><span class="zh">N 位 reviewer 通读，跨节一致性（如 abstract「all benchmarks」对不上实验只测一个 dataset）由通读 reviewer 直接抓。</span><span class="en">N domain reviewers reading the whole paper catch cross-section consistency (e.g. an abstract claiming "all benchmarks" against experiments on only one dataset) directly.</span></div>
+      <div class="note" style="margin-top:14px"><span class="zh">因为 reviewer 通读全文，跨节不一致也会被直接抓出来，比如 abstract 写了「all benchmarks」，实验却只测一个 dataset。</span><span class="en">N domain reviewers reading the whole paper catch cross-section consistency (e.g. an abstract claiming "all benchmarks" against experiments on only one dataset) directly.</span></div>
     </div>
   </section>
 
   <!-- 六、三路分流 -->
   <section id="s5" class="reveal">
-    <div class="h2"><span class="idx">06</span><h2><span class="zh">三路分流：不是所有问题都该自动改</span><span class="en">Three-way routing and human gates</span></h2><span class="zoom"><span class="zh">设计原则</span><span class="en">design principle</span></span></div>
-    <p class="sub"><span class="zh">PaperJury 不把所有 reviewer 意见都当真。每个问题会先被核验，再按性质分流：能修的修，缺实验或证据的交给作者，不成立的丢弃。</span><span class="en">Routes in two stages: first a deterministic <b>contestability</b> router sends mechanical + minor issues to a separate <b>polish track</b> (no jury); only substantive-major issues reach the trial. The three routes below are the judge's verdict <b>inside</b> the trial, downstream of the contestability router.</span></p>
+    <div class="h2"><span class="idx">06</span><h2><span class="zh">三路分流：不是所有意见都该写进论文</span><span class="en">Three-way routing and human gates</span></h2><span class="zoom"><span class="zh">设计原则</span><span class="en">design principle</span></span></div>
+    <p class="sub"><span class="zh">PaperJury 不默认相信 reviewer 意见。每个 issue 先核验，再按性质分流：能安全改的写补丁；缺实验、缺证据或需要研究判断的交给作者；不成立的直接驳回。</span><span class="en">Routes in two stages: first a deterministic <b>contestability</b> router sends mechanical + minor issues to a separate <b>polish track</b> (no jury); only substantive-major issues reach the trial. The three routes below are the judge's verdict <b>inside</b> the trial, downstream of the contestability router.</span></p>
     <div class="route">
-      <div class="card" style="border-top-color:var(--danger)"><h3>invalid-drop</h3><p><span class="zh">误读、幻觉、重复、越界、严重度虚高 → 丢弃，并记录证据。</span><span class="en">accurately judged invalid (hallucination / misread / duplicate / out of scope / inflated severity) → dropped, with evidence.</span></p><span class="rc"><span class="zh">→ 转召回审计复查</span><span class="en">→ to recall audit for re-check</span></span></div>
-      <div class="card" style="border-top-color:var(--mem)"><h3>valid-fixable</h3><p><span class="zh">文本问题、claim 过强、结构不清（无需新实验或数据，且不漂移）→ 起草最小补丁，过护栏后落稿。</span><span class="en">valid + <b>text-fixable</b> (no new experiments/data) + no drift → draft a minimal edit, pass the guards, land it.</span></p><span class="rc"><span class="zh">→ drafter · 需新数据则改判 author-required 或诚实软化</span><span class="en">→ drafter · if it needs new data, reroute to author-required or soften honestly</span></span></div>
-      <div class="card" style="border-top-color:var(--human)"><h3>author-required</h3><p><span class="zh">缺实验、缺数据、需要研究判断 → 进入作者待办队列。这是正确分流，不算漏判。</span><span class="en">needs author-private info / new experiments / a judgment call → routed to the author (second instance). Correct handling, not a recall loss.</span></p><span class="rc"><span class="zh">→ review 交作者 · auto 入队</span><span class="en">→ review hands it to the author · auto queues it</span></span></div>
+      <div class="card" style="border-top-color:var(--danger)"><h3>invalid-drop</h3><p><span class="zh">误读、幻觉、重复、越界或严重度虚高：驳回，并保留证据。</span><span class="en">accurately judged invalid (hallucination / misread / duplicate / out of scope / inflated severity) → dropped, with evidence.</span></p><span class="rc"><span class="zh">→ 仍会交给召回审计抽查</span><span class="en">→ to recall audit for re-check</span></span></div>
+      <div class="card" style="border-top-color:var(--mem)"><h3>valid-fixable</h3><p><span class="zh">文本问题、claim 过强或结构不清；无需新实验或数据，也不会漂移：写最小补丁，过护栏后落稿。</span><span class="en">valid + <b>text-fixable</b> (no new experiments/data) + no drift → draft a minimal edit, pass the guards, land it.</span></p><span class="rc"><span class="zh">→ drafter · 需要新数据则改判 author-required 或诚实软化</span><span class="en">→ drafter · if it needs new data, reroute to author-required or soften honestly</span></span></div>
+      <div class="card" style="border-top-color:var(--human)"><h3>author-required</h3><p><span class="zh">缺实验、缺数据，或需要研究判断：进入作者待办队列。这是正确分流，不算漏判。</span><span class="en">needs author-private info / new experiments / a judgment call → routed to the author (second instance). Correct handling, not a recall loss.</span></p><span class="rc"><span class="zh">→ review 交作者 · auto 入队</span><span class="en">→ review hands it to the author · auto queues it</span></span></div>
     </div>
     <div class="formula">
-      <span class="zh"><b>一条原则贯穿始终：不确定时交给作者，不静默丢弃，也不静默改稿。</b>
-      <div class="note" style="margin-top:8px">机械、轻微的问题不进裁定，单独走 polish 流程批量润色；万一其中藏着大问题，会重新送回评审；拿不准的也会进待办队列，绝不悄悄丢掉。</div>
-      <div class="note" style="margin-top:8px">软维度难免有残余误差，所以不承诺完美、也不承诺零队列。</div></span>
+      <span class="zh"><b>一条原则贯穿始终：拿不准就交给作者，不静默丢弃，也不静默改稿。</b>
+      <div class="note" style="margin-top:8px">机械、轻微的问题不进裁定，单独走 polish 流程批量润色；如果其中藏着大问题，会重新送回评审。拿不准的也会进待办队列，不会悄悄消失。</div>
+      <div class="note" style="margin-top:8px">软维度总会留下残余误差，所以不承诺完美，也不承诺零队列。</div></span>
       <span class="en"><b>Design aim: make the judgment accurate and route three ways by the nature of the issue, so precision and recall need not be traded off.</b> That trade-off mainly arises when a noisy validity score is thresholded; making the judgment <b>accurate</b> and routing <b>three ways</b> by the nature of the issue is meant to let both improve together.<br>
       <span class="mono">queue = the irreducible "truly needs the author" + "could not be confidently classified"</span>. The first is irreducible; the second shrinks as accuracy rises. Compute goes into <b>verification / grounding / adjudication</b> (raising accuracy), not into "finding more issues".
       <div class="note" style="margin-top:8px"><b>Polish track:</b> issues the contestability router judges mechanical / minor skip the jury and take a batch copy-edit / light-check; a misrouted major can <b>escalate back to trial</b>, the uncertain ones are queued (polish-review), <b>never silently dropped</b>.</div>
@@ -561,11 +628,11 @@
   <section id="s6" class="reveal">
     <div class="h2"><span class="idx">07</span><h2><span class="zh">硬规则</span><span class="en">Hard rules</span></h2><span class="zoom"><span class="zh">贯穿所有模式</span><span class="en">throughout all modes</span></span></div>
     <div class="rules">
-      <div class="rule"><b>1 <span class="zh">作者授权</span><span class="en">author sign-off</span></b> <span class="zh">未经作者授权绝不改稿；auto 用「事前授权策略 + 待办队列」来满足它（预先授权），而非逐条确认。</span><span class="en">never edit the manuscript without the author's authorization; auto satisfies it via up-front policy sign-off + queue (a named carve-out), not per-edit sign-off.</span></div>
-      <div class="rule"><b>2 <span class="zh">角色隔离</span><span class="en">isolation</span></b> <span class="zh">检方、陪审、审计三方互不通气、也看不到 ledger；靠「prompt 里不放」加「每个 reviewer 型 prompt 显式写明 ISOLATION 指令」形成双重隔离约束。</span><span class="en">prosecution/jury/audit never cross-talk and never see the ledger; enforced by what is not in the prompt + an explicit ISOLATION instruction in every reviewer-type prompt.</span></div>
+      <div class="rule"><b>1 <span class="zh">作者授权</span><span class="en">author sign-off</span></b> <span class="zh">未经作者授权绝不改稿；auto 通过「事前授权策略 + 待办队列」满足这一条，不逐条确认。</span><span class="en">never edit the manuscript without the author's authorization; auto satisfies it via up-front policy sign-off + queue (a named carve-out), not per-edit sign-off.</span></div>
+      <div class="rule"><b>2 <span class="zh">角色隔离</span><span class="en">isolation</span></b> <span class="zh">检方、陪审、审计三方互不通气，也看不到 ledger；实现方式是 prompt 不给相关信息，并在每个 reviewer 型 prompt 里显式写明 ISOLATION。</span><span class="en">prosecution/jury/audit never cross-talk and never see the ledger; enforced by what is not in the prompt + an explicit ISOLATION instruction in every reviewer-type prompt.</span></div>
       <div class="rule"><b>3 <span class="zh">必须有引文和判据</span><span class="en">quote + criterion required</span></b> <span class="zh">观察必引原文（可核验）；valid-fixable 由法官设 close_criterion。</span><span class="en">every observation must quote the source (verifiable); a valid-fixable issue carries a close_criterion (set by the judge).</span></div>
       <div class="rule"><b>4 <span class="zh">草稿外信息不入稿</span><span class="en">zero leakage</span></b> <span class="zh">回译、日志、自检结果只保留在作者侧，不写入论文正文。</span><span class="en">back-translations / logs / self-checks stay author-side, never enter the manuscript.</span></div>
-      <div class="rule"><b>5 <span class="zh">分歧必须显式处理</span><span class="en">disagreement resolves</span></b> <span class="zh">分歧靠讨论解决，然后 override（记录在案），绝不悄悄驳回（动 spine 锚的修复一律入队）。</span><span class="en">disagreement resolves through discussion, then override (logged), never a silent dismissal (any fix touching a spine anchor is queued).</span></div>
+      <div class="rule"><b>5 <span class="zh">分歧必须显式处理</span><span class="en">disagreement resolves</span></b> <span class="zh">有分歧就讨论；谈不拢再 override，并记录在案。动到 spine 锚的修复一律入队。</span><span class="en">disagreement resolves through discussion, then override (logged), never a silent dismissal (any fix touching a spine anchor is queued).</span></div>
       <div class="rule"><b>6 <span class="zh">不写死项目路径</span><span class="en">no hardcoded paths</span></b> <span class="zh">skill 不含项目路径 / 文件，一切运行时解析。</span><span class="en">the skill carries no project paths / files; everything resolved at runtime.</span></div>
     </div>
   </section>
@@ -587,9 +654,9 @@
   function t(o){ return o[LANG] != null ? o[LANG] : o.zh; }
 
   var T = {
-    flowReset:{zh:'点「播放引擎流」，跟着一条 charge 走完八步。', en:'Click "Play the engine flow" to follow one charge through all eight steps.'},
-    flowReady:{zh:'就绪 · 点播放看 charge 流过', en:'Ready · click play to watch a charge flow through'},
-    play:{zh:'▶ 播放引擎流', en:'▶ Play the engine flow'},
+    flowReset:{zh:'点「播放流程」，跟着一条 issue 走完八步。', en:'Click "Play the engine flow" to follow one charge through all eight steps.'},
+    flowReady:{zh:'就绪 · 点播放看 issue 流过', en:'Ready · click play to watch a charge flow through'},
+    play:{zh:'▶ 播放流程', en:'▶ Play the engine flow'},
     pause:{zh:'❚❚ 暂停', en:'❚❚ Pause'},
     stepWord:{zh:'步骤 ', en:'Step '},
     caseReset:{zh:'点「审一桩案子」，看一条指控从起诉走到判决与分流。', en:'Click "Try a case" to watch one charge go from indictment to verdict and routing.'},
@@ -622,14 +689,14 @@
   // ===== 流水线:播放引擎流 =====
   var flow = $('#pipeline-flow');
   var caps = [
-    {zh:'<b>0 分解</b> · 把论文切成带稳定 id 的 claim 单元 + 节列表 · 确定性，庭外。', en:'<b>0 Decompose</b> · split the paper into claim units + the section list with stable ids. Deterministic, off-court.'},
-    {zh:'<b>1 分派 + 通读</b> · 为论文指定 N 个子领域，N 位领域 reviewer 各通读全文一遍，逐字引证，产出候选 charges。召回在这里。', en:'<b>1 Assign + holistic read</b> · name N subfields; N domain reviewers each read the whole paper once, quoting verbatim, producing candidate charges. Recall happens here.'},
-    {zh:'<b>2 覆盖 + 合并</b> · 三层防略读（逐节覆盖 + coverage-auditor）+ 跨 reviewer 去重；路由器按可争议性分两路：机械/轻微 → polish，major → 庭审。', en:'<b>2 Coverage + merge</b> · three-layer anti-skim (per-section coverage + coverage-auditor) + cross-reviewer dedup; the router splits by contestability: mechanical/minor → polish, major → trial.'},
-    {zh:'<b>3 庭审（5→12 个评审视角）</b> · 逐 charge 开庭：全文辩护，5 位视角彼此独立的陪审员带着局部上下文投票，无明显多数升 12，最后法官三路裁定。', en:'<b>3 Trial (5→12 jurors)</b> · one charge at a time: a whole-paper defense; 5 independent jurors vote with local context; escalate to 12 on no clear majority; then the judge routes three ways.'},
-    {zh:'<b>4 召回审计</b> · Mode A 复查每一条 drop、救回误丢的问题；Mode B 落稿前抽检强共识 major，防止整组共识一起错。', en:'<b>4 Recall audit</b> · Mode A re-checks every drop to revive wrong drops; Mode B spot-checks strong-consensus majors before the edit, guarding against the whole panel agreeing on the same mistake.'},
-    {zh:'<b>5 起草</b> · valid-fixable 交 drafter 起草最小补丁。', en:'<b>5 Drafter</b> · valid-fixable goes to the drafter for a minimal patch.'},
-    {zh:'<b>6 编辑安全 + 落稿</b> · anchor-diff + cross-ref 预筛风险：LOW 直接 apply 过 compile 护栏；RISKY → meaning-audit（冻结锚）/ edit-audit（其它），过关才落，否则回滚入队。', en:'<b>6 Edit-safety + apply</b> · anchor-diff + cross-ref pre-filter risk: LOW applies under the compile guard; RISKY → meaning-audit (frozen anchors) / edit-audit (the rest); only a pass lands, else revert + queue.'},
-    {zh:'<b>7 书记官 / 终审</b> · review 阶段由作者把关这一步；auto 模式下书记官把这一轮已处理干净的结果并入累计 ledger，再用确定性的收敛判断驱动外层的一审 → … → 终审。', en:'<b>7 Clerk / final</b> · in review the author handles this step; in auto the clerk reconciles this round into the cumulative ledger, and a deterministic convergence test drives the outer loop first instance → … → final instance.'}
+    {zh:'<b>0 分解</b> · 把论文切成带稳定 id 的 claim 单元和节列表；这是庭外确定性步骤。', en:'<b>0 Decompose</b> · split the paper into claim units + the section list with stable ids. Deterministic, off-court.'},
+    {zh:'<b>1 分派 + 通读</b> · 为论文指定 N 个子领域，N 位领域 reviewer 各自通读全文，逐字引证，产出候选 charges。召回从这里开始。', en:'<b>1 Assign + holistic read</b> · name N subfields; N domain reviewers each read the whole paper once, quoting verbatim, producing candidate charges. Recall happens here.'},
+    {zh:'<b>2 覆盖 + 合并</b> · 三层防略读（逐节覆盖 + coverage-auditor）+ 跨 reviewer 去重；路由器按争议程度分两路：机械/轻微 → polish，major → 庭审。', en:'<b>2 Coverage + merge</b> · three-layer anti-skim (per-section coverage + coverage-auditor) + cross-reviewer dedup; the router splits by contestability: mechanical/minor → polish, major → trial.'},
+    {zh:'<b>3 庭审（5→12 个评审视角）</b> · 逐 charge 开庭：全文辩护，5 位视角彼此独立的陪审员带局部上下文投票；没有明显多数才升 12，最后由法官三路裁定。', en:'<b>3 Trial (5→12 jurors)</b> · one charge at a time: a whole-paper defense; 5 independent jurors vote with local context; escalate to 12 on no clear majority; then the judge routes three ways.'},
+    {zh:'<b>4 召回审计</b> · Mode A 复查每一条 drop、救回误丢的问题；Mode B 落稿前抽检强共识 major，防止整组一起看错。', en:'<b>4 Recall audit</b> · Mode A re-checks every drop to revive wrong drops; Mode B spot-checks strong-consensus majors before the edit, guarding against the whole panel agreeing on the same mistake.'},
+    {zh:'<b>5 起草</b> · valid-fixable 交给 drafter，写最小补丁。', en:'<b>5 Drafter</b> · valid-fixable goes to the drafter for a minimal patch.'},
+    {zh:'<b>6 编辑安全 + 落稿</b> · anchor-diff + cross-ref 先筛风险：LOW 直接 apply，再过 compile 护栏；RISKY → meaning-audit（冻结锚）/ edit-audit（其它）。过关才落，否则回滚并入队。', en:'<b>6 Edit-safety + apply</b> · anchor-diff + cross-ref pre-filter risk: LOW applies under the compile guard; RISKY → meaning-audit (frozen anchors) / edit-audit (the rest); only a pass lands, else revert + queue.'},
+    {zh:'<b>7 书记官 / 终审</b> · review 阶段由作者把关；auto 模式下，clerk 把本轮结果并入累计 ledger，再用确定性的收敛判断驱动外层循环。', en:'<b>7 Clerk / final</b> · in review the author handles this step; in auto the clerk reconciles this round into the cumulative ledger, and a deterministic convergence test drives the outer loop first instance → … → final instance.'}
   ];
   var flowRefresh = function(){};
   if (flow){
@@ -686,19 +753,19 @@
   var caseStarted = false, idx = 0;
   var outcomes = [
     { v:'valid-fixable', tally:{zh:'5 人陪审团 4 / 1 认定成立',en:'5-juror tier 4 / 1 sustains the charge'}, seat:'#c-drafter',
-      line:{zh:'④ 判 <b>valid-fixable</b>：可改文本、不漂移 → drafter 起草最小补丁；anchor-diff + cross-ref 预筛，LOW 过 compile 护栏后落稿，并记入 journal。', en:'④ Verdict <b>valid-fixable</b>: text-fixable, no drift → the drafter writes a minimal patch; anchor-diff + cross-ref pre-filter, a LOW edit passes the compile guard and is landed + journaled.'} },
+      line:{zh:'④ 判 <b>valid-fixable</b>：文本可改、不会漂移 → drafter 写最小补丁；anchor-diff + cross-ref 预筛，LOW 过 compile 护栏后落稿，并记入 journal。', en:'④ Verdict <b>valid-fixable</b>: text-fixable, no drift → the drafter writes a minimal patch; anchor-diff + cross-ref pre-filter, a LOW edit passes the compile guard and is landed + journaled.'} },
     { v:'invalid-drop', tally:{zh:'5 人陪审团 1 / 4 认定不成立',en:'5-juror tier 1 / 4 rejects the charge'}, seat:'#c-recall',
-      line:{zh:'④ 判 <b>invalid-drop</b>：丢弃 → 召回审计 fresh skeptic 复查（Mode A），找回误丢的真问题。', en:'④ Verdict <b>invalid-drop</b>: dropped → the recall-audit fresh skeptic re-checks (Mode A) and catches wrongful drops (real issues come back).'} },
+      line:{zh:'④ 判 <b>invalid-drop</b>：驳回 → 召回审计 fresh skeptic 复查（Mode A），专门找回误丢的真问题。', en:'④ Verdict <b>invalid-drop</b>: dropped → the recall-audit fresh skeptic re-checks (Mode A) and catches wrongful drops (real issues come back).'} },
     { v:'author-required', tally:{zh:'5 人无明显多数 → 升 12 人仍裂判',en:'no clear majority at 5 → escalated to 12, still split'}, seat:'#c-appeal',
-      line:{zh:'④ 判 <b>author-required</b>：需新数据 / 判断取舍 → 升二审交作者（auto 时放入待办队列，累计到终审）。', en:'④ Verdict <b>author-required</b>: needs new data / a judgment call → escalated to the author (queued in auto, accumulating to the final instance).'} }
+      line:{zh:'④ 判 <b>author-required</b>：需要新数据或研究判断 → 升二审交作者；auto 时放入待办队列，累计到终审。', en:'④ Verdict <b>author-required</b>: needs new data / a judgment call → escalated to the author (queued in auto, accumulating to the final instance).'} }
   ];
   if (runBtn){
     var ccap = $('#case-cap'), cind = $('#case-ind'),
         jury = $$('#jury .j'), running = false;
     var stepLines = [
-      {zh:'① 检方（领域 reviewer）提出<b>指控</b>，附逐字引文 → 退场。', en:'① The prosecution (a domain reviewer) files a <b>charge</b> with a verbatim quote → steps away.'},
-      {zh:'② 覆盖 + 合并：防略读 + 去重后按<b>可争议性</b>分流，这条是 substantive-major → 进入庭审（机械/轻微会走 polish 流程）。', en:'② Coverage + merge: after anti-skim + dedup, route by <b>contestability</b>; this one is substantive-major → on to trial (mechanical/minor would take the polish track).'},
-      {zh:'③ 辩方带证据为其辩护；先派 5 位<b>视角彼此独立</b>的陪审员，带着局部上下文就「指控是否成立」投票（无明显多数会升 12）…', en:'③ The defense argues its case with evidence; a first tier of 5 <b>independent</b> jurors vote on whether the charge holds, with local context (no clear majority escalates to 12)…'}
+      {zh:'① 检方（领域 reviewer）提出<b>指控</b>，附逐字引文，然后退场。', en:'① The prosecution (a domain reviewer) files a <b>charge</b> with a verbatim quote → steps away.'},
+      {zh:'② 覆盖 + 合并：防略读 + 去重后按<b>争议程度</b>分流。这条是 substantive-major，进入庭审；机械/轻微问题会走 polish 流程。', en:'② Coverage + merge: after anti-skim + dedup, route by <b>contestability</b>; this one is substantive-major → on to trial (mechanical/minor would take the polish track).'},
+      {zh:'③ 辩方带证据辩护；先派 5 位<b>视角彼此独立</b>的陪审员，带局部上下文投票判断「指控是否成立」（无明显多数才升 12）…', en:'③ The defense argues its case with evidence; a first tier of 5 <b>independent</b> jurors vote on whether the charge holds, with local context (no clear majority escalates to 12)…'}
     ];
     function tallyLine(o){ return {zh:'法官唱票：<b>'+o.tally.zh+'</b> → 作出裁定。', en:'The judge reads the tally: <b>'+o.tally.en+'</b> → ruling.'}; }
     function clearCourt(){ ['#c-pros','#c-grand','#c-judge','#c-def','#c-drafter','#c-recall','#c-appeal'].forEach(function(s){
