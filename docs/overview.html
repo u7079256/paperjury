@@ -8,13 +8,13 @@
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0e0f13">
 <meta property="og:type" content="website">
-<meta property="og:title" content="paperjury · courtroom review engine">
-<meta property="og:description" content="Interactive workflow overview (EN / 中文): global three modes down to one case, one courtroom. Three modes share one engine core.">
+<meta property="og:title" content="PaperJury · AI paper review stress test">
+<meta property="og:description" content="A closed-loop review–judge–revise workflow for pre-submission paper checks.">
 <!-- GH Pages social card. Regenerate overview-card.png via: msedge --headless=new --window-size=1200,630 --screenshot of overview.html?lang=en -->
 <meta property="og:image" content="https://u7079256.github.io/paperjury/overview-card.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="paperjury · courtroom review engine">
-<meta name="twitter:description" content="Interactive workflow overview, global to local. EN / 中文.">
+<meta name="twitter:title" content="PaperJury · AI paper review stress test">
+<meta name="twitter:description" content="A closed-loop review–judge–revise workflow for pre-submission paper checks.">
 <meta name="twitter:image" content="https://u7079256.github.io/paperjury/overview-card.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230e0f13'/><circle cx='16' cy='10.5' r='3.4' fill='%23d6a14b'/><path d='M8 19h16M8 23h11' stroke='%23ece7dd' stroke-width='1.9' stroke-linecap='round'/></svg>">
 <script>(function(){var d=document.documentElement;d.className+=' js';var lang=null;try{var m=(location.search||'').match(/[?&]lang=(en|zh)/i);if(m){lang=m[1].toLowerCase();}else{var s=localStorage.getItem('prl-lang');if(s==='en'||s==='zh')lang=s;}}catch(e){}if(lang){d.setAttribute('data-lang',lang);d.setAttribute('lang',lang);try{localStorage.setItem('prl-lang',lang);}catch(e){}}})();</script>
@@ -293,7 +293,7 @@
   <header class="hero reveal">
     <div class="kicker"><span class="zh">CS 论文预审 / 改稿 · Claude Code Skill · Workflow + Memory</span><span class="en">CS-conference review / editing · Skill + Workflow + Memory</span></div>
     <h1><span class="zh">投稿前，先做一轮<br>AI 审稿压力测试。</span><span class="en">Before a reviewer tears it apart,<br>let a <em>jury</em> do it first.</span></h1>
-    <p class="lede"><span class="zh">直接问 AI「我论文怎么样」，答案常常像抽奖：要么泛泛夸好，要么无限挑刺。<br><br>PaperJury 把审稿、裁定、修改、复查做成闭环：能修的自动修，缺实验或证据的留给作者；改到收益变小就停下，避免越改越偏。</span><span class="en">Ask an AI if your paper is any good and you get a polite yes. PaperJury argues the other side: N reviewers read the whole paper, disputes go to an independent vote and a three-way verdict (fix it / needs you / no fix), and only edits you sign off on land, then it actually compiles.</span></p>
+    <p class="lede"><span class="zh">直接问 AI「我论文怎么样」，答案常常像抽奖：要么泛泛夸好，要么无限挑刺。<br><br>PaperJury 把审稿、裁定、修改、复查做成闭环：能修的自动修，缺实验或证据的留给作者；改到收益变小时停止，避免越改越偏。</span><span class="en">Ask an AI if your paper is any good and you get a polite yes. PaperJury argues the other side: N reviewers read the whole paper, disputes go to an independent vote and a three-way verdict (fix it / needs you / no fix), and only edits you sign off on land, then it actually compiles.</span></p>
     <div class="caption">
       <div class="cr"><span><b>PaperJury</b> v. Your Paper</span><span class="no">No. 26-CV-0603</span></div>
       <div class="cr"><span><span class="zh">三种模式</span><span class="en">Three modes</span> · direct-edit / review / auto</span><span>Skill + Workflow + Memory</span></div>
@@ -320,7 +320,7 @@
 
   <!-- 一、三模式 -->
   <section id="s1" class="reveal">
-    <div class="h2"><span class="idx">01</span><h2><span class="zh">三种模式，对应三种改稿场景</span><span class="en">Three modes, one shared engine core</span></h2><span class="zoom"><span class="zh">全局</span><span class="en">global</span></span></div>
+    <div class="h2"><span class="idx">01</span><h2><span class="zh">三种模式，对应三种改稿场景</span><span class="en">Three modes for three editing scenarios</span></h2><span class="zoom"><span class="zh">全局</span><span class="en">global</span></span></div>
     <p class="sub"><span class="zh">不是三个孤立命令，而是三种改稿意图：小改动走 direct-edit，投稿前自查走 review，需要多轮自动收敛时再显式开启 auto。</span><span class="en">Three entries, one engine. review and auto run the same courtroom engine; auto just removes the human second instance and swaps each human gate for a <b>pre-authorized policy + return queue</b>.</span></p>
     <div class="modes">
       <div class="mode" style="border-top-color:var(--human)">
@@ -333,7 +333,7 @@
         </ul>
       </div>
       <div class="mode" style="border-top-color:var(--wf)">
-        <span class="lab" style="color:#9cc0ff">REVIEW</span><span class="freq"> · <span class="zh">偶尔，投稿前</span><span class="en">occasional, pre-submission</span></span>
+        <span class="lab" style="color:#9cc0ff">REVIEW</span><span class="freq"> · <span class="zh">投稿前自查</span><span class="en">occasional, pre-submission</span></span>
         <h3><span class="zh">投稿前，系统性找问题</span><span class="en">Systematic hardening</span></h3>
         <ul>
           <li><span class="zh">适合投稿前做一次严格自查</span><span class="en">Courtroom <b>per-issue adjudication engine</b> (zoomed in the next sections)</span></li>
@@ -347,7 +347,7 @@
         <ul>
           <li><span class="zh">适合让它连续处理一批明显问题</span><span class="en">Same engine, human removed; gates → pre-authorized policy + return queue</span></li>
           <li><span class="zh">能安全修改的自动落稿；缺实验、缺数据、判断不确定的问题进入待办队列</span><span class="en">Anti-drift: frozen spine + four-state meaning audit + per-passage cap</span></li>
-          <li><span class="zh">当修改收益变小或触发上限时停止，避免越改越偏 · 完成 = <span class="mono">ledger.js gate</span></span><span class="en">stops at clerk convergence (or applied-quiescence / a hard limit) · completion = <span class="mono">ledger.js gate</span></span></li>
+          <li><span class="zh">当修改收益变小或触发上限时停止，避免越改越偏。完成 = 收敛检查通过。</span><span class="en">stops at clerk convergence (or applied-quiescence / a hard limit) · completion = <span class="mono">ledger.js gate</span></span></li>
         </ul>
       </div>
     </div>
@@ -420,7 +420,7 @@
       <div class="node det"><div class="box"><span class="n">0</span><h4><span class="zh">分解</span><span class="en">Decompose</span></h4><p><span class="zh">切成 claim 单元 + 稳定 passage-id</span><span class="en">Split into claim units + stable passage-id</span></p><span class="file">decompose.js</span></div></div>
       <div class="node wf"><div class="box"><span class="n">1 · WF</span><h4><span class="zh">分派 + 通读</span><span class="en">Assign + holistic read</span></h4><p><span class="zh">分派 N 个子领域，N 位领域 reviewer 各通读全文一遍</span><span class="en">assign N subfields; N domain reviewers each read the whole paper once</span></p><span class="file">assign-reviewers · reading-check</span></div></div>
       <div class="node wf"><div class="box"><span class="n">2 · WF</span><h4><span class="zh">覆盖 + 合并</span><span class="en">Coverage + merge</span></h4><p><span class="zh">防略读审计 + 跨 reviewer 去重 → 按可争议性分流</span><span class="en">anti-skim audit + cross-reviewer dedup → route by contestability</span></p><span class="file">coverage-auditor · merge</span></div></div>
-      <div class="node wf"><div class="box"><span class="n">3 · WF</span><h4><span class="zh">庭审（5→12 人）</span><span class="en">Trial (5→12 jurors)</span></h4><p><span class="zh">全文辩护 / 5 人陪审团带局部上下文 / 无多数升 12 → 法官三路裁定</span><span class="en">whole-paper defense / 5-juror local-context tier / escalate to 12 → judge routes three ways</span></p><span class="file">trial</span></div></div>
+      <div class="node wf"><div class="box"><span class="n">3 · WF</span><h4><span class="zh">庭审（5→12 个评审视角）</span><span class="en">Trial (5→12 jurors)</span></h4><p><span class="zh">全文辩护 / 5 人陪审团带局部上下文 / 无多数升 12 → 法官三路裁定</span><span class="en">whole-paper defense / 5-juror local-context tier / escalate to 12 → judge routes three ways</span></p><span class="file">trial</span></div></div>
       <div class="node wf"><div class="box"><span class="n">4 · WF</span><h4><span class="zh">召回审计</span><span class="en">Recall audit</span></h4><p><span class="zh">A 救回误丢的问题 + B 落稿前抽检强共识 major</span><span class="en">Mode A revives wrong drops + Mode B spot-checks consensus majors before the edit</span></p><span class="file">recall-audit</span></div></div>
       <div class="node wf"><div class="box"><span class="n">5 · WF</span><h4><span class="zh">起草</span><span class="en">Drafter</span></h4><p><span class="zh">valid-fixable → 起草最小补丁</span><span class="en">valid-fixable → a minimal patch</span></p><span class="file">drafter</span></div></div>
       <div class="node det"><div class="box"><span class="n">6</span><h4><span class="zh">编辑安全 + 落稿</span><span class="en">Edit-safety + apply</span></h4><p><span class="zh">anchor-diff + cross-ref → meaning / edit-audit → apply</span><span class="en">anchor-diff + cross-ref → meaning / edit-audit → apply</span></p><span class="file">anchor-diff · cross-ref · apply-patch</span></div></div>
@@ -562,7 +562,7 @@
     <div class="h2"><span class="idx">07</span><h2><span class="zh">硬规则</span><span class="en">Hard rules</span></h2><span class="zoom"><span class="zh">贯穿所有模式</span><span class="en">throughout all modes</span></span></div>
     <div class="rules">
       <div class="rule"><b>1 <span class="zh">作者授权</span><span class="en">author sign-off</span></b> <span class="zh">未经作者授权绝不改稿；auto 用「事前授权策略 + 待办队列」来满足它（预先授权），而非逐条确认。</span><span class="en">never edit the manuscript without the author's authorization; auto satisfies it via up-front policy sign-off + queue (a named carve-out), not per-edit sign-off.</span></div>
-      <div class="rule"><b>2 <span class="zh">角色隔离</span><span class="en">isolation</span></b> <span class="zh">检方、陪审、审计三方互不通气、也看不到 ledger；靠「prompt 里不放」加「每个 reviewer 型 prompt 显式写明 ISOLATION 指令」双重保证。</span><span class="en">prosecution/jury/audit never cross-talk and never see the ledger; enforced by what is not in the prompt + an explicit ISOLATION instruction in every reviewer-type prompt.</span></div>
+      <div class="rule"><b>2 <span class="zh">角色隔离</span><span class="en">isolation</span></b> <span class="zh">检方、陪审、审计三方互不通气、也看不到 ledger；靠「prompt 里不放」加「每个 reviewer 型 prompt 显式写明 ISOLATION 指令」形成双重隔离约束。</span><span class="en">prosecution/jury/audit never cross-talk and never see the ledger; enforced by what is not in the prompt + an explicit ISOLATION instruction in every reviewer-type prompt.</span></div>
       <div class="rule"><b>3 <span class="zh">必须有引文和判据</span><span class="en">quote + criterion required</span></b> <span class="zh">观察必引原文（可核验）；valid-fixable 由法官设 close_criterion。</span><span class="en">every observation must quote the source (verifiable); a valid-fixable issue carries a close_criterion (set by the judge).</span></div>
       <div class="rule"><b>4 <span class="zh">草稿外信息不入稿</span><span class="en">zero leakage</span></b> <span class="zh">回译、日志、自检结果只保留在作者侧，不写入论文正文。</span><span class="en">back-translations / logs / self-checks stay author-side, never enter the manuscript.</span></div>
       <div class="rule"><b>5 <span class="zh">分歧必须显式处理</span><span class="en">disagreement resolves</span></b> <span class="zh">分歧靠讨论解决，然后 override（记录在案），绝不悄悄驳回（动 spine 锚的修复一律入队）。</span><span class="en">disagreement resolves through discussion, then override (logged), never a silent dismissal (any fix touching a spine anchor is queued).</span></div>
@@ -625,7 +625,7 @@
     {zh:'<b>0 分解</b> · 把论文切成带稳定 id 的 claim 单元 + 节列表 · 确定性，庭外。', en:'<b>0 Decompose</b> · split the paper into claim units + the section list with stable ids. Deterministic, off-court.'},
     {zh:'<b>1 分派 + 通读</b> · 为论文指定 N 个子领域，N 位领域 reviewer 各通读全文一遍，逐字引证，产出候选 charges。召回在这里。', en:'<b>1 Assign + holistic read</b> · name N subfields; N domain reviewers each read the whole paper once, quoting verbatim, producing candidate charges. Recall happens here.'},
     {zh:'<b>2 覆盖 + 合并</b> · 三层防略读（逐节覆盖 + coverage-auditor）+ 跨 reviewer 去重；路由器按可争议性分两路：机械/轻微 → polish，major → 庭审。', en:'<b>2 Coverage + merge</b> · three-layer anti-skim (per-section coverage + coverage-auditor) + cross-reviewer dedup; the router splits by contestability: mechanical/minor → polish, major → trial.'},
-    {zh:'<b>3 庭审（5→12 人）</b> · 逐 charge 开庭：全文辩护，5 位视角彼此独立的陪审员带着局部上下文投票，无明显多数升 12，最后法官三路裁定。', en:'<b>3 Trial (5→12 jurors)</b> · one charge at a time: a whole-paper defense; 5 independent jurors vote with local context; escalate to 12 on no clear majority; then the judge routes three ways.'},
+    {zh:'<b>3 庭审（5→12 个评审视角）</b> · 逐 charge 开庭：全文辩护，5 位视角彼此独立的陪审员带着局部上下文投票，无明显多数升 12，最后法官三路裁定。', en:'<b>3 Trial (5→12 jurors)</b> · one charge at a time: a whole-paper defense; 5 independent jurors vote with local context; escalate to 12 on no clear majority; then the judge routes three ways.'},
     {zh:'<b>4 召回审计</b> · Mode A 复查每一条 drop、救回误丢的问题；Mode B 落稿前抽检强共识 major，防止整组共识一起错。', en:'<b>4 Recall audit</b> · Mode A re-checks every drop to revive wrong drops; Mode B spot-checks strong-consensus majors before the edit, guarding against the whole panel agreeing on the same mistake.'},
     {zh:'<b>5 起草</b> · valid-fixable 交 drafter 起草最小补丁。', en:'<b>5 Drafter</b> · valid-fixable goes to the drafter for a minimal patch.'},
     {zh:'<b>6 编辑安全 + 落稿</b> · anchor-diff + cross-ref 预筛风险：LOW 直接 apply 过 compile 护栏；RISKY → meaning-audit（冻结锚）/ edit-audit（其它），过关才落，否则回滚入队。', en:'<b>6 Edit-safety + apply</b> · anchor-diff + cross-ref pre-filter risk: LOW applies under the compile guard; RISKY → meaning-audit (frozen anchors) / edit-audit (the rest); only a pass lands, else revert + queue.'},
