@@ -37,6 +37,8 @@ The intended use is to surface avoidable problems earlier, while you can still a
 
 It is a Claude Code skill. Install it by cloning the repo into the folder Claude Code reads skills from:
 
+For the Codex-first port, use [paperjury-codex](https://github.com/u7079256/paperjury-codex).
+
 ```bash
 # macOS / Linux
 git clone https://github.com/u7079256/paperjury ~/.claude/skills/paperjury
