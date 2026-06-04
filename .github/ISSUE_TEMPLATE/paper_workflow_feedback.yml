@@ -1,0 +1,51 @@
+name: Paper workflow feedback
+description: Tell us how a real review run went (verdict quality, false positives, missed issues)
+labels: ["workflow-feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This helps validate the engine on real papers. Please do NOT paste unpublished manuscript text or anything you cannot share. English or 中文 both welcome.
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Which mode did you run
+      options:
+        - review (full)
+        - review (passage)
+        - auto (/goal)
+        - direct-edit
+    validations:
+      required: true
+  - type: textarea
+    id: useful
+    attributes:
+      label: What it got right
+      description: Real weaknesses it surfaced that you agreed with.
+  - type: textarea
+    id: false-positives
+    attributes:
+      label: False positives / over-reach
+      description: Charges that were wrong, or edits that changed meaning. The "Invalid" outcome is meant to catch these. Did it?
+  - type: textarea
+    id: missed
+    attributes:
+      label: What it missed
+      description: Real problems a human reviewer would raise that the engine did not.
+  - type: dropdown
+    id: venue
+    attributes:
+      label: Venue or field (optional)
+      options:
+        - CVPR / ICCV / ECCV (vision)
+        - NeurIPS / ICML / ICLR (ML)
+        - ACL / EMNLP (NLP)
+        - Systems (OSDI / NSDI / SOSP / ...)
+        - Other
+        - Prefer not to say
+    validations:
+      required: false
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else

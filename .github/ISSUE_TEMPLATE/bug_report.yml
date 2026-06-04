@@ -1,0 +1,57 @@
+name: Bug report
+description: Something in the skill, engine, or scripts behaved incorrectly
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. English or 中文 both welcome.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you do, and what went wrong?
+      placeholder: e.g. ran review on a full paper and the merge stage errored
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: The trigger you used and any relevant project config.
+      value: |
+        1.
+        2.
+        3.
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Mode
+      options:
+        - direct-edit
+        - review
+        - auto
+        - not sure
+    validations:
+      required: false
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: Claude Code version, OS, node version, and whether a LaTeX toolchain is present.
+      placeholder: |
+        Claude Code:
+        OS:
+        node -v:
+        LaTeX: latexmk / pdflatex / none
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or error output
+      render: shell
