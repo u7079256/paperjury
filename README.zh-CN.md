@@ -2,18 +2,34 @@
 
 # PaperJury
 
-> PaperJury:基于多智能体对抗评审的论文审查工具,投稿前就给你 reviewer 级的尖锐批评,让修改更有的放矢。
+> 投稿前，先做一轮 AI 审稿压力测试。
 
 <p align="center">
   <a href="https://u7079256.github.io/paperjury/overview.html?lang=zh"><img alt="打开在线交互式总览" src="https://img.shields.io/badge/在线交互式总览-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-3b3d47?style=for-the-badge">
 </p>
 
-问 AI「我论文写得怎么样」,多半只换来一句客气、不痛不痒的肯定。PaperJury 反着来:让一支严苛的多视角评审团替反方把关。N 位领域评审各自通读全文,有分歧的问题交给多位互相独立的评审投票、再由裁决环节给出三种结论(可修 / 需你定夺 / 不予改动);只有安全、且经你签字的改动才会落地。之后它还会在本机真编译一遍 LaTeX、跑一遍确定性的 desk-reject 检查,所以结论是验证过的,不只是嘴上建议。
+直接问 AI「我论文怎么样」,答案常常像抽奖:要么泛泛夸好,要么无限挑刺。PaperJury 把这件事改成闭环:审稿、裁定、修改、复查。
 
-它是一个 Claude Code skill,同一个 skill 暴露三种模式(direct-edit、review、auto),底层是一套把这些角色按「庭审」组织起来的对抗式评审引擎(检方 = 各评审、陪审团 = 独立投票、法官 = 三方裁决、书记官 = 多轮收敛)加一组确定性 guards。
+它会把每个问题分成三类:
+
+- **可自动修:** 表达不清、claim 过强、结构不顺这类可以安全改掉的问题。
+- **需作者补:** 缺实验、缺 ablation、缺数据或证据,得作者自己处理。
+- **不成立:** AI reviewer 误读了论文,或者提了不该改的问题。
+
+PaperJury 是一款 Claude Code skill,支持三种模式:direct-edit、review、auto。它不替代作者判断,也不替代 peer review,只是在你真正投稿之前,先把那些本可以提前发现的问题摆到台面上。
 
 交互式总览:[在线站点](https://u7079256.github.io/paperjury/overview.html?lang=zh)(GitHub Pages),或仓库内 [`docs/overview.html`](docs/overview.html)。
+
+---
+
+## 使用边界
+
+PaperJury 是投稿前的自查流程,不替代作者的科学判断,也不替代 peer review。它不该拿来编造实验、伪造结果、加上没有证据支撑的 claim,或者掩盖论文的局限。
+
+凡是需要新实验、缺失证据、作者私有知识或研究层面判断的问题,PaperJury 都交回作者处理,而不是自动写进论文。三类结果(可自动修、需作者补、不成立)的划分正是为此:该由人拿主意的地方,主意始终在你手里。
+
+它真正擅长的,是趁你还来得及动手,提前把那些本可避免的问题摆出来:表达不清、claim 过强、逻辑衔接不足、格式风险,以及 reviewer 视角下投稿前值得复查的弱点。
 
 ---
 
@@ -41,9 +57,9 @@ git clone https://github.com/u7079256/paperjury "$env:USERPROFILE\.claude\skills
 
 大多数写作工具只会把论文往前推:起草、润色。没有一个会像审稿人那样,站到你论断的对立面去较真。PaperJury 就是冲着这个缺口设计的,分四块。
 
-- **对抗式,机制内建。** 不是一遍改写建议,而是一整套正当程序:N 位领域评审通读全文,可争议性路由把真正有分歧的问题送去双方对辩,5 位(只有迟迟没有明显多数时才升到 12 位)互相独立的评审在隔离下审议,裁决给出三种结论:可修、需你定夺、不予改动。能给出「不予改动」,一味迎合的改写工具在机制上就做不到。
+- **对抗式,机制内建。** 不是一遍改写建议,而是一整套正当程序:N 位领域评审通读全文,可争议性路由把真正有分歧的问题送去双方对辩,5 位(只有迟迟没有明显多数时才升到 12 位)互相独立的评审在隔离下审议,裁决给出三种结论:可自动修、需作者补、不成立。能给出「不成立」,一味迎合的改写工具在机制上就做不到。
 - **闭环多轮,而非单向前推。** 每一轮都是对改后稿的干净复评(评审看不到上一轮的台账,所以同一个问题被再次提出就是真正的相互印证,而不是被锚定),书记官按确定性规则把每一轮归并进同一份台账,直到某一轮干净复评不再冒出新问题。落任何改动之前,新的怀疑者会先试着救回被错误丢弃的问题,并复核强共识的结论。
-- **是护栏,不是自动驾驶。** 安全的改动在风险匹配的防护下落地(冻结锚点、单段改动次数上限、锚点与跨节的语义复核),而且始终经你签字。有风险的改动不会被悄悄写入,而是排队等你过一遍。
+- **是护栏,不是自动驾驶。** 安全的改动在风险匹配的防护下落地(冻结锚点、单段改动次数上限、锚点与跨节的语义复核),而且始终经你授权。有风险的改动不会被悄悄写入,而是排队等你过一遍。
 - **真编译,不只是嘴上批评。** 它在你本机真跑一次 LaTeX 构建,报出真实的报错、未定义引用、overfull box 和页数;本机没有工具链时,诚实降级为结构性检查。确定性的 desk-reject 检查抓那些经典坑:去匿名泄漏、页边距和行距的小动作、documentclass 漂移、缺失的必需章节、超页,全部对照你项目自己持有的约束来查。
 
 ---
@@ -62,11 +78,11 @@ git clone https://github.com/u7079256/paperjury "$env:USERPROFILE\.claude\skills
 - **行为:** 启动对抗式评审引擎(`references/review-engine-v3.md`)。
 - **范围子触发:** `full`(整篇)或 `passage`(某一节 / 段落 / claim)。
 
-### Auto(无人值守)
+### Auto(自动迭代)
 
-- **触发方式:** 用户通过 `/goal` 或配置 `mode: auto` 显式开启无人值守循环,让评审与修订循环朝一个可验证的目标推进。
-- **硬约束:** 绝不自动进入 auto 模式,仅能显式开启;它没有任何运行时信号,只能通过 `/goal` 上下文或项目配置 `mode: auto` 进入。
-- **行为:** 先获取作者对核心方向和评审分配的确认,之后引擎按预授权的 bounded-aggressive + 编辑安全策略,自动落安全 fix、把有风险的改动入队,多轮迭代到停下为止:书记官判定收敛,或 applied-quiescence / 硬上限兜底(详见 `references/auto-mode.md`)。
+- **触发方式:** 用户通过 `/goal` 或配置 `mode: auto` 显式开启自动迭代,让 review-revise 循环朝可验证的目标推进。
+- **硬约束:** 绝不自动进入 auto 模式,只能显式开启。它没有任何运行时信号,要么走 `/goal` 上下文,要么靠项目配置 `mode: auto` 进入。
+- **行为:** 先拿到作者对核心方向和评审分配的确认,之后引擎按预授权的 bounded-aggressive + 编辑安全策略,自动落地安全 fix,把有风险的改动入队,多轮迭代到停下为止:书记官判定收敛,或 applied-quiescence / 硬上限兜底(详见 `references/auto-mode.md`)。
 
 ---
 
@@ -84,16 +100,16 @@ git clone https://github.com/u7079256/paperjury "$env:USERPROFILE\.claude\skills
 - "审稿。" / "Review my paper." / "投之前 mock-review 一下。"
 - "只评 Section 3.2。" / "review passage `<你贴的那条 claim>`。"
 - "这是评审提的问题,迭代草稿逐一解决。"
-- → 它跑对抗引擎,挑出真正的弱点(把致命缺陷和小问题分开),逐条和你过一遍:你给方向,它起草,经你授权才改;未经你签字不改稿。
+- → 它跑对抗引擎,挑出真正的弱点(把致命缺陷和小问题分开),逐条和你过一遍:你给方向,它起草,经你授权才改;未经你确认不改稿。
 
-**无人值守朝目标打磨(→ auto,需要 `/goal`):**
+**自动迭代朝目标打磨(→ auto,需要 `/goal`):**
 - `/goal "harden the paper until ledger.js gate passes(0 个阻断 gate 的 major)"`
 - → 它自己跑多轮评审-修订循环,自动落安全 fix,把有风险的改动入队,等你回来一次性处理。这需要 `/goal` 驱动:只开 "auto" 工具放行 + 发普通 prompt 只跑一轮就停,不会循环(原因见 [`docs/AGENT-GUIDE.md`](docs/AGENT-GUIDE.md) §3)。
 
 **确认不会被 desk-reject:**
 - "跑一下 submission-readiness / 合规检查。" → 确定性的格式筛查 + 编译驱动的版面检查。
 
-一句话:**改一处 → 直接说;想挑问题 → 说「审稿」;想无人值守 → `/goal`。**
+一句话:**改一处 → 直接说;想挑问题 → 说「审稿」;想自动迭代 → `/goal`。**
 
 ---
 
@@ -168,7 +184,7 @@ writing toolkit 的工具名(具体 prompt 内容此处不列):`translate-to-eng
 - Workflow sandbox 没有文件系统、也没有子进程;正因如此,所有确定性 guards 都由 orchestrator 侧经 Bash 在各 workflow 调用之间运行。
 - compile-guard.js 对不可验证性诚实:无法真正编译时,降级到结构 lint 并报告 compiled:null。
 - 提交就绪检查跨模式,分两部分:A = compliance-check.js + 一个语义 agent;B = 复用 compile-guard.js 的编译驱动版面循环,配合对 PDF 的 Read。
-- 你的论文留在本地。PaperJury 全程在你自己的 Claude Code session 里跑,不内置任何会议文件,只写你项目里的 `.tex`、台账、日志和补丁,什么都不上传。
+- 你的项目文件、ledger、journal 和 patch 都留在本地论文项目里。PaperJury 这边没有自己的后端或服务器,所以不会有任何东西发到 PaperJury 的服务器。审稿走的是你自己的 Claude Code session,模型本身跑在云端:内容到了那边怎么处理,跟着你这套 Claude Code 环境的条款和设置走,PaperJury 不会在上面再加一层。
 
 ---
 

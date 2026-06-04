@@ -2,18 +2,34 @@
 
 # PaperJury
 
-> Before a reviewer tears it apart, let a jury do it first.
+> A pre-submission AI review stress-test for research papers.
 
 <p align="center">
   <a href="https://u7079256.github.io/paperjury/overview.html?lang=en"><img alt="Open the live interactive overview" src="https://img.shields.io/badge/Open_the_interactive_overview-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-3b3d47?style=for-the-badge">
 </p>
 
-Ask an AI "is my paper any good?" and you mostly get a polite, non-committal yes. PaperJury does the opposite: it puts your manuscript in front of a panel that argues the other side. N domain reviewers read the whole paper, contested issues go to a jury that deliberates and a judge that returns a three-way verdict (fix it / needs you / no fix), and only safe, signed-off edits land. Then it runs a real LaTeX compile and deterministic desk-reject checks, so the result is verified, not just suggested.
+*Before a reviewer tears it apart, let a jury do it first.*
 
-It is one Claude Code skill exposing three modes (direct-edit, review, auto), backed by a courtroom-style review engine and deterministic guards.
+PaperJury turns paper feedback into a closed loop: review → verdict → revise → verify. Instead of taking every AI suggestion at face value, it sorts each issue into one of three outcomes:
+
+- **Fixable**: safe, text-level issues that can be patched automatically.
+- **Author-required**: missing experiments, missing evidence, or research decisions that stay with you.
+- **Invalid**: reviewer misreadings or unsupported critiques that should not be applied.
+
+It offers three modes: direct-edit, review, and auto. PaperJury is built for pre-submission self-checking. It does not replace peer review, it does not invent missing experiments, and it keeps research-level decisions with the author.
 
 Interactive overview: the [live site](https://u7079256.github.io/paperjury/overview.html?lang=en) (GitHub Pages), or [`docs/overview.html`](docs/overview.html) in-repo.
+
+---
+
+## Responsible Use
+
+PaperJury is a pre-submission self-check workflow. It does not replace the author's scientific judgment, and it does not replace peer review. It should never be used to invent experiments, fabricate results, add unsupported claims, or hide a paper's limitations.
+
+When an issue needs a new experiment, missing evidence, private knowledge, or a research-level decision, PaperJury routes it to the author instead of patching it automatically. The Fixable / Author-required / Invalid outcomes exist precisely so that judgment calls stay with you.
+
+The intended use is to surface avoidable problems earlier, while you can still act on them: unclear claims, weak logical connections, unsupported wording, formatting risks, and the kind of reviewer-style concerns worth checking before submission.
 
 ---
 
@@ -171,7 +187,7 @@ The writing toolkit names (prompt bodies not shown here): `translate-to-english`
 - `compile-guard.js` is explicit about what it cannot verify: when it cannot truly compile, it degrades to structural lint and reports `compiled:null`.
 - Submission-readiness is cross-mode, two parts: **A** = `compliance-check.js` plus a semantic agent; **B** = a compile-driven layout loop reusing `compile-guard.js` plus Read-on-PDF.
 
-Your paper stays local. PaperJury runs inside your own Claude Code session; it ships no venue files and writes only your `.tex`, the ledger, the journal, and the patches, in your own project. Nothing is uploaded.
+Your project files, ledger, journal, and patches stay inside your local paper project. PaperJury has no backend or server of its own, so nothing is sent to a PaperJury server. The review runs through your own Claude Code session, which means the model itself runs in the cloud: how your content is handled there follows the terms and settings of that Claude Code environment, not anything PaperJury adds on top.
 
 ---
 
