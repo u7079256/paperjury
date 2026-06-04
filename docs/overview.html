@@ -664,6 +664,22 @@
     caseNext:{zh:'下一次将演：', en:'Next run: '},
     caseDone:{zh:' &nbsp;✓ 一案审结。', en:' &nbsp;✓ Case closed.'}
   };
+  var META = {
+    title:{
+      zh:'PaperJury · 投稿前的 AI 审稿压力测试 · 工作流总览',
+      en:'PaperJury · Pre-submission AI paper review · Workflow overview'
+    },
+    desc:{
+      zh:'PaperJury：面向 CS 会议论文的投稿前 AI 审稿压力测试。把审稿、裁定、修改、复查做成闭环：能安全改的交给补丁流程，缺实验或证据的交给作者，不成立的意见直接驳回。',
+      en:'PaperJury is a pre-submission AI paper review stress test: a closed-loop workflow for review, verdict, revision, and verification.'
+    }
+  };
+  function syncMeta(){
+    document.title = t(META.title);
+    var desc = document.querySelector('meta[name="description"]');
+    if(desc) desc.setAttribute('content', t(META.desc));
+  }
+  syncMeta();
 
   // 顶部阅读进度
   var prog = $('#prog');
@@ -792,7 +808,7 @@
     caseRefresh = function(){
       if(running) return;
       if(ccap) ccap.innerHTML='<span class="ph">'+t(T.caseReset)+'</span>';
-      if(cind) cind.textContent = caseStarted ? (t(T.caseNext)+outcomes[idx % outcomes.length].v) : t(T.caseSeq);
+      if(cind) cind.textContent = caseStarted ? (t(T.caseNext)+t(outcomes[idx % outcomes.length].label)) : t(T.caseSeq);
     };
   }
 
@@ -802,6 +818,7 @@
     docEl.setAttribute('data-lang', LANG);
     docEl.setAttribute('lang', LANG==='en'?'en':'zh');
     try{ localStorage.setItem('prl-lang', LANG); }catch(e){}
+    syncMeta();
     flowRefresh();
     caseRefresh();
   }
