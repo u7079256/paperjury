@@ -206,8 +206,9 @@ Your project files, ledger, journal, and patches stay inside your local paper pr
 
 Where this is going (planned, not yet shipped):
 
+- **Fast mode / quick version.** A lower-latency, lower-token path for fast checks when you want useful triage more than full courtroom depth.
+- **Claude Code plugin marketplace release.** Package PaperJury for direct install from the Claude Code plugin marketplace, alongside the clone install above.
 - **Reviewer personas tuned to each venue community's taste.** CVPR, ACL, and NeurIPS reviewers do not critique the same way; the goal is a reviewer that carries each community's expectations, beyond the current three-family style context.
-- **`/plugin install` from the Claude Code plugin marketplace**, alongside the clone install above.
 - **Vision-based layout verification**: compile, render, and check the visual layout (column overflow, figure placement), not just the compile log.
 - **Automatic venue detection** from your `.cls` / template.
 - **Validation of the engine on real papers at scale.**

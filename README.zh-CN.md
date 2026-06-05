@@ -203,8 +203,9 @@ writing toolkit 的工具名（具体 prompt 内容此处不列）：`translate-
 
 还在路上（规划中，尚未上线）：
 
+- **快速版本 / quick mode。** 做一条低等待、低 token 消耗的快速路径；不追求完整庭审深度，先给可用的快速 triage。
+- **推送到 Claude Code plugin 市场。** 打包成可直接安装的 Claude Code plugin；clone 安装仍保留。
 - **评审人格带上每个会议 community 的 taste。** CVPR、ACL、NeurIPS 的 reviewer 挑刺口味并不一样；目标是让评审带上各自社区的预期，而不只是现在的三族 style 上下文。
-- **支持 `/plugin install`**，从 Claude Code 的 plugin 市场直接装（clone 安装仍保留）。
 - **基于视觉的版面校验**：编译、渲染、再检查版面（分栏溢出、图表摆放），不只看编译日志。
 - **从 `.cls` / 模板自动识别 venue。**
 - **在更多真实论文上规模化验证引擎。**
