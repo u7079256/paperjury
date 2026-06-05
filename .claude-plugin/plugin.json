@@ -1,0 +1,29 @@
+{
+  "name": "paperjury",
+  "version": "0.5.0",
+  "description": "Pre-submission AI review and editing for CS-conference papers: direct-edit LaTeX, run an adversarial multi-agent courtroom review with consensus-gated revisions, or run it unattended toward a goal.",
+  "author": {
+    "name": "Yiran Wang"
+  },
+  "homepage": "https://github.com/u7079256/paperjury",
+  "repository": "https://github.com/u7079256/paperjury",
+  "license": "MIT",
+  "keywords": [
+    "academic-writing",
+    "peer-review",
+    "adversarial-review",
+    "latex",
+    "paper-review",
+    "cvpr",
+    "iccv",
+    "eccv",
+    "acl",
+    "emnlp",
+    "neurips",
+    "icml",
+    "iclr"
+  ],
+  "skills": [
+    "./"
+  ]
+}

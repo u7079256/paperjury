@@ -1,6 +1,9 @@
 # Internal development / continuity notes, not for publication
 docs/HANDOFF.md
 
+# Internal writeup (arXiv draft) + dogfood scratch: machine-specific paths, not for publication
+writeup/
+
 # OS / editor cruft
 .DS_Store
 Thumbs.db
