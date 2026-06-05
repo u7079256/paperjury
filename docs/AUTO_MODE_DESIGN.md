@@ -1,7 +1,7 @@
 # Auto mode — design rationale (v0.7; engine + envelope BUILT 2026-06-01)
 
 Status: design v0.7 (2026-06-01). This doc is the RATIONALE; the operational protocol
-is `references/auto-mode.md`. BUILT: the v2 engine auto runs on, the spine + four-state
+is `references/auto-mode.md`. BUILT: the v3 engine auto runs on, the spine + four-state
 meaning audit, and the deterministic safety-envelope helpers (`journal.js`
 passage-rounds / within-cap / applied-in-round; `ledger.js gate`). NOT yet run
 end-to-end on a real paper (a `/goal` dry-run is the remaining step). A third mode for
@@ -14,8 +14,8 @@ A third mode alongside `direct-edit` (common) and `review` (occasional):
 - **auto** = run the review-revise loop unattended toward a verifiable goal,
   applying safe fixes without per-edit sign-off, queueing the risky ones.
 
-**Auto's inner review engine IS review-engine v2** (the courtroom per-issue
-adjudication engine; see `REVIEW_ENGINE_V2_DESIGN.md`). Auto = v2 run unattended:
+**Auto's inner review engine IS review-engine v3** (the courtroom per-issue
+adjudication engine; see `REVIEW_ENGINE_V3_DESIGN.md`). Auto = the v3 engine run unattended:
 it removes the human 2nd instance and routes every human gate (referrals, grounded
 appeals, recall-auditor escalations) to the return queue. NOTE: the §9 dials below
 are a PRE-v2 sketch (panel-era) that need re-derivation for v2's structure at
@@ -371,6 +371,12 @@ issues sitting in the return queue (each noted, e.g. "needs new experiment").
   bar; recall auditor always runs on every drop).
 
 ## 9. Intensity presets (decided 2026-05-31)
+
+> **STALE (pre-v3):** the dial table below predates the v3 engine and still names
+> v2-only machinery (grand-jury screen, reading loop-until-dry) that v3 removed.
+> Pending re-derivation against `review-engine-v3.md` Inventory. The §9 PRINCIPLE
+> (intensity scales recall only, never the drift-safety envelope) is engine-agnostic
+> and still holds.
 
 > RE-DERIVED FOR v2 (2026-06-01, D-04 resolved): the dial table below is now the v2
 > knob set (reading loop-until-dry + lenses, grand-jury screen depth, trial-jury

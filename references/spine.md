@@ -1,12 +1,12 @@
 # The spine and the meaning audit (anti-drift core)
 
 The spine + four-state meaning audit are the engine's drift guard. They are SHARED
-by review-engine v2 and auto (AUTO_MODE_DESIGN §2, REVIEW_ENGINE_V2_DESIGN §8).
+by review-engine v3 and auto (AUTO_MODE_DESIGN §2, REVIEW_ENGINE_V3_DESIGN).
 Enforcement differs by mode:
 
 - **auto**: GATING. A failing audit verdict rolls back the causing edit and queues
   it. This is load-bearing (no human in the loop).
-- **review (v2)**: ADVISORY. The audit reports drift to the human ("this edit
+- **review**: ADVISORY. The audit reports drift to the human ("this edit
   weakened anchor A4 -- proceed?"); the human, who signs off every edit anyway, is
   the real drift guard. The spine-confirm step is OPTIONAL in review mode (offer it;
   do not force a critique request through a freeze gate).

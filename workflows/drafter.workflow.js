@@ -1,4 +1,4 @@
-// drafter.workflow.js -- v2 SENTENCE EXECUTION (REVIEW_ENGINE_V2 §3 roster).
+// drafter.workflow.js -- v3 SENTENCE EXECUTION (review-engine-v3.md §43 roster).
 // After a `valid-fixable` verdict, the author agent (a different hat from the
 // defense) drafts the MINIMAL-edit fix that meets the judge's close_criterion while
 // preserving the surrounding claim and NOT drifting a frozen spine anchor. The
@@ -23,7 +23,7 @@
 
 export const meta = {
   name: 'drafter',
-  description: 'v2 drafter: for each valid-fixable charge, draft the minimal-edit patch meeting the close_criterion without drifting a spine anchor. Proposes {before,after}; the orchestrator applies + guards. paperjury review-engine v2.',
+  description: 'drafter: for each valid-fixable charge, draft the minimal-edit patch meeting the close_criterion without drifting a spine anchor. Proposes {before,after}; the orchestrator applies + guards. paperjury review-engine v3.',
   phases: [{ title: 'Draft', detail: 'one author-agent per fixable charge proposes a minimal exact-string patch' }],
 }
 
