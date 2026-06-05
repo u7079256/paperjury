@@ -32,6 +32,13 @@ PaperJury 是 Claude Code skill，支持三种模式：direct-edit、review、au
 
 ---
 
+## TODO
+
+- [ ] **快速版本 / quick mode。** 做一条低等待、低 token 消耗的快速路径；不追求完整庭审深度，先给可用的快速 triage。
+- [ ] **推送到 Claude Code plugin 市场。** 打包成可直接安装的 Claude Code plugin；clone 安装仍保留。
+
+---
+
 ## 使用边界
 
 PaperJury 是投稿前的自查流程，不替代作者的科学判断，也不替代 peer review。它不能拿来编造实验、伪造结果、加上没有证据支撑的 claim，或者掩盖论文局限。
@@ -203,8 +210,6 @@ writing toolkit 的工具名（具体 prompt 内容此处不列）：`translate-
 
 还在路上（规划中，尚未上线）：
 
-- **快速版本 / quick mode。** 做一条低等待、低 token 消耗的快速路径；不追求完整庭审深度，先给可用的快速 triage。
-- **推送到 Claude Code plugin 市场。** 打包成可直接安装的 Claude Code plugin；clone 安装仍保留。
 - **评审人格带上每个会议 community 的 taste。** CVPR、ACL、NeurIPS 的 reviewer 挑刺口味并不一样；目标是让评审带上各自社区的预期，而不只是现在的三族 style 上下文。
 - **基于视觉的版面校验**：编译、渲染、再检查版面（分栏溢出、图表摆放），不只看编译日志。
 - **从 `.cls` / 模板自动识别 venue。**

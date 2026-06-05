@@ -266,9 +266,11 @@
   .rule{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--danger);border-radius:8px;padding:10px 13px}
   .rule b{color:#f0938c;font-family:var(--mono);font-size:12px}
   .todo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-  .todo-card{background:linear-gradient(180deg,rgba(255,255,255,.02),var(--paper));border:1px solid var(--line);border-left:4px solid var(--seal);border-radius:8px;padding:13px 15px}
-  .todo-card b{display:block;font-family:var(--mono);font-size:11px;color:#f2d59a;margin-bottom:5px}
-  .todo-card span:last-child{font-size:13px;color:var(--muted)}
+  .todo-card{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:start;
+    background:linear-gradient(180deg,rgba(255,255,255,.02),var(--paper));border:1px solid var(--line);border-left:4px solid var(--seal);border-radius:8px;padding:13px 15px}
+  .todo-box{width:18px;height:18px;border:1.5px solid rgba(214,161,75,.72);border-radius:4px;background:rgba(214,161,75,.08);box-shadow:inset 0 0 0 2px rgba(11,11,9,.42);margin-top:1px}
+  .todo-copy b{display:block;font-family:var(--mono);font-size:11px;color:#f2d59a;margin-bottom:5px}
+  .todo-copy > span{font-size:13px;color:var(--muted)}
   .caveats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:11px}
   .caveat{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--human);border-radius:8px;padding:9px 13px;font-size:12.5px;color:var(--muted)}
   .caveat b{color:#f2c277;font-family:var(--mono);font-size:11.5px}
@@ -407,6 +409,15 @@
         <a href="https://github.com/u7079256/paperjury-codex"><span class="zh">🚀 打开 Codex 版</span><span class="en">🚀 Open Codex port</span></a>
         <a href="https://github.com/u7079256/paperjury/tree/main/samples/dogfood"><span class="zh">🧪 查看 dogfood</span><span class="en">🧪 View dogfood</span></a>
       </div>
+    </div>
+  </section>
+
+  <section id="todo" class="reveal">
+    <div class="h2"><span class="idx">TODO</span><h2><span class="zh">下一步</span><span class="en">Next up</span></h2><span class="zoom"><span class="zh">发布后清单</span><span class="en">post-release list</span></span></div>
+    <p class="sub"><span class="zh">Codex-first 版本已经推送，下面两件事排进下一轮。</span><span class="en">With the Codex-first port shipped, these two items move into the next pass.</span></p>
+    <div class="todo-grid">
+      <div class="todo-card"><span class="todo-box" aria-hidden="true"></span><div class="todo-copy"><b>FAST MODE</b><span class="zh">做一个快速版本，降低等待时间和 token 消耗；适合先跑快速 triage，再决定是否进入完整庭审。</span><span class="en">Build a quick version that reduces waiting time and token use; useful for triage before a full courtroom pass.</span></div></div>
+      <div class="todo-card"><span class="todo-box" aria-hidden="true"></span><div class="todo-copy"><b>PLUGIN MARKETPLACE</b><span class="zh">推送到 Claude Code plugin 市场，让安装从 clone 目录变成直接安装。</span><span class="en">Ship PaperJury through the Claude Code plugin marketplace, so install becomes direct instead of clone-first.</span></div></div>
     </div>
   </section>
 
@@ -677,15 +688,6 @@
       <div class="rule"><b>4 <span class="zh">草稿外信息不入稿</span><span class="en">zero leakage</span></b> <span class="zh">回译、日志、自检结果只保留在作者侧，不写入论文正文。</span><span class="en">back-translations / logs / self-checks stay author-side, never enter the manuscript.</span></div>
       <div class="rule"><b>5 <span class="zh">分歧必须显式处理</span><span class="en">disagreement resolves</span></b> <span class="zh">有分歧就讨论；谈不拢再 override，并记录在案。动到 spine 锚的修复一律入队。</span><span class="en">disagreement resolves through discussion, then override (logged), never a silent dismissal (any fix touching a spine anchor is queued).</span></div>
       <div class="rule"><b>6 <span class="zh">不写死项目路径</span><span class="en">no hardcoded paths</span></b> <span class="zh">skill 不含项目路径 / 文件，一切运行时解析。</span><span class="en">the skill carries no project paths / files; everything resolved at runtime.</span></div>
-    </div>
-  </section>
-
-  <section id="todo" class="reveal">
-    <div class="h2"><span class="idx">TODO</span><h2><span class="zh">下一步</span><span class="en">Next up</span></h2><span class="zoom"><span class="zh">发布后清单</span><span class="en">post-release list</span></span></div>
-    <p class="sub"><span class="zh">Codex-first 版本已经推送，下面两件事排进下一轮。</span><span class="en">With the Codex-first port shipped, these two items move into the next pass.</span></p>
-    <div class="todo-grid">
-      <div class="todo-card"><b>FAST MODE</b><span class="zh">做一个快速版本，降低等待时间和 token 消耗；适合先跑快速 triage，再决定是否进入完整庭审。</span><span class="en">Build a quick version that reduces waiting time and token use; useful for triage before a full courtroom pass.</span></div>
-      <div class="todo-card"><b>PLUGIN MARKETPLACE</b><span class="zh">推送到 Claude Code plugin 市场，让安装从 clone 目录变成直接安装。</span><span class="en">Ship PaperJury through the Claude Code plugin marketplace, so install becomes direct instead of clone-first.</span></div>
     </div>
   </section>
 
