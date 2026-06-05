@@ -23,13 +23,21 @@ or `auto`.
 
 ---
 
-## 1. Install (verified; no plugin manifest exists today)
+## 1. Install (verified)
 
-The repo is a **bare skill directory**: `SKILL.md` at its root, plus `references/`,
-`workflows/`, `scripts/`, `configs/`, `docs/`. There is **no plugin/marketplace manifest**
-(`.claude-plugin/`, `marketplace.json`, `plugin.json`) and **no `/plugin install` route**.
+The repo ships a Claude Code **plugin manifest** (`.claude-plugin/plugin.json` +
+`.claude-plugin/marketplace.json`, root-as-skill) AND stays usable as a **bare skill
+directory** (`SKILL.md` at its root, plus `references/`, `workflows/`, `scripts/`,
+`configs/`, `docs/`). Two install routes.
 
-Install = make the directory discoverable as a skill:
+**Plugin route** (Claude Code marketplace), from inside Claude Code:
+
+```text
+/plugin marketplace add u7079256/paperjury
+/plugin install paperjury@u7079256
+```
+
+**Skill route** = make the directory discoverable as a skill:
 
 1. Obtain the repo: `git clone https://github.com/u7079256/paperjury`.
 2. Place the cloned directory under a Claude Code skills path:
@@ -46,9 +54,9 @@ Runtime tools the engine USES (must exist in the host environment, not bundled b
 submission-readiness compile loop — a LaTeX toolchain (`latexmk`/`pdflatex`); `compile-guard.js`
 degrades to a structural lint and reports `compiled:null` when LaTeX is absent.
 
-Optional (NOT done today): to enable `/plugin install`, add `.claude-plugin/plugin.json`
-(+ a `marketplace.json` in a marketplace repo). Until then, installation is the manual
-directory placement above.
+The plugin and skill routes are non-exclusive: the same `SKILL.md` at the repo root is
+what both use, so a `git clone` into `~/.claude/skills/` and a `/plugin install` resolve
+to the identical engine.
 
 ---
 

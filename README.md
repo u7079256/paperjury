@@ -35,7 +35,6 @@ Interactive overview: the [live site](https://u7079256.github.io/paperjury/overv
 ## TODO
 
 - [ ] **Fast mode / quick version.** A lower-latency, lower-token path for fast checks when you want useful triage more than full courtroom depth.
-- [ ] **Claude Code plugin marketplace release.** Package PaperJury for direct install from the Claude Code plugin marketplace, alongside the clone install above.
 
 ---
 
@@ -51,9 +50,16 @@ The intended use is to surface avoidable problems earlier, while you can still a
 
 ## Install
 
-It is a Claude Code skill. Install it by cloning the repo into the folder Claude Code reads skills from:
+It is a Claude Code skill, installable two ways. For the Codex-first port, use [paperjury-codex](https://github.com/u7079256/paperjury-codex).
 
-For the Codex-first port, use [paperjury-codex](https://github.com/u7079256/paperjury-codex).
+**Option A: Claude Code plugin (one command).** From inside Claude Code:
+
+```text
+/plugin marketplace add u7079256/paperjury
+/plugin install paperjury@u7079256
+```
+
+**Option B: clone as a skill.** Clone the repo into the folder Claude Code reads skills from:
 
 ```bash
 # macOS / Linux
