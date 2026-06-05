@@ -23,6 +23,12 @@ Interactive overview: the [live site](https://u7079256.github.io/paperjury/overv
 
 ---
 
+## News
+
+- **2026-06-05:** PaperJury's Codex-first port has shipped: [paperjury-codex](https://github.com/u7079256/paperjury-codex). To mark the push, this repo also includes a compact [dogfood sample](samples/dogfood/) with before/after PDFs and a human-verified run report.
+
+---
+
 ## Responsible Use
 
 PaperJury is a pre-submission self-check workflow. It does not replace the author's scientific judgment, and it does not replace peer review. It should never be used to invent experiments, fabricate results, add unsupported claims, or hide a paper's limitations.
