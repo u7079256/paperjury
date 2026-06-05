@@ -23,9 +23,12 @@ PaperJury 是 Claude Code skill，支持三种模式：direct-edit、review、au
 
 ---
 
-## 近况
+## 🎉 近况
 
-- **2026-06-05：** PaperJury 的 Codex-first 版本已经推送：[paperjury-codex](https://github.com/u7079256/paperjury-codex)。为庆祝这次推送，本仓库也加入了一个紧凑的 [dogfood sample](samples/dogfood/)：包含修改前后 PDF 和人工核对过的运行报告。
+> **🚀 2026-06-05：PaperJury 的 Codex-first 版本已经推送。**
+> 入口在这里：[paperjury-codex](https://github.com/u7079256/paperjury-codex)。
+>
+> **🧪 Dogfood sample 已加入：** 为庆祝这次推送，本仓库现在包含一个紧凑的 [dogfood sample](samples/dogfood/)：修改前后 PDF，以及人工核对过的运行报告。
 
 ---
 

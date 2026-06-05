@@ -63,19 +63,24 @@
   nav.bar .langbtn:hover{color:#f2d59a;border-color:var(--seal);background:var(--paper)}
   nav.bar .langbtn:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
 
-  .news-strip{scroll-margin-top:62px;padding:24px 0 0}
-  .news-card{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;
-    border:1px solid rgba(214,161,75,.36);border-left:4px solid var(--seal);border-radius:8px;
-    background:linear-gradient(90deg,rgba(214,161,75,.13),rgba(23,23,19,.92) 38%,rgba(91,156,255,.08));
-    padding:14px 16px;box-shadow:0 14px 42px rgba(0,0,0,.24)}
-  .news-date{font-family:var(--mono);font-size:11px;font-weight:600;color:#f2d59a;white-space:nowrap}
+  .news-strip{scroll-margin-top:62px;padding:30px 0 4px}
+  .news-card{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:18px;align-items:center;position:relative;overflow:hidden;
+    border:1.5px solid rgba(214,161,75,.66);border-left:6px solid var(--seal);border-radius:8px;
+    background:
+      linear-gradient(90deg,rgba(214,161,75,.2),rgba(23,23,19,.96) 34%,rgba(91,156,255,.11)),
+      repeating-linear-gradient(135deg,rgba(214,161,75,.08) 0 1px,transparent 1px 13px);
+    padding:17px 18px;box-shadow:0 18px 55px rgba(0,0,0,.34),0 0 32px rgba(214,161,75,.12)}
+  .news-card::after{content:"NEW";position:absolute;right:18px;top:8px;font-family:var(--mono);font-size:10px;font-weight:700;color:rgba(242,213,154,.48);letter-spacing:.12em}
+  .news-badge{display:grid;grid-template-columns:auto;gap:4px;justify-items:center;align-items:center;min-width:78px}
+  .news-emoji{font-size:31px;line-height:1;filter:drop-shadow(0 0 16px rgba(214,161,75,.38))}
+  .news-date{font-family:var(--mono);font-size:11px;font-weight:700;color:#f2d59a;white-space:nowrap}
   .news-copy{min-width:0}
   .news-label{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--seal);letter-spacing:0;text-transform:uppercase}
-  .news-title{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--ink);line-height:1.18;margin-top:2px}
-  .news-note{font-size:12.5px;color:var(--muted);margin-top:3px}
+  .news-title{font-family:var(--serif);font-size:21px;font-weight:900;color:var(--ink);line-height:1.16;margin-top:2px}
+  .news-note{font-size:13px;color:var(--muted);margin-top:4px;max-width:760px}
   .news-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
   .news-actions a{font-family:var(--mono);font-size:11px;font-weight:600;text-decoration:none;color:var(--ink);
-    border:1px solid var(--line2);border-radius:7px;padding:6px 9px;background:rgba(11,11,9,.28);white-space:nowrap;transition:.18s}
+    border:1px solid rgba(214,161,75,.4);border-radius:7px;padding:7px 10px;background:rgba(11,11,9,.36);white-space:nowrap;transition:.18s}
   .news-actions a:hover{border-color:var(--seal);color:#f2d59a;background:var(--paper2)}
 
   header.hero{padding:72px 0 36px;border-bottom:1px solid rgba(214,161,75,.16)}
@@ -387,15 +392,15 @@
 
   <section id="news" class="news-strip reveal" aria-label="PaperJury news">
     <div class="news-card">
-      <div class="news-date">2026.06.05</div>
+      <div class="news-badge"><span class="news-emoji" aria-hidden="true">🎉</span><span class="news-date">2026.06.05</span></div>
       <div class="news-copy">
         <div class="news-label"><span class="zh">新版本推送</span><span class="en">release note</span></div>
-        <div class="news-title"><span class="zh">Codex-first 版本已经推送。</span><span class="en">The Codex-first port has shipped.</span></div>
-        <div class="news-note"><span class="zh">为庆祝这次推送，仓库加入了 dogfood 样例：修改前后 PDF，以及人工核对过的运行报告。</span><span class="en">To mark the push, the repo now includes a dogfood sample with before/after PDFs and a human-verified run report.</span></div>
+        <div class="news-title"><span class="zh">🚀 Codex-first 版本已经推送。</span><span class="en">🚀 The Codex-first port has shipped.</span></div>
+        <div class="news-note"><span class="zh">🧪 为庆祝这次推送，仓库加入了 dogfood 样例：修改前后 PDF，以及人工核对过的运行报告。</span><span class="en">🧪 To mark the push, the repo now includes a dogfood sample with before/after PDFs and a human-verified run report.</span></div>
       </div>
       <div class="news-actions">
-        <a href="https://github.com/u7079256/paperjury-codex"><span class="zh">打开 Codex 版</span><span class="en">Open Codex port</span></a>
-        <a href="https://github.com/u7079256/paperjury/tree/main/samples/dogfood"><span class="zh">查看 dogfood</span><span class="en">View dogfood</span></a>
+        <a href="https://github.com/u7079256/paperjury-codex"><span class="zh">🚀 打开 Codex 版</span><span class="en">🚀 Open Codex port</span></a>
+        <a href="https://github.com/u7079256/paperjury/tree/main/samples/dogfood"><span class="zh">🧪 查看 dogfood</span><span class="en">🧪 View dogfood</span></a>
       </div>
     </div>
   </section>

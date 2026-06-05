@@ -23,9 +23,12 @@ Interactive overview: the [live site](https://u7079256.github.io/paperjury/overv
 
 ---
 
-## News
+## 🎉 News
 
-- **2026-06-05:** PaperJury's Codex-first port has shipped: [paperjury-codex](https://github.com/u7079256/paperjury-codex). To mark the push, this repo also includes a compact [dogfood sample](samples/dogfood/) with before/after PDFs and a human-verified run report.
+> **🚀 2026-06-05: PaperJury's Codex-first port has shipped.**
+> Open it here: [paperjury-codex](https://github.com/u7079256/paperjury-codex).
+>
+> **🧪 Dogfood sample added:** this repo now includes a compact [dogfood sample](samples/dogfood/) with before/after PDFs and a human-verified run report.
 
 ---
 
