@@ -25,6 +25,8 @@ PaperJury 是 Claude Code skill，支持三种模式：direct-edit、review、au
 
 ## 🎉 近况
 
+> **🔔 2026-06-10：v1.0.0 发布。** 第一个稳定版本，与 Codex 版的 v1.0 对齐。新增非阻塞的更新提醒：有更新的稳定版 tag 时会给出提示。
+>
 > **🚀 2026-06-05：PaperJury 的 Codex-first 版本已经推送。**
 > 入口在这里：[paperjury-codex](https://github.com/u7079256/paperjury-codex)。
 >
@@ -34,6 +36,7 @@ PaperJury 是 Claude Code skill，支持三种模式：direct-edit、review、au
 
 ## TODO
 
+- [x] 🔔 **软更新提醒。** PaperJury 启动时检查有没有更新的稳定版 tag，有就给一条非阻塞的更新提示。
 - [ ] **快速版本 / quick mode。** 做一条低等待、低 token 消耗的快速路径；不追求完整庭审深度，先给可用的快速 triage。
 
 ---
@@ -72,6 +75,8 @@ git clone https://github.com/u7079256/paperjury "$env:USERPROFILE\.claude\skills
 ```
 
 (也可以放在 `<项目>/.claude/skills/` 下，只对单个项目生效)。Claude Code 会通过 `SKILL.md` 自动发现它，随后以 `paperjury` 出现在 skill 列表里。需要 `node`（确定性检查跑在它上面）；LaTeX 工具链可选（真编译和版面检查会用到，没有时会诚实降级）。
+
+PaperJury 启动时会对 GitHub 上的稳定版 release tag 做一次软更新检查：有更新版本就提示怎么更新（重跑 plugin 安装，或 clone 安装直接 `git pull`）；连不上 GitHub 就保持沉默继续干活。设 `PAPERJURY_DISABLE_UPDATE_CHECK=1` 可关掉提醒。更新后请开新会话，新的 skill 内容才会生效。
 
 **给 Claude / 编码 agent：** 更深入的驱动说明见 [`docs/AGENT-GUIDE.md`](docs/AGENT-GUIDE.md)：安装、三种模式及触发方式、引擎管线、`auto` 与 `/goal` 的区别、fan-out 怎么启动，都是写给 agent 读的。想了解内部细节，可以让 Claude 先读这个文件再问。
 

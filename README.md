@@ -25,6 +25,8 @@ Interactive overview: the [live site](https://u7079256.github.io/paperjury/overv
 
 ## 🎉 News
 
+> **🔔 2026-06-10: v1.0.0 released.** First stable release, aligned with the Codex port's v1.0. Adds a non-blocking update reminder that points to the latest stable release when a newer tag exists.
+>
 > **🚀 2026-06-05: PaperJury's Codex-first port has shipped.**
 > Open it here: [paperjury-codex](https://github.com/u7079256/paperjury-codex).
 >
@@ -34,6 +36,7 @@ Interactive overview: the [live site](https://u7079256.github.io/paperjury/overv
 
 ## TODO
 
+- [x] 🔔 **Soft update reminders.** Check for newer stable release tags at PaperJury startup and show a non-blocking update notice.
 - [ ] **Fast mode / quick version.** A lower-latency, lower-token path for fast checks when you want useful triage more than full courtroom depth.
 
 ---
@@ -72,6 +75,8 @@ git clone https://github.com/u7079256/paperjury "$env:USERPROFILE\.claude\skills
 ```
 
 (or under `<project>/.claude/skills/` to scope it to one project). Claude Code auto-discovers it through `SKILL.md` and it shows up as the `paperjury` skill. `node` is required (the deterministic checks run on it); a LaTeX toolchain is optional (the real-compile and layout checks use it, and degrade honestly when it is absent).
+
+At the start of a PaperJury run, the skill performs a soft update check against stable GitHub release tags. If a newer tag exists, it prints how to update (re-run the plugin install, or `git pull` for clone installs); if GitHub is unreachable, it stays silent and continues. Set `PAPERJURY_DISABLE_UPDATE_CHECK=1` to disable this reminder. After updating, start a new session so the updated skill content is loaded.
 
 **For Claude / coding agents:** the deep "how to drive this" reference is [`docs/AGENT-GUIDE.md`](docs/AGENT-GUIDE.md): install, the three modes and their triggers, the engine pipeline, the `auto` vs `/goal` distinction, and how the fan-out launches, written for an agent to read. Curious about the internals? Just point Claude at that file and ask.
 
