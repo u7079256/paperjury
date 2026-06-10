@@ -1,6 +1,6 @@
-{
+﻿{
   "name": "paperjury",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "private": false,
   "description": "A pre-submission AI review stress-test for research papers.",
   "license": "MIT",

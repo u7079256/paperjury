@@ -1,7 +1,7 @@
 ---
 name: paperjury
 description: Three modes for CS-conference papers (CVPR/ICCV/ECCV vision, ACL/EMNLP/NAACL NLP, ICLR/NeurIPS/ICML/AAAI ML). DIRECT-EDIT mode (common): the user describes a change in Chinese or English and the LaTeX is edited directly through a CS-venue writing toolkit with author sign-off (use for 改这段 / 把中文想法写成 latex / polish / de-AI / translate / compress a passage). REVIEW mode (occasional, pre-submission): harden the paper through an adversarial courtroom review engine (N holistic domain reviewers / contestability routing / two-sided trial / three-way verdict / clerk-converged multi-round loop) with consensus-gated, author-signed revisions (use for review / critique / 审稿 / 评审 / mock-review). AUTO mode (unattended, opt-in via /goal): run the review-revise loop toward a verifiable goal, applying safe fixes under a drift-bounded policy and queueing risky ones. Resolves all inputs at runtime, no hardcoded paths. Not a from-scratch drafter (use ml-paper-writing) and not an official-venue rebuttal.
-version: 0.5.0
+version: 1.0.0
 author: Yiran Wang
 license: MIT
 tags: [Academic Writing, Peer Review, Adversarial Review, CVPR, ICCV, ECCV, ACL, EMNLP, NAACL, ICLR, NeurIPS, ICML, AAAI, Workflow, LaTeX]

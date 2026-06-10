@@ -2,6 +2,26 @@
 
 All notable changes to PaperJury are documented in this file.
 
+## [1.0.0] - 2026-06-10
+
+First stable release, aligned with the Codex port's v1.0.
+
+### Added
+
+- **Soft update reminders.** `scripts/check-update.js` soft-checks stable GitHub
+  release tags at PaperJury startup and prints a non-blocking update notice
+  (plugin and clone routes). Silent when GitHub is unreachable; disable with
+  `PAPERJURY_DISABLE_UPDATE_CHECK=1`.
+
+### Changed
+
+- **Dogfood sample PDFs restored to the repo.** `original_draft.pdf` and
+  `revised_draft.pdf` live in `samples/dogfood/` again, so the public repo is
+  self-contained; they are no longer distributed as release assets.
+- **Version promoted to 1.0.0** across the plugin manifest, marketplace listing,
+  package manifest, and `SKILL.md` frontmatter. The `v0.5.0` release and tag are
+  superseded by `v1.0.0`.
+
 ## [0.5.0] - 2026-06-05
 
 ### Added
