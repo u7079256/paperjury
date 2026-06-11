@@ -62,7 +62,7 @@ The intended use is to surface avoidable problems earlier, while you can still a
 
 It is a Claude Code skill, installable two ways. For the Codex-first port, use [paperjury-codex](https://github.com/u7079256/paperjury-codex).
 
-**Option A: Claude Code plugin (one command).** From inside Claude Code:
+**Option A: Claude Code plugin (marketplace route).** From inside Claude Code:
 
 ```text
 /plugin marketplace add u7079256/paperjury
