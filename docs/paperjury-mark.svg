@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="PaperJury logo mark">
+  <defs>
+    <linearGradient id="pjGoldV4" x1="17" y1="9" x2="43" y2="55" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#eec05b"/>
+      <stop offset="1" stop-color="#a97024"/>
+    </linearGradient>
+  </defs>
+  <path d="M19 14h17l12 13-14 39L19 44Z" fill="#0b0b09"/>
+  <path d="M36 14v49L19 44l10-17Z" fill="url(#pjGoldV4)"/>
+  <path d="M36 14 48 27 36 63Z" fill="#f0eadf"/>
+  <path d="M19 14h17l12 13-14 39L19 44Z" fill="none" stroke="#d6a14b" stroke-width="1.35" stroke-linejoin="round" opacity=".68"/>
+  <path d="M36 14v49" fill="none" stroke="#0b0b09" stroke-width="3.4" stroke-linecap="round"/>
+  <path d="M16 17h9M15 32h7M16 47h9" fill="none" stroke="#d6a14b" stroke-width="4.6" stroke-linecap="round"/>
+</svg>

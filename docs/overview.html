@@ -16,7 +16,7 @@
 <meta name="twitter:title" content="PaperJury · AI paper review stress test">
 <meta name="twitter:description" content="A closed-loop review–judge–revise workflow for pre-submission paper checks.">
 <meta name="twitter:image" content="https://u7079256.github.io/paperjury/overview-card.png">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230e0f13'/><circle cx='16' cy='10.5' r='3.4' fill='%23d6a14b'/><path d='M8 19h16M8 23h11' stroke='%23ece7dd' stroke-width='1.9' stroke-linecap='round'/></svg>">
+<link rel="icon" href="paperjury-mark.svg" type="image/svg+xml">
 <script>(function(){var d=document.documentElement;d.className+=' js';var lang=null;try{var m=(location.search||'').match(/[?&]lang=(en|zh)/i);if(m){lang=m[1].toLowerCase();}else{var s=localStorage.getItem('prl-lang');if(s==='en'||s==='zh')lang=s;}}catch(e){}if(lang){d.setAttribute('data-lang',lang);d.setAttribute('lang',lang);try{localStorage.setItem('prl-lang',lang);}catch(e){}}})();</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@400;700&display=swap');
@@ -51,7 +51,8 @@
   nav.bar{position:sticky;top:0;z-index:30;margin:0;
     backdrop-filter:blur(16px);background:rgba(16,16,13,.82);border-bottom:1px solid rgba(214,161,75,.18)}
   nav.bar .inner{max-width:1180px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-  nav.bar .brand{font-family:var(--mono);font-size:12px;color:var(--seal);font-weight:600;margin-right:8px;white-space:nowrap}
+  nav.bar .brand{font-family:var(--mono);font-size:12px;color:var(--seal);font-weight:600;margin-right:8px;white-space:nowrap;display:inline-flex;align-items:center;gap:7px}
+  nav.bar .brand-mark{width:18px;height:18px;display:block;flex:0 0 auto}
   nav.bar a{font-size:12px;color:var(--muted);text-decoration:none;padding:5px 9px;border-radius:8px;
     border:1px solid transparent;display:inline-flex;gap:6px;align-items:center;white-space:nowrap;transition:.18s}
   nav.bar a .z{font-family:var(--mono);font-size:9.5px;color:var(--faint);letter-spacing:0}
@@ -71,6 +72,9 @@
       repeating-linear-gradient(135deg,rgba(214,161,75,.08) 0 1px,transparent 1px 13px);
     padding:17px 18px;box-shadow:0 18px 55px rgba(0,0,0,.34),0 0 32px rgba(214,161,75,.12)}
   .news-card::after{content:"NEW";position:absolute;right:18px;top:8px;font-family:var(--mono);font-size:10px;font-weight:700;color:rgba(242,213,154,.48);letter-spacing:.12em}
+  .news-card+.news-card{margin-top:12px}
+  .news-card.old{border-left-color:rgba(214,161,75,.4);box-shadow:0 12px 36px rgba(0,0,0,.28)}
+  .news-card.old::after{content:""}
   .news-badge{display:grid;grid-template-columns:auto;gap:4px;justify-items:center;align-items:center;min-width:78px}
   .news-emoji{font-size:31px;line-height:1;filter:drop-shadow(0 0 16px rgba(214,161,75,.38))}
   .news-date{font-family:var(--mono);font-size:11px;font-weight:700;color:#f2d59a;white-space:nowrap}
@@ -344,7 +348,7 @@
 <div id="prog"></div>
 
 <nav class="bar"><div class="inner">
-  <span class="brand">paperjury</span>
+  <span class="brand"><img class="brand-mark" src="paperjury-mark.svg" alt="" aria-hidden="true">paperjury</span>
   <a href="#news"><span class="z"><span class="zh">发布</span><span class="en">news</span></span> <span class="zh">近况</span><span class="en">News</span></a>
   <a href="#todo"><span class="z">todo</span> <span class="zh">下一步</span><span class="en">Next</span></a>
   <a href="#s1"><span class="z"><span class="zh">全局</span><span class="en">global</span></span> <span class="zh">三模式</span><span class="en">Three modes</span></a>
@@ -399,6 +403,17 @@
 
   <section id="news" class="news-strip reveal" aria-label="PaperJury news">
     <div class="news-card">
+      <div class="news-badge"><span class="news-emoji" aria-hidden="true">📄</span><span class="news-date">2026.06.12</span></div>
+      <div class="news-copy">
+        <div class="news-label"><span class="zh">论文</span><span class="en">paper</span></div>
+        <div class="news-title"><span class="zh">📄 PaperJury 论文出炉。</span><span class="en">📄 The PaperJury paper is out.</span></div>
+        <div class="news-note"><span class="zh">《PaperJury: Due-Process Review for Bounded LaTeX Revision》——把整套「审稿 → 裁定 → 修改 → 复查」引擎完整写成论文：确定性与语义的分工、按可争议性路由、对抗式庭审、按风险分级的编辑护栏。</span><span class="en">"PaperJury: Due-Process Review for Bounded LaTeX Revision" — the full review → verdict → revise → verify engine as a paper: the deterministic-vs-semantic split, contestability routing, the due-process trial, and risk-proportional edit guards.</span></div>
+      </div>
+      <div class="news-actions">
+        <a href="paperjury-paper.pdf"><span class="zh">📄 读论文（PDF）</span><span class="en">📄 Read the paper (PDF)</span></a>
+      </div>
+    </div>
+    <div class="news-card old">
       <div class="news-badge"><span class="news-emoji" aria-hidden="true">🎉</span><span class="news-date">2026.06.05</span></div>
       <div class="news-copy">
         <div class="news-label"><span class="zh">新版本推送</span><span class="en">release note</span></div>

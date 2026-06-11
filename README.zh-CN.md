@@ -1,10 +1,15 @@
 [English](README.md) · **中文**
 
+<p align="center">
+  <img src="docs/paperjury-mark.svg" alt="PaperJury logo" width="96">
+</p>
+
 # PaperJury
 
 > 投稿前，先让 AI 陪审团审一遍。
 
 <p align="center">
+  <a href="https://u7079256.github.io/paperjury/paperjury-paper.pdf"><img alt="阅读论文（PDF）" src="https://img.shields.io/badge/论文-PDF-b31b1b?style=for-the-badge&logo=latex&logoColor=white"></a>
   <a href="https://u7079256.github.io/paperjury/overview.html?lang=zh"><img alt="打开在线交互式总览" src="https://img.shields.io/badge/在线交互式总览-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-3b3d47?style=for-the-badge">
 </p>
@@ -25,6 +30,8 @@ PaperJury 是 Claude Code skill，支持三种模式：direct-edit、review、au
 
 ## 🎉 近况
 
+> **📄 2026-06-12：PaperJury 论文出炉。** preprint 在这里：[*PaperJury: Due-Process Review for Bounded LaTeX Revision*](https://u7079256.github.io/paperjury/paperjury-paper.pdf)——把整套「审稿 → 裁定 → 修改 → 复查」引擎完整写成论文：确定性与语义的分工、按可争议性路由、对抗式庭审、按风险分级的编辑护栏。
+>
 > **🔔 2026-06-10：v1.0.0 发布。** 第一个稳定版本，与 Codex 版的 v1.0 对齐。新增非阻塞的更新提醒：有更新的稳定版 tag 时会给出提示。
 >
 > **🚀 2026-06-05：PaperJury 的 Codex-first 版本已经推送。**

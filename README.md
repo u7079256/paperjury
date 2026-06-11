@@ -1,10 +1,15 @@
 **English** · [中文](README.zh-CN.md)
 
+<p align="center">
+  <img src="docs/paperjury-mark.svg" alt="PaperJury logo" width="96">
+</p>
+
 # PaperJury
 
 > A pre-submission AI review stress-test for research papers.
 
 <p align="center">
+  <a href="https://u7079256.github.io/paperjury/paperjury-paper.pdf"><img alt="Read the paper (PDF)" src="https://img.shields.io/badge/Paper-PDF-b31b1b?style=for-the-badge&logo=latex&logoColor=white"></a>
   <a href="https://u7079256.github.io/paperjury/overview.html?lang=en"><img alt="Open the live interactive overview" src="https://img.shields.io/badge/Open_the_interactive_overview-d6a14b?style=for-the-badge&logo=githubpages&logoColor=white"></a>
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-3b3d47?style=for-the-badge">
 </p>
@@ -25,6 +30,8 @@ Interactive overview: the [live site](https://u7079256.github.io/paperjury/overv
 
 ## 🎉 News
 
+> **📄 2026-06-12: The PaperJury paper is out.** Read the preprint: [*PaperJury: Due-Process Review for Bounded LaTeX Revision*](https://u7079256.github.io/paperjury/paperjury-paper.pdf) — the full review → verdict → revise → verify engine written up as a paper: the deterministic-vs-semantic split, contestability routing, the due-process trial, and risk-proportional edit guards.
+>
 > **🔔 2026-06-10: v1.0.0 released.** First stable release, aligned with the Codex port's v1.0. Adds a non-blocking update reminder that points to the latest stable release when a newer tag exists.
 >
 > **🚀 2026-06-05: PaperJury's Codex-first port has shipped.**
