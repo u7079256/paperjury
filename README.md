@@ -1,7 +1,7 @@
 **English** · [中文](README.zh-CN.md)
 
 <p align="center">
-  <img src="docs/paperjury-mark.svg" alt="PaperJury logo" width="96">
+  <img src="docs/paperjury-mark.png" alt="PaperJury logo" width="96">
 </p>
 
 # PaperJury
